@@ -15,49 +15,49 @@ knitr::opts_chunk$set(collapse = TRUE, comment = "#>", fig.width = 7, fig.height
 ```
 
 ```{r setup}
-library(easyExp)
+library(easydox)
 ```
 
 ## Introduction
 
-In most of the functions, the function paramaters follow the pattern of dataset, response variable, factor 1, factor 2, factor 3. The function details can be check typing *?[function_name]* in the R Console. If you have less than the paramaters listed here, in most cases you can simply ignore the extra ones and the function has the mechanisms to deal with these issues.
+In most of the functions, the function paramaters follow the pattern of *y~x1+x2+x3, color, facet*. The function details can be check typing *?[function_name]* in the R Console.
 
 ## An example using dataset Towels2
 
 #### A box plot to check the equal variances assumption in ANOVA
 
 ```{r}
-var_boxplot(Towels2, LogStrength, Brand, Water)
+dox_boxplot(LogStrength ~ Brand, Towels2, color = Water)
 ```
 
 #### A scatterplot to check the equal variances assumption in ANOVA
 
 ```{r}
-var_scatterplot(Towels2, LogStrength, Brand, Water)
+dox_scatterplot(LogStrength ~ Brand, Towels2, color = Water)
 ```
+
+
+```{r}
+dox_scatterplot(LogStrength ~ Brand, Towels2, color = Water, jitter = 0.15)
+```
+
 
 #### An interactive table to show variances of different groups
 
 ```{r}
-var_table(Towels2, LogStrength, Brand, Water)
+dox_table(LogStrength ~ Brand + Water, Towels2)
 ```
 
 You can sort the GroupVariance or other columns by clicking the column name.
 
-#### A qqplot and a histogram for residuals
+#### Iid and Normality Assumption Checking
 
 ```{r}
-normal_err(Towels2, LogStrength, Brand, Water, interaction = TRUE)
-
-# Alternatively, you can use residuals as the function input in cases like split-plot designs.
 aov1 = aov(LogStrength~Brand*Water, Towels2)
-# normal_err(aov1$residuals)
+dox_resid(aov1, Towels2)
 ```
-
-#### Residual vs fit and residual vs order plots
-
 ```{r}
-iid(Towels2, aov1)
+dox_resid(aov1, Towels2, plot = 2, bins = 40)
 ```
 
 #### ANOVA Table
@@ -69,7 +69,7 @@ summary(aov1)
 #### Main Effect Plots
 
 ```{r, message = FALSE}
-main_plot(Towels2, LogStrength, Brand, Water)
+dox_main(LogStrength ~ Brand + Water, Towels2)
 ```
 
 If you are only interested in one treatment (or you have a 3-way ANOVA), you can simply add (or reduce) parameters in the function inputs.
@@ -77,5 +77,5 @@ If you are only interested in one treatment (or you have a 3-way ANOVA), you can
 #### Interaction Effect Plot
 
 ```{r}
-interaction_plot(Towels2, LogStrength, Brand, Water)
+dox_inter(LogStrength ~ Brand + Water, Towels2)
 ```
