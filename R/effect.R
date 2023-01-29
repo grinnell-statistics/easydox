@@ -6,7 +6,7 @@
 #' @param dataset the dataset that contains the experiment information
 #' @param ylim a vector of the range of the y-axis
 #' @return main effect plots
-#' @importFrom ggplot2 ggplot aes geom_line theme geom_point coord_cartesian element_text
+#' @importFrom ggplot2 ggplot aes geom_line theme geom_point coord_cartesian element_text element_blank
 #' @importFrom dplyr group_by summarise %>%
 #' @importFrom gridExtra grid.arrange
 #' @export
