@@ -4,16 +4,14 @@
 \alias{dox_inter}
 \title{Interaction Effect Plot}
 \usage{
-dox_inter(dataset, response, x1, x2)
+dox_inter(formula, dataset, facet = NULL)
 }
 \arguments{
+\item{formula}{y~x1+x2}
+
 \item{dataset}{the dataset that contains the experiment information}
 
-\item{response}{the value of interest}
-
-\item{x1}{the first factor}
-
-\item{x2}{the second factor}
+\item{facet}{faceted by this factor (optional)}
 }
 \value{
 interaction effect plot

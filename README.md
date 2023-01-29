@@ -46,10 +46,10 @@ iid = function(dataset, anova_model)
 **Main Effect and Interaction Effect Plots**
 ```
 # Main Effect Plots
-dox_main = function(dataset, response, x1, x2, x3, ylim)
+dox_main = function(y~x1+x2(optional)+x3(optional), dataset, ylim(optional))
 
 # Interaction Effect Plots
-dox_inter = function(dataset, response, x1, x2)
+dox_inter = function(y~x1+x2, dataset, facet = NULL)
 ```
 
 

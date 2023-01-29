@@ -4,18 +4,12 @@
 \alias{dox_main}
 \title{Main Effect Plots}
 \usage{
-dox_main(dataset, response, x1, x2, x3, ylim)
+dox_main(formula, dataset, ylim)
 }
 \arguments{
+\item{formula}{y~x1+x2(optional)+x3(optional)}
+
 \item{dataset}{the dataset that contains the experiment information}
-
-\item{response}{the value of interest}
-
-\item{x1}{the first factor}
-
-\item{x2}{the second factor (optional)}
-
-\item{x3}{the third factor (optional)}
 
 \item{ylim}{a vector of the range of the y-axis}
 }
