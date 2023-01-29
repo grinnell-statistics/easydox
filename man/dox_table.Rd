@@ -4,18 +4,12 @@
 \alias{dox_table}
 \title{An interactive table to show variances of different groups}
 \usage{
-dox_table(dataset, response, x1, x2 = NULL, x3 = NULL)
+dox_table(formula, dataset)
 }
 \arguments{
+\item{formula}{y~x1+x2(optional)+x3(optional)}
+
 \item{dataset}{the dataset that contains the experiment information}
-
-\item{response}{the value of interest}
-
-\item{x1}{the first factor}
-
-\item{x2}{the second factor (optional)}
-
-\item{x3}{the third factor (optional)}
 }
 \value{
 an interactive variance table

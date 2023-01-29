@@ -7,7 +7,7 @@
 dox_scatterplot(formula, dataset, color = NULL, facet = NULL, jitter = FALSE)
 }
 \arguments{
-\item{formula}{the value of interest ~ the first factor}
+\item{formula}{y~x1}
 
 \item{dataset}{the dataset that contains the experiment information}
 

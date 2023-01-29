@@ -18,13 +18,13 @@ When reviewing the packages in R we find that currently there are few user-frien
 1) equal variances within groups
 ```
 # barplot
-dox_boxplot = function(formula, dataset, color=NULL, facet = NULL)
+dox_boxplot = function(y~x, dataset, color=NULL, facet = NULL)
 
 # scatterplot
-dox_scatterplot = function(formula, dataset, color=NULL, facet = NULL, jitter = FALSE)
+dox_scatterplot = function(y~x, dataset, color=NULL, facet = NULL, jitter = FALSE)
 
 # interactive variance table
-dox_table = function(dataset, response, x1, x2=NULL, x3=NULL)
+dox_table = function(y~x1+x2(optional)+x3(optional), dataset)
 ```
 
 
@@ -65,7 +65,7 @@ Popcorn
 Soda
 Towels2
 
-# block deisgn/split-plot design
+# block design/split-plot design
 C5Popcorn
 Colors
 Colors2

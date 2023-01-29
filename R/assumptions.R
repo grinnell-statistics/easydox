@@ -3,7 +3,7 @@
 #' This function gives a box plot to check the within groups equal variances assumptions.
 #' The first factor x1 is the x-axis, and if the second factor x2 exists,
 #' the box plot will be colored by x2.
-#' @param formula the value of interest ~ the first factor
+#' @param formula y~x1
 #' @param dataset the dataset that contains the experiment information
 #' @param color colored by this factor (optional)
 #' @param facet faceted by this factor (optional)
@@ -26,7 +26,7 @@ dox_boxplot = function(formula, dataset, color=NULL, facet = NULL){
 #' The first factor x1 is the x-axis, and if the second factor x2 exists,
 #' the scatterplot will be colored by x2.
 
-#' @param formula the value of interest ~ the first factor
+#' @param formula y~x1
 #' @param dataset the dataset that contains the experiment information
 #' @param color colored by this factor (optional)
 #' @param facet faceted by this factor (optional)
@@ -72,34 +72,45 @@ dox_scatterplot = function(formula, dataset, color=NULL, facet = NULL, jitter = 
 #'
 #' This function gives an interactive table to show variances of different groups.
 #' It can help check the within groups equal variances assumptions. You can click column names to sort.
+#' @param formula y~x1+x2(optional)+x3(optional)
 #' @param dataset the dataset that contains the experiment information
-#' @param response the value of interest
-#' @param x1 the first factor
-#' @param x2 the second factor (optional)
-#' @param x3 the third factor (optional)
 #' @return an interactive variance table
 #' @importFrom dplyr group_by summarise %>% mutate_if n
 #' @importFrom reactable reactable colDef
 #' @importFrom reactablefmtr data_bars
 #' @export
-dox_table = function(dataset, response, x1, x2=NULL, x3=NULL){
-  summary_table = group_by(dataset, {{x1}},{{x2}},{{x3}}) %>%
-    summarise(GroupVariance=var({{response}}),
+dox_table = function(formula, dataset){
+  response = all.vars(formula)[1]
+  x1 = all.vars(formula)[2]
+  x2 = all.vars(formula)[3]
+  x3 = all.vars(formula)[4]
+
+  if (is.na(x2)){
+    data_groupby = group_by(dataset, .data[[x1]])
+  }
+  else if (is.na(x3)){
+    data_groupby = group_by(dataset, .data[[x1]], .data[[x2]])
+  }
+  else{
+    data_groupby = group_by(dataset, .data[[x1]], .data[[x2]],.data[[x3]])
+  }
+
+  summary_table = data_groupby %>%
+    summarise(GroupVariance=var(.data[[response]]),
               SampleSize=n(), .groups = 'drop')
   summary_df = as.data.frame(summary_table)
   summary_df = summary_df %>%
     mutate_if(is.numeric, round, digits = 2)
 
 
-    reactable(summary_df,defaultColDef = colDef(cell = data_bars(summary_df, box_shadow = TRUE, round_edges = TRUE,
-                                                                 text_position = "outside-base",
-                                                                 fill_color = c("#e81cff", "#40c9ff"),
-                                                                 background = "#e5e5e5",fill_gradient = TRUE)))
+  reactable(summary_df,defaultColDef = colDef(cell = data_bars(summary_df, box_shadow = TRUE, round_edges = TRUE,
+                                                               text_position = "outside-base",
+                                                               fill_color = c("#e81cff", "#40c9ff"),
+                                                               background = "#e5e5e5",fill_gradient = TRUE)))
 
-    #as.datatable(formattable(summary_df, list(SampleSize = color_bar("#80ed99"),GroupVariance = color_bar("#f28482"))))
+  #as.datatable(formattable(summary_df, list(SampleSize = color_bar("#80ed99"),GroupVariance = color_bar("#f28482"))))
 
 }
-
 
 
 #' A qqplot and a histogram for residuals
