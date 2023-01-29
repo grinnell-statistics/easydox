@@ -115,7 +115,7 @@ dox_main = function(formula, dataset, ylim){
 #' @param dataset the dataset that contains the experiment information
 #' @param facet faceted by this factor (optional)
 #' @return interaction effect plot
-#' @importFrom ggplot2 ggplot aes geom_line theme geom_point element_text labs facet_grid
+#' @importFrom ggplot2 ggplot aes geom_line theme geom_point element_text labs facet_grid vars
 #' @importFrom dplyr group_by summarise %>%
 #' @export
 dox_inter = function(formula, dataset, facet = NULL){

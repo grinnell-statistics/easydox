@@ -8,7 +8,7 @@
 #' @param color colored by this factor (optional)
 #' @param facet faceted by this factor (optional)
 #' @return a box plot
-#' @importFrom ggplot2 ggplot aes geom_boxplot theme element_text facet_grid
+#' @importFrom ggplot2 ggplot aes geom_boxplot theme element_text facet_grid vars
 #' @export
 dox_boxplot = function(formula, dataset, color=NULL, facet = NULL){
   response = all.vars(formula)[1]
@@ -32,7 +32,7 @@ dox_boxplot = function(formula, dataset, color=NULL, facet = NULL){
 #' @param facet faceted by this factor (optional)
 #' @param jitter whether to use geom_jitter
 #' @return a scatterplot
-#' @importFrom ggplot2 ggplot aes geom_point theme stat_summary element_text facet_grid
+#' @importFrom ggplot2 ggplot aes geom_point theme stat_summary element_text facet_grid vars
 #' @export
 
 dox_scatterplot = function(formula, dataset, color=NULL, facet = NULL, jitter = FALSE){
