@@ -1,0 +1,24 @@
+Package: easydox
+Title: An easy-to-use package for experimental analysis
+Version: 0.0.0.9000
+Authors@R: 
+    c(person("Huandong", "Chang", email="huandongchang@hotmail.com", role = c("aut", "cre"),comment = c(ORCID = "0000-0001-8454-3835")),
+    person("Shonda", "Kuiper", email="kuipers@grinnell.edu", role = c("aut", "cph", "fnd")))
+Description: When you analyze and visualize your experiments, are you always bored with creating nice, concise, and easy-to-understand visualizations? From assumption checking to effects visualizations, everything can be done in one line with easydox, whether one-way, two-way, or three-way ANOVA!
+License: `use_mit_license()`
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.3
+Imports:
+        ggplot2,
+        dplyr,
+        reactablefmtr,
+	reactable,
+	gridExtra
+Depends: 
+    R (>= 2.10)
+LazyData: true
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr

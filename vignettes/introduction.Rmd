@@ -1,0 +1,81 @@
+---
+title: "Introduction"
+output: rmarkdown::html_vignette
+#output:
+ # html_document:
+  #  df_print: paged
+vignette: >
+  %\VignetteIndexEntry{introduction}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>", fig.width = 7, fig.height = 4, fig.align = "center")
+```
+
+```{r setup}
+library(easyExp)
+```
+
+## Introduction
+
+In most of the functions, the function paramaters follow the pattern of dataset, response variable, factor 1, factor 2, factor 3. The function details can be check typing *?[function_name]* in the R Console. If you have less than the paramaters listed here, in most cases you can simply ignore the extra ones and the function has the mechanisms to deal with these issues.
+
+## An example using dataset Towels2
+
+#### A box plot to check the equal variances assumption in ANOVA
+
+```{r}
+var_boxplot(Towels2, LogStrength, Brand, Water)
+```
+
+#### A scatterplot to check the equal variances assumption in ANOVA
+
+```{r}
+var_scatterplot(Towels2, LogStrength, Brand, Water)
+```
+
+#### An interactive table to show variances of different groups
+
+```{r}
+var_table(Towels2, LogStrength, Brand, Water)
+```
+
+You can sort the GroupVariance or other columns by clicking the column name.
+
+#### A qqplot and a histogram for residuals
+
+```{r}
+normal_err(Towels2, LogStrength, Brand, Water, interaction = TRUE)
+
+# Alternatively, you can use residuals as the function input in cases like split-plot designs.
+aov1 = aov(LogStrength~Brand*Water, Towels2)
+# normal_err(aov1$residuals)
+```
+
+#### Residual vs fit and residual vs order plots
+
+```{r}
+iid(Towels2, aov1)
+```
+
+#### ANOVA Table
+
+```{r}
+summary(aov1)
+```
+
+#### Main Effect Plots
+
+```{r, message = FALSE}
+main_plot(Towels2, LogStrength, Brand, Water)
+```
+
+If you are only interested in one treatment (or you have a 3-way ANOVA), you can simply add (or reduce) parameters in the function inputs.
+
+#### Interaction Effect Plot
+
+```{r}
+interaction_plot(Towels2, LogStrength, Brand, Water)
+```
