@@ -28,19 +28,12 @@ dox_table = function(y~x1+x2(optional)+x3(optional), dataset)
 ```
 
 
-2) normally distributed residuals
+2) normally distributed residuals \& independent and identically distributed observations
 ```
-# A qqplot and a histogram for residuals
-normal_err = function(dataset, response, x1, x2=NULL, interaction = TRUE, bins = 30)
+dox_resid = function(anova_model, dataset, plot = "all", bins = 30)
 
-# or you can use residuals as input
-normal_err = function(residuals, bins = 30)
-```
-
-3) independent and identically distributed observations
-```
-# Residual vs fit/order plots
-iid = function(dataset, anova_model)
+# or you can pick one plot
+dox_resid = function(anova_model, dataset, plot = 1, bins = 30)
 ```
 
 **Main Effect and Interaction Effect Plots**

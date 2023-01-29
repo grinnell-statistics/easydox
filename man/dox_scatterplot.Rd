@@ -15,7 +15,7 @@ dox_scatterplot(formula, dataset, color = NULL, facet = NULL, jitter = FALSE)
 
 \item{facet}{faceted by this factor (optional)}
 
-\item{jitter}{whether to use geom_jitter}
+\item{jitter}{the width of jitter or FALSE (not to use jitter)}
 }
 \value{
 a scatterplot
