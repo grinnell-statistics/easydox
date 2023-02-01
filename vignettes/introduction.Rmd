@@ -80,3 +80,42 @@ If you are only interested in one treatment (or you have a 3-way ANOVA), you can
 ```{r}
 dox_inter(LogStrength ~ Brand + Water, Towels2)
 ```
+
+
+## Split-plot example with Memory Dataset
+
+```{r}
+dox_boxplot(Score ~ Wordlist, data = Memory, color = Distracter)
+```
+
+```{r}
+dox_scatterplot(Score~Major, Memory, color = Wordlist)
+```
+
+```{r}
+dox_scatterplot(Score~Major, Memory, facet = Wordlist)
+```
+
+
+```{r}
+dox_table(Score~Major+Wordlist+Distracter, Memory)
+```
+
+```{r}
+aov1 <- aov(Score ~ Major + Wordlist*Distracter + Error(Major/as.factor(Student2)), Memory)
+#summary(aov1)
+dox_resid(aov1, Memory)
+```
+
+```{r}
+dox_resid(aov1, Memory, plot = 1)
+```
+
+
+```{r}
+dox_main(Score~Major+Wordlist+Distracter, Memory)
+```
+
+```{r}
+dox_inter(Score~Wordlist+Distracter, Memory)
+```
