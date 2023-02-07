@@ -76,7 +76,7 @@ Tennis
 
 # Example
 You can find a complete example
-[here](http://htmlpreview.github.io/?https://github.com/HuandongChang/easyExp/blob/main/vignettes/introduction.html). Some highlights:
+[here](http://htmlpreview.github.io/?https://github.com/HuandongChang/easydox/blob/main/vignettes/introduction.html). Some highlights:
 
 ![](figure/vartable.png)
 
