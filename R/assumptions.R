@@ -13,6 +13,22 @@
 dox_boxplot = function(formula, dataset, color=NULL, facet = NULL){
   response = all.vars(formula)[1]
   x1 = all.vars(formula)[2]
+  if(is.numeric(dataset[[x1]])){
+    error_message = paste("Variable \"", x1, "\" needs to be a factor. Currently numeric.")
+    stop(error_message)
+  }
+  color_str = deparse(substitute(color))
+  if(color_str!="NULL" && (is.numeric(dataset[,color_str]))){
+    error_message = paste("Variable \"", color_str, "\" needs to be a factor. Currently numeric.")
+    stop(error_message)
+  }
+
+  facet_str = deparse(substitute(facet))
+  if(facet_str != "NULL" && is.numeric(dataset[,facet_str])){
+    error_message = paste("Variable \"", facet_str, "\" needs to be a factor. Currently numeric.")
+    stop(error_message)
+  }
+
   ggplot(data = dataset, aes(x = .data[[x1]], y = .data[[response]])) +
     geom_boxplot() +
     aes(colour = {{color}}) +
@@ -36,9 +52,26 @@ dox_boxplot = function(formula, dataset, color=NULL, facet = NULL){
 #' @export
 
 dox_scatterplot = function(formula, dataset, color=NULL, facet = NULL, jitter = FALSE){
+  response = all.vars(formula)[1]
+  x1 = all.vars(formula)[2]
+  if(is.numeric(dataset[[x1]])){
+    error_message = paste("Variable \"", x1, "\" needs to be a factor. Currently numeric.")
+    stop(error_message)
+  }
+  color_str = deparse(substitute(color))
+  if(color_str!="NULL" && (is.numeric(dataset[,color_str]))){
+    error_message = paste("Variable \"", color_str, "\" needs to be a factor. Currently numeric.")
+    stop(error_message)
+  }
+
+  facet_str = deparse(substitute(facet))
+  if(facet_str != "NULL" && is.numeric(dataset[,facet_str])){
+    error_message = paste("Variable \"", facet_str, "\" needs to be a factor. Currently numeric.")
+    stop(error_message)
+  }
+
+
   if (!(jitter)){
-    response = all.vars(formula)[1]
-    x1 = all.vars(formula)[2]
     ggplot(dataset,  aes(x = .data[[x1]], y = .data[[response]], color={{color}})) +
       geom_point() +
       stat_summary(
@@ -52,8 +85,6 @@ dox_scatterplot = function(formula, dataset, color=NULL, facet = NULL, jitter = 
   }
 
   else{
-    response = all.vars(formula)[1]
-    x1 = all.vars(formula)[2]
     ggplot(dataset,  aes(x = .data[[x1]], y = .data[[response]], color={{color}})) +
       geom_jitter(width = {{jitter}}) +
       stat_summary(
@@ -66,6 +97,7 @@ dox_scatterplot = function(formula, dataset, color=NULL, facet = NULL, jitter = 
       )+theme(axis.title=element_text(size=14,face="bold"),axis.text.x = element_text(size = 12, angle = 45))+facet_grid(vars({{facet}}))
   }
 }
+
 
 
 #' An interactive table to show variances of different groups
@@ -84,6 +116,21 @@ dox_table = function(formula, dataset){
   x1 = all.vars(formula)[2]
   x2 = all.vars(formula)[3]
   x3 = all.vars(formula)[4]
+
+  if(is.numeric(dataset[[x1]])){
+    error_message = paste("Variable \"", x1, "\" needs to be a factor. Currently numeric.")
+    stop(error_message)
+  }
+
+  if(is.numeric(dataset[[x2]])){
+    error_message = paste("Variable \"", x2, "\" needs to be a factor. Currently numeric.")
+    stop(error_message)
+  }
+
+  if(is.numeric(dataset[[x3]])){
+    error_message = paste("Variable \"", x3, "\" needs to be a factor. Currently numeric.")
+    stop(error_message)
+  }
 
   if (is.na(x2)){
     data_groupby = group_by(dataset, .data[[x1]])
@@ -111,7 +158,6 @@ dox_table = function(formula, dataset){
   #as.datatable(formattable(summary_df, list(SampleSize = color_bar("#80ed99"),GroupVariance = color_bar("#f28482"))))
 
 }
-
 
 
 #' Residual vs fit/order plots

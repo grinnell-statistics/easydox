@@ -15,6 +15,21 @@ dox_main = function(formula, dataset, ylim){
   x1 = all.vars(formula)[2]
   x2 = all.vars(formula)[3]
   x3 = all.vars(formula)[4]
+  if(is.numeric(dataset[[x1]])){
+    error_message = paste("Variable \"", x1, "\" needs to be a factor. Currently numeric.")
+    stop(error_message)
+  }
+
+  if(is.numeric(dataset[[x2]])){
+    error_message = paste("Variable \"", x2, "\" needs to be a factor. Currently numeric.")
+    stop(error_message)
+  }
+
+  if(is.numeric(dataset[[x3]])){
+    error_message = paste("Variable \"", x3, "\" needs to be a factor. Currently numeric.")
+    stop(error_message)
+  }
+
   # ylim if not specified
   y_min = 0
   y_max = 0
@@ -122,6 +137,23 @@ dox_inter = function(formula, dataset, facet = NULL){
   response = all.vars(formula)[1]
   x1 = all.vars(formula)[2]
   x2 = all.vars(formula)[3]
+
+  if(is.numeric(dataset[[x1]])){
+    error_message = paste("Variable \"", x1, "\" needs to be a factor. Currently numeric.")
+    stop(error_message)
+  }
+
+  if(is.numeric(dataset[[x2]])){
+    error_message = paste("Variable \"", x2, "\" needs to be a factor. Currently numeric.")
+    stop(error_message)
+  }
+
+  facet_str = deparse(substitute(facet))
+  if(facet_str != "NULL" && is.numeric(dataset[,facet_str])){
+    error_message = paste("Variable \"", facet_str, "\" needs to be a factor. Currently numeric.")
+    stop(error_message)
+  }
+
   df <- dataset %>%
     group_by(.data[[x1]], .data[[x2]], {{facet}}) %>%
     summarise(Mean_Response = mean(.data[[response]]),.groups = 'drop')
