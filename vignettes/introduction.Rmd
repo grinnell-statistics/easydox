@@ -103,7 +103,7 @@ dox_table(Score~Major+Wordlist+Distracter, Memory)
 
 ```{r}
 aov1 <- aov(Score ~ Major + Wordlist*Distracter + Error(Major/as.factor(Student2)), Memory)
-#summary(aov1)
+summary(aov1)
 dox_resid(aov1, Memory)
 ```
 

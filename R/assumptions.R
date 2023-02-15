@@ -222,7 +222,7 @@ dox_resid = function(anova_model, dataset, plot = "all", bins = 30){
   }
 
   if ({{plot}} == "all")
-  {grid.arrange(qqplot, hist, residual_fitted, residual_order, ncol=1)}
+  {grid.arrange(qqplot, hist, residual_fitted, residual_order, ncol=2)}
   else if({{plot}} == 1) {qqplot}
   else if({{plot}} == 2) {hist}
   else if({{plot}} == 3) {residual_fitted}
