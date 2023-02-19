@@ -50,7 +50,7 @@ dox_table(LogStrength ~ Brand + Water, Towels2)
 
 You can sort the GroupVariance or other columns by clicking the column name.
 
-#### Iid and Normality Assumption Checking
+#### IID and Normality Assumption Checking
 
 ```{r}
 aov1 = aov(LogStrength~Brand*Water, Towels2)
@@ -64,7 +64,7 @@ dox_resid(aov1, Towels2, plot = 2, bins = 40)
 #### ANOVA Table
 
 ```{r}
-summary(aov1)
+dox_aov(aov1)
 ```
 
 #### Main Effect Plots
