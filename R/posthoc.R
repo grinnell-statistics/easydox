@@ -20,8 +20,12 @@ dox_aov=function(aov){
   extra_row <- c(sum(table$Df), sum(table[["Sum Sq"]]),NA,NA,NA)
   anova_results <- rbind(table, extra_row)
   rownames(anova_results) <- lastest_rownames
-
+  # options(knitr.kable.NA = '')
   # Create ANOVA summary table with kable
-  kable(format(anova_results, digits = 4), align = 'c',
+  knitr::opts_chunk$set(
+    out.width = "50%",
+    out.height = "400px"
+  )
+  kable(format(anova_results, digits = 4), align = 'r',
         caption = "ANOVA Summary", escape = F, format.args = list(big.mark = ","))  %>% kable_styling()
 }
