@@ -45,6 +45,13 @@ dox_main = function(y~x1+x2(optional)+x3(optional), dataset, ylim(optional))
 dox_inter = function(y~x1+x2, dataset, facet = NULL)
 ```
 
+3) ANOVA
+```
+# ANOVA Table with Total DF \& SS
+dox_aov = function(anova_model)
+
+```
+
 
 # Datasets Available in the Package
 ```
