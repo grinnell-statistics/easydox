@@ -1,10 +1,8 @@
 ---
-title: "introduction"
-# output: rmarkdown::html_vignette
-output: rmarkdown::render("introduction.Rmd", output_format = "html_vignette", output_file = "introduction.html")
-
-# Output created: Introduction.html
-# output:html_document:
+title: "Introduction"
+output: rmarkdown::html_vignette
+#output:
+ # html_document:
   #  df_print: paged
 vignette: >
   %\VignetteIndexEntry{introduction}
