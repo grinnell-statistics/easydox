@@ -47,7 +47,7 @@ dox_aov=function(aov){
 #' @importFrom rlang enquo quo_name parse_expr eval_tidy
 #' @import ggplot2
 #' @export
-dox_comparison <- function(data, treatment, target, alpha = 0.05, method = "ALL") {
+dox_comparison <- function(target, treatment, data, alpha = 0.05, method = "ALL") {
   # Get the string version
   treatment_str = deparse(substitute(treatment))
   target_str = deparse(substitute(target))

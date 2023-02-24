@@ -4,14 +4,14 @@
 \alias{dox_comparison}
 \title{Confidence intervals of pairwise comparisons}
 \usage{
-dox_comparison(data, treatment, target, alpha = 0.05, method = "ALL")
+dox_comparison(target, treatment, data, alpha = 0.05, method = "ALL")
 }
 \arguments{
-\item{data}{dataset of experimental results}
+\item{target}{the target variable in the dataset}
 
 \item{treatment}{the treatment variable in the dataset}
 
-\item{target}{the target variable in the dataset}
+\item{data}{dataset of experimental results}
 
 \item{alpha}{alpha level (default 0.05)}
 

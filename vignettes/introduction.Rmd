@@ -59,12 +59,6 @@ dox_resid(aov1, Towels2)
 dox_resid(aov1, Towels2, plot = 2, bins = 40)
 ```
 
-#### ANOVA Table
-
-```{r}
-dox_aov(aov1)
-```
-
 #### Main Effect Plots
 
 ```{r, message = FALSE}
@@ -79,6 +73,17 @@ If you are only interested in one treatment (or you have a 3-way ANOVA), you can
 dox_inter(LogStrength ~ Brand + Water, Towels2)
 ```
 
+#### ANOVA Table
+
+```{r}
+dox_aov(aov1)
+```
+
+#### Pairwise Comparison
+
+```{r}
+dox_comparison(LogStrength, Brand, Towels2)
+```
 
 
 # Split-plot example with Memory Dataset
