@@ -1,28 +1,28 @@
 ---
-title: "Introduction"
+title: "easydox Introduction"
+# rmarkdown::render("introduction.Rmd", output_format = "html_document")
 output: rmarkdown::html_vignette
-#output:
- # html_document:
-  #  df_print: paged
-vignette: >
-  %\VignetteIndexEntry{introduction}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
+
+# vignette: >
+#   %\VignetteIndexEntry{Vignette Title}
+#   %\VignetteEngine{knitr::rmarkdown}
+#   %\VignetteEncoding{UTF-8}
 ---
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(collapse = TRUE, comment = "#>", fig.width = 7, fig.height = 4, fig.align = "center")
 ```
 
+
 ```{r setup}
 library(easydox)
 ```
 
-## Introduction
+# Introduction
 
-In most of the functions, the function paramaters follow the pattern of *y~x1+x2+x3, color, facet*. The function details can be check typing *?[function_name]* in the R Console.
+In most of the functions, the function paramaters follow the pattern of *y\~x1+x2+x3, color, facet*. The function details can be check typing *?[function_name]* in the R Console.
 
-## An example using dataset Towels2
+# An example using dataset Towels2
 
 #### A box plot to check the equal variances assumption in ANOVA
 
@@ -36,11 +36,9 @@ dox_boxplot(LogStrength ~ Brand, Towels2, color = Water)
 dox_scatterplot(LogStrength ~ Brand, Towels2, color = Water)
 ```
 
-
 ```{r}
 dox_scatterplot(LogStrength ~ Brand, Towels2, color = Water, jitter = 0.15)
 ```
-
 
 #### An interactive table to show variances of different groups
 
@@ -82,7 +80,8 @@ dox_inter(LogStrength ~ Brand + Water, Towels2)
 ```
 
 
-## Split-plot example with Memory Dataset
+
+# Split-plot example with Memory Dataset
 
 ```{r}
 dox_boxplot(Score ~ Wordlist, data = Memory, color = Distracter)
@@ -95,7 +94,6 @@ dox_scatterplot(Score~Major, Memory, color = Wordlist)
 ```{r}
 dox_scatterplot(Score~Major, Memory, facet = Wordlist)
 ```
-
 
 ```{r}
 dox_table(Score~Major+Wordlist+Distracter, Memory)
@@ -110,7 +108,6 @@ dox_resid(aov2, Memory)
 ```{r}
 dox_resid(aov2, Memory, plot = 1)
 ```
-
 
 ```{r}
 dox_main(Score~Major+Wordlist+Distracter, Memory)
