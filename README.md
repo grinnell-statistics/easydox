@@ -46,10 +46,13 @@ dox_main = function(y~x1+x2(optional)+x3(optional), dataset, ylim(optional))
 dox_inter = function(y~x1+x2, dataset, facet = NULL)
 ```
 
-**ANOVA**
+**ANOVA \& PostHoc**
 ```
 # ANOVA Table with Total DF \& SS
 dox_aov = function(anova_model)
+
+# Confidence Intervals using Fisher least siginificant difference (LSD), Bonferroni significant difference (BSD), and Tukey honest siginificant difference (HSD)
+dox_comparison = function(target, treatment, data, alpha = 0.05, method = "ALL")
 ```
 
 
