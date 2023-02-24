@@ -60,6 +60,7 @@ dox_comparison <- function(target, treatment, data, alpha = 0.05, method = "ALL"
 
   # Get the levels of the treatment variable
   treatment_levels <- unique(data[[treatment_str]])
+  treatment_levels=as.character(treatment_levels)
 
 
   # Obtain all pairs

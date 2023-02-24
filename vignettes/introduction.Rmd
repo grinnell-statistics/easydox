@@ -82,7 +82,8 @@ dox_aov(aov1)
 #### Pairwise Comparison
 
 ```{r}
-dox_comparison(LogStrength, Brand, Towels2)
+Towels2$Water = as.factor(Towels2$Water)
+dox_comparison(LogStrength, Water, Towels2)
 ```
 
 
