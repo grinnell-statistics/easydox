@@ -14,7 +14,9 @@ Imports:
         dplyr,
         reactablefmtr,
 	reactable,
-	gridExtra
+	gridExtra,
+	kableExtra,
+	rlang
 Depends: 
     R (>= 2.10)
 LazyData: true
