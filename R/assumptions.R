@@ -217,7 +217,8 @@ dox_resid = function(anova_model, dataset, plot = "all", bins = 30){
     residual_df = as.data.frame(resids)
     colnames(residual_df) = c("residual")
     qqplot <- ggplot(residual_df, aes(sample = residual))
-    qqplot = qqplot + stat_qq() + stat_qq_line() + labs(title="QQPLOT for Error Terms")
+    qqplot = qqplot + stat_qq() + stat_qq_line() +
+      labs(title = "QQ Plot for Error Terms", x = "Theoretical", y = "Sample")
 
     # res histogram
     hist = ggplot(residual_df, aes(x=residual)) + geom_histogram(bins=bins, fill="lightblue")+ labs(title="Histogram for Error Terms")
