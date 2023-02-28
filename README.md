@@ -91,7 +91,7 @@ You can find a complete example
 
 ![](figure/vartable.png)
 
-![](figure/residual.png)
+![](figure/residual_all.png)
 
 ![](figure/interactionEffect.png)
 
