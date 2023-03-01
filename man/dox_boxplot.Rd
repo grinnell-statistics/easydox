@@ -2,12 +2,12 @@
 % Please edit documentation in R/assumptions.R
 \name{dox_boxplot}
 \alias{dox_boxplot}
-\title{A box plot to check the equal variances assumption in ANOVA}
+\title{A box plot to check the equal variances assumption in ANOVA.}
 \usage{
 dox_boxplot(formula, dataset, color = NULL, facet = NULL)
 }
 \arguments{
-\item{formula}{y~x1}
+\item{formula}{y~x}
 
 \item{dataset}{the dataset that contains the experiment information}
 
@@ -20,6 +20,4 @@ a box plot
 }
 \description{
 This function gives a box plot to check the within groups equal variances assumptions.
-The first factor x1 is the x-axis, and if the second factor x2 exists,
-the box plot will be colored by x2.
 }

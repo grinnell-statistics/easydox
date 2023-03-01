@@ -1,9 +1,7 @@
-#' A box plot to check the equal variances assumption in ANOVA
+#' A box plot to check the equal variances assumption in ANOVA.
 #'
 #' This function gives a box plot to check the within groups equal variances assumptions.
-#' The first factor x1 is the x-axis, and if the second factor x2 exists,
-#' the box plot will be colored by x2.
-#' @param formula y~x1
+#' @param formula y~x
 #' @param dataset the dataset that contains the experiment information
 #' @param color colored by this factor (optional)
 #' @param facet faceted by this factor (optional)
@@ -39,10 +37,7 @@ dox_boxplot = function(formula, dataset, color=NULL, facet = NULL){
 #' A scatterplot to check the equal variances assumption in ANOVA
 #'
 #' This function gives a scatterplot to check the within groups equal variances assumptions.
-#' The first factor x1 is the x-axis, and if the second factor x2 exists,
-#' the scatterplot will be colored by x2.
-
-#' @param formula y~x1
+#' @param formula y~x
 #' @param dataset the dataset that contains the experiment information
 #' @param color colored by this factor (optional)
 #' @param facet faceted by this factor (optional)

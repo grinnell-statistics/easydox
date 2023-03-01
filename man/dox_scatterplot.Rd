@@ -7,7 +7,7 @@
 dox_scatterplot(formula, dataset, color = NULL, facet = NULL, jitter = FALSE)
 }
 \arguments{
-\item{formula}{y~x1}
+\item{formula}{y~x}
 
 \item{dataset}{the dataset that contains the experiment information}
 
@@ -22,6 +22,4 @@ a scatterplot
 }
 \description{
 This function gives a scatterplot to check the within groups equal variances assumptions.
-The first factor x1 is the x-axis, and if the second factor x2 exists,
-the scatterplot will be colored by x2.
 }
