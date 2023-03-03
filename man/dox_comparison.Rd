@@ -21,6 +21,6 @@ dox_comparison(target, treatment, dataset, alpha = 0.05, method = "ALL")
 confidence interval plots
 }
 \description{
-This function plots the confidence intervals of pairwise comparisons using Fisher least siginificant difference (LSD),
-Bonferroni significant difference (BSD), and Tukey honest siginificant difference (HSD).
+This function plots the confidence intervals of pairwise comparisons using Fisher least significant difference (LSD),
+Bonferroni significant difference (BSD), and Tukey honest significant difference (HSD) methods.
 }

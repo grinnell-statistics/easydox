@@ -20,6 +20,6 @@ A qqplot and a histogram for residuals; a residual versus fit plot and a residua
 }
 \description{
 This function gives four plots to check the "independent and identically distributed observations"
-and "normality" assumption in ANOVA. 1.a qqplot for residuals; 2.and a histogram for residuals;
+and "normality" assumption in ANOVA. 1.a qqplot for residuals; 2.a histogram for residuals;
 3.residual versus fit plot; 4.residual versus order plot
 }

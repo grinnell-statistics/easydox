@@ -158,7 +158,7 @@ dox_table = function(formula, dataset){
 #' Residual vs fit/order plots
 #'
 #' This function gives four plots to check the "independent and identically distributed observations"
-#' and "normality" assumption in ANOVA. 1.a qqplot for residuals; 2.and a histogram for residuals;
+#' and "normality" assumption in ANOVA. 1.a qqplot for residuals; 2.a histogram for residuals;
 #' 3.residual versus fit plot; 4.residual versus order plot
 #' @param anova_model the anova model
 #' @param dataset the dataset that contains the experiment information

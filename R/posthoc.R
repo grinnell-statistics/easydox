@@ -1,18 +1,18 @@
 #' An ANOVA summary table with total DF & SS
 #'
 #' This function gives an ANOVA summary table with total degrees of freedom and sum of squares
-#' @param aov the anova model
+#' @param anova_model the anova model
 #' @return a html table
 #' @importFrom dplyr %>%
 #' @importFrom kableExtra kable kable_styling
 #' @export
-dox_aov=function(aov){
-  if(length(summary(aov)) > 1){
+dox_aov=function(anova_model){
+  if(length(summary(anova_model)) > 1){
     stop("This function only works for ANOVA with one summary table. Designs like split-plot do not work.")
   }
 
 
-  table <- summary(aov)[[1]]
+  table <- summary(anova_model)[[1]]
   lastest_rownames = c(rownames(table),"Total")
 
 
@@ -34,8 +34,8 @@ dox_aov=function(aov){
 
 #' Confidence intervals of pairwise comparisons
 #'
-#' This function plots the confidence intervals of pairwise comparisons using Fisher least siginificant difference (LSD),
-#' Bonferroni significant difference (BSD), and Tukey honest siginificant difference (HSD).
+#' This function plots the confidence intervals of pairwise comparisons using Fisher least significant difference (LSD),
+#' Bonferroni significant difference (BSD), and Tukey honest significant difference (HSD) methods.
 #' @param dataset dataset of experimental results
 #' @param treatment the treatment variable in the dataset
 #' @param target the target variable in the dataset
@@ -51,6 +51,8 @@ dox_comparison <- function(target, treatment, dataset, alpha = 0.05, method = "A
   # Get the string version
   treatment_str = deparse(substitute(treatment))
   target_str = deparse(substitute(target))
+  alpha_str = deparse(substitute(alpha))
+  legend_str = paste("< ", alpha_str)
 
   # Compute ANOVA to obtain MSE
   response <- parse_expr(quo_name(enquo(target)))
@@ -124,7 +126,7 @@ dox_comparison <- function(target, treatment, dataset, alpha = 0.05, method = "A
     scale_color_manual(values = c("yes" = "red", "no" = "black")) +
     geom_errorbarh(aes(xmin = LSD_ci_low, xmax = LSD_ci_high), height = 0.2) +
     geom_point(size = 1) +
-    labs(x = "Confidence Interval", y = "LSD", color = "Significant?") +
+    labs(x = "Confidence Interval", y = "LSD", color = legend_str) +
     xlim(x_min, x_max)
 
 
@@ -132,14 +134,14 @@ dox_comparison <- function(target, treatment, dataset, alpha = 0.05, method = "A
     scale_color_manual(values = c("yes" = "red", "no" = "black")) +
     geom_errorbarh(aes(xmin = BSD_ci_low, xmax = BSD_ci_high), height = 0.2) +
     geom_point(size = 1) +
-    labs(x = "Confidence Interval", y = "BSD", color = "Significant?") +
+    labs(x = "Confidence Interval", y = "BSD", color = legend_str) +
     xlim(x_min, x_max)
 
   HSD_plot = ggplot(results, aes(x = diff, y = paste(treatment1, treatment2), color = HSD_significant)) +
     scale_color_manual(values = c("yes" = "red", "no" = "black")) +
     geom_errorbarh(aes(xmin = HSD_ci_low, xmax = HSD_ci_high), height = 0.2) +
     geom_point(size = 1) +
-    labs(x = "Confidence Interval", y = "Tukey HSD", color = "Significant?") +
+    labs(x = "Confidence Interval", y = "Tukey HSD", color = legend_str) +
     xlim(x_min, x_max)
 
   if (method == "LSD")
