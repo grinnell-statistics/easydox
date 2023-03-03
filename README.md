@@ -53,7 +53,7 @@ dox_aov = function(anova_model)
 
 # Confidence Intervals using Fisher Least Siginificant Difference (LSD), 
 # Bonferroni Significant Difference (BSD), and Tukey Honest Siginificant Difference (HSD)
-dox_comparison = function(target, treatment, data, alpha = 0.05, method = "ALL")
+dox_comparison = function(target, treatment, dataset, alpha = 0.05, method = "ALL")
 ```
 
 

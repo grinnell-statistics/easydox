@@ -36,7 +36,7 @@ dox_aov=function(aov){
 #'
 #' This function plots the confidence intervals of pairwise comparisons using Fisher least siginificant difference (LSD),
 #' Bonferroni significant difference (BSD), and Tukey honest siginificant difference (HSD).
-#' @param data dataset of experimental results
+#' @param dataset dataset of experimental results
 #' @param treatment the treatment variable in the dataset
 #' @param target the target variable in the dataset
 #' @param alpha alpha level (default 0.05)
@@ -47,7 +47,7 @@ dox_aov=function(aov){
 #' @importFrom rlang enquo quo_name parse_expr eval_tidy
 #' @import ggplot2
 #' @export
-dox_comparison <- function(target, treatment, data, alpha = 0.05, method = "ALL") {
+dox_comparison <- function(target, treatment, dataset, alpha = 0.05, method = "ALL") {
   # Get the string version
   treatment_str = deparse(substitute(treatment))
   target_str = deparse(substitute(target))
@@ -55,11 +55,11 @@ dox_comparison <- function(target, treatment, data, alpha = 0.05, method = "ALL"
   # Compute ANOVA to obtain MSE
   response <- parse_expr(quo_name(enquo(target)))
   x <- parse_expr(quo_name(enquo(treatment)))
-  anova_res=eval_tidy(expr(aov(!!response ~ !!x, data = data)))
+  anova_res=eval_tidy(expr(aov(!!response ~ !!x, data = dataset)))
   mse <- summary(anova_res)[[1]]["Mean Sq"][[1]][2]
 
   # Get the levels of the treatment variable
-  treatment_levels <- unique(data[[treatment_str]])
+  treatment_levels <- unique(dataset[[treatment_str]])
   treatment_levels=as.character(treatment_levels)
 
 
@@ -73,8 +73,8 @@ dox_comparison <- function(target, treatment, data, alpha = 0.05, method = "ALL"
     treatment2 <- pairs[i, "treatment2"]
 
     # Extract two treatment groups
-    data1 <- data %>% filter({{treatment}} == treatment1) %>% pull({{target}})
-    data2 <- data %>% filter({{treatment}} == treatment2) %>% pull({{target}})
+    data1 <- dataset %>% filter({{treatment}} == treatment1) %>% pull({{target}})
+    data2 <- dataset %>% filter({{treatment}} == treatment2) %>% pull({{target}})
 
     # Compute the sample sizes and means for the two treatment groups
     n1 <- length(data1)
@@ -84,15 +84,15 @@ dox_comparison <- function(target, treatment, data, alpha = 0.05, method = "ALL"
 
     # Compute the margin of error and confidence interval
     # LSD
-    LSD_me <- qt(alpha/2, nrow(data) - length(treatment_levels), lower.tail = FALSE) * sqrt(mse * (1/n1 + 1/n2))
+    LSD_me <- qt(alpha/2, nrow(dataset) - length(treatment_levels), lower.tail = FALSE) * sqrt(mse * (1/n1 + 1/n2))
     LSD_ci <- c(mean1 - mean2 - LSD_me, mean1 - mean2 + LSD_me)
 
     # BSD
-    BSD_me <- qt(alpha/2/nrow(pairs), nrow(data) - length(treatment_levels), lower.tail = FALSE) * sqrt(mse * (1/n1 + 1/n2))
+    BSD_me <- qt(alpha/2/nrow(pairs), nrow(dataset) - length(treatment_levels), lower.tail = FALSE) * sqrt(mse * (1/n1 + 1/n2))
     BSD_ci <- c(mean1 - mean2 - BSD_me, mean1 - mean2 + BSD_me)
 
     # Tukey HSD
-    HSD_me <- qtukey(alpha,length(treatment_levels),nrow(data)-length(treatment_levels), lower.tail = FALSE)*sqrt(mse*(1/n1+1/n2))/sqrt(2)
+    HSD_me <- qtukey(alpha,length(treatment_levels),nrow(dataset)-length(treatment_levels), lower.tail = FALSE)*sqrt(mse*(1/n1+1/n2))/sqrt(2)
     HSD_ci <- c(mean1 - mean2 - HSD_me, mean1 - mean2 + HSD_me)
 
     # Store the results
