@@ -82,7 +82,7 @@ dox_aov(aov1)
 #### Pairwise Comparison
 
 ```{r}
-dox_comparison(LogStrength, Water, Towels2)
+dox_comparison(LogStrength~Water, Towels2)
 ```
 
 
@@ -125,5 +125,5 @@ dox_inter(Score~Wordlist+Distracter, Memory)
 #### Pairwise Comparison
 
 ```{r}
-dox_comparison(Score, Major, Memory)
+dox_comparison(Score~Major, Memory)
 ```

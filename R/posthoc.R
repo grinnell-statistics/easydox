@@ -37,8 +37,7 @@ dox_aov=function(anova_model){
 #' This function plots the confidence intervals of pairwise comparisons using Fisher least significant difference (LSD),
 #' Bonferroni significant difference (BSD), and Tukey honest significant difference (HSD) methods.
 #' @param dataset dataset of experimental results
-#' @param treatment the treatment variable in the dataset
-#' @param target the target variable in the dataset
+#' @param formula target~treatment
 #' @param alpha alpha level (default 0.05)
 #' @param method LSD, BSD, or HSD (default is ALL)
 #' @return confidence interval plots
@@ -47,17 +46,24 @@ dox_aov=function(anova_model){
 #' @importFrom rlang enquo quo_name parse_expr eval_tidy
 #' @import ggplot2
 #' @export
-dox_comparison <- function(target, treatment, dataset, alpha = 0.05, method = "ALL") {
+dox_comparison <- function(formula,dataset, alpha = 0.05, method = "ALL") {
   # Get the string version
-  treatment_str = deparse(substitute(treatment))
-  target_str = deparse(substitute(target))
+  target_str = all.vars(formula)[1]
+  treatment_str = all.vars(formula)[2]
+
   alpha_str = deparse(substitute(alpha))
-  legend_str = paste("< ", alpha_str)
+  legend_str = paste("p-value < ", alpha_str)
 
   # Compute ANOVA to obtain MSE
-  response <- parse_expr(quo_name(enquo(target)))
-  x <- parse_expr(quo_name(enquo(treatment)))
-  anova_res=eval_tidy(expr(aov(!!response ~ !!x, data = dataset)))
+  # response <- parse_expr(quo_name(enquo(target)))
+  # x <- parse_expr(quo_name(enquo(treatment)))
+  # anova_res=eval_tidy(expr(aov(!!response ~ !!x, data = dataset)))
+
+  # str aov
+  formula_str <- paste(target_str, "~", treatment_str)
+  formula_obj <- as.formula(formula_str)
+  anova_res <- aov(formula_obj, data = dataset)
+
   mse <- summary(anova_res)[[1]]["Mean Sq"][[1]][2]
 
   # Get the levels of the treatment variable
@@ -75,8 +81,8 @@ dox_comparison <- function(target, treatment, dataset, alpha = 0.05, method = "A
     treatment2 <- pairs[i, "treatment2"]
 
     # Extract two treatment groups
-    data1 <- dataset %>% filter({{treatment}} == treatment1) %>% pull({{target}})
-    data2 <- dataset %>% filter({{treatment}} == treatment2) %>% pull({{target}})
+    data1 <- dataset[dataset[[treatment_str]] == treatment1,target_str]
+    data2 <- dataset[dataset[[treatment_str]] == treatment2,target_str]
 
     # Compute the sample sizes and means for the two treatment groups
     n1 <- length(data1)

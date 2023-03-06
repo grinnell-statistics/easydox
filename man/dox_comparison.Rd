@@ -4,18 +4,20 @@
 \alias{dox_comparison}
 \title{Confidence intervals of pairwise comparisons}
 \usage{
-dox_comparison(target, treatment, dataset, alpha = 0.05, method = "ALL")
+dox_comparison(formula, dataset, alpha = 0.05, method = "ALL")
 }
 \arguments{
-\item{target}{the target variable in the dataset}
-
-\item{treatment}{the treatment variable in the dataset}
+\item{formula}{target~treatment}
 
 \item{dataset}{dataset of experimental results}
 
 \item{alpha}{alpha level (default 0.05)}
 
 \item{method}{LSD, BSD, or HSD (default is ALL)}
+
+\item{treatment}{the treatment variable in the dataset}
+
+\item{target}{the target variable in the dataset}
 }
 \value{
 confidence interval plots
