@@ -62,15 +62,23 @@ dox_resid(aov1, Towels2, plot = 2, bins = 40)
 #### Main Effect Plots
 
 ```{r, message = FALSE}
-dox_main(LogStrength ~ Brand + Water, Towels2)
+dox_main(LogStrength ~ Brand + Water, Towels2, label="Mean")
 ```
 
 If you are only interested in one treatment (or you have a 3-way ANOVA), you can simply add (or reduce) parameters in the function inputs.
 
+```{r, message = FALSE}
+dox_main(LogStrength ~ Brand + Water, Towels2, label="Effect")
+```
+
 #### Interaction Effect Plot
 
 ```{r}
-dox_inter(LogStrength ~ Brand + Water, Towels2)
+dox_inter(LogStrength ~ Brand + Water, Towels2, label="Mean")
+```
+
+```{r}
+dox_inter(LogStrength ~ Brand + Water, Towels2, label="Effect")
 ```
 
 #### ANOVA Table
@@ -82,7 +90,7 @@ dox_aov(aov1)
 #### Pairwise Comparison
 
 ```{r}
-dox_comparison(LogStrength~Water, Towels2)
+dox_pairs(LogStrength~Water, Towels2)
 ```
 
 
@@ -115,15 +123,25 @@ dox_resid(aov2, Memory, plot = 1)
 ```
 
 ```{r}
-dox_main(Score~Major+Wordlist+Distracter, Memory)
+dox_main(Score~Major+Wordlist+Distracter, Memory, label="Mean")
 ```
 
 ```{r}
-dox_inter(Score~Wordlist+Distracter, Memory)
+dox_main(Score~Major+Wordlist+Distracter, Memory, label="Effect")
 ```
+
+
+```{r}
+dox_inter(Score~Wordlist+Distracter, Memory, label="Mean")
+```
+
+```{r}
+dox_inter(Score~Wordlist+Distracter, Memory, label="Effect")
+```
+
 
 #### Pairwise Comparison
 
 ```{r}
-dox_comparison(Score~Major, Memory)
+dox_pairs(Score~Major, Memory)
 ```

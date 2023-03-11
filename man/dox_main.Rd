@@ -4,12 +4,14 @@
 \alias{dox_main}
 \title{Main Effect Plots}
 \usage{
-dox_main(formula, dataset, ylim)
+dox_main(formula, dataset, label = "Mean", ylim)
 }
 \arguments{
 \item{formula}{y~x1+x2(optional)+x3(optional)}
 
 \item{dataset}{the dataset that contains the experiment information}
+
+\item{label}{Label "Mean" or "Effect"}
 
 \item{ylim}{a vector of the range of the y-axis}
 }

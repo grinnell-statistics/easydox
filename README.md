@@ -40,10 +40,10 @@ dox_resid = function(anova_model, dataset, plot = 1, bins = 30)
 **Main Effect and Interaction Effect Plots**
 ```
 # Main Effect Plots
-dox_main = function(y~x1+x2(optional)+x3(optional), dataset, ylim(optional))
+dox_main = function(y~x1+x2(optional)+x3(optional), dataset, label="Mean", ylim(optional))
 
 # Interaction Effect Plots
-dox_inter = function(y~x1+x2, dataset, facet = NULL)
+dox_inter = function(y~x1+x2, dataset, facet = NULL, label="Mean")
 ```
 
 **ANOVA \& PostHoc**
@@ -53,7 +53,7 @@ dox_aov = function(anova_model)
 
 # Confidence Intervals using Fisher Least Siginificant Difference (LSD), 
 # Bonferroni Significant Difference (BSD), and Tukey Honest Siginificant Difference (HSD)
-dox_comparison = function(y~x, dataset, alpha = 0.05, method = "ALL")
+dox_pairs = function(y~x, dataset, alpha = 0.05, method = "ALL")
 ```
 
 

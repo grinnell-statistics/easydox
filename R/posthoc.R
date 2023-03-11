@@ -46,7 +46,7 @@ dox_aov=function(anova_model){
 #' @importFrom rlang enquo quo_name parse_expr eval_tidy
 #' @import ggplot2
 #' @export
-dox_comparison <- function(formula,dataset, alpha = 0.05, method = "ALL") {
+dox_pairs <- function(formula,dataset, alpha = 0.05, method = "ALL") {
   # Get the string version
   target_str = all.vars(formula)[1]
   treatment_str = all.vars(formula)[2]
