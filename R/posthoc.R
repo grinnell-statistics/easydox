@@ -123,45 +123,50 @@ dox_pairs <- function(formula,dataset, alpha = 0.05, method = "ALL") {
   x_max = max(max(results$LSD_ci_high),max(results$BSD_ci_high),max(results$HSD_ci_low))
 
   # Add an indicator for statistical significance
-  results$LSD_significant <- ifelse(results$LSD_ci_low > 0 | results$LSD_ci_high < 0, "yes", "no")
-  results$BSD_significant <- ifelse(results$BSD_ci_low > 0 | results$BSD_ci_high < 0, "yes", "no")
-  results$HSD_significant <- ifelse(results$HSD_ci_low > 0 | results$HSD_ci_high < 0, "yes", "no")
+  results$LSD_no_zero <- ifelse(results$LSD_ci_low > 0 | results$LSD_ci_high < 0, "yes", "no")
+  results$BSD_no_zero <- ifelse(results$BSD_ci_low > 0 | results$BSD_ci_high < 0, "yes", "no")
+  results$HSD_no_zero <- ifelse(results$HSD_ci_low > 0 | results$HSD_ci_high < 0, "yes", "no")
 
   # Plot the confidence intervals
-  LSD_plot = ggplot(results, aes(x = diff, y = paste(treatment1, treatment2), color = LSD_significant)) +
+  LSD_plot = ggplot(results, aes(x = diff, y = paste(treatment1, treatment2), color = LSD_no_zero)) +
     scale_color_manual(values = c("yes" = "red", "no" = "black")) +
-    geom_errorbarh(aes(xmin = LSD_ci_low, xmax = LSD_ci_high), height = 0.2) +
+    geom_errorbarh(aes(xmin = LSD_ci_low, xmax = LSD_ci_high), height = 0.3) +
     geom_point(size = 1) +
     labs(x = "Confidence Interval", y = "LSD", color = legend_str) +
     xlim(x_min, x_max)
 
 
-  BSD_plot = ggplot(results, aes(x = diff, y = paste(treatment1, treatment2), color = BSD_significant)) +
+  BSD_plot = ggplot(results, aes(x = diff, y = paste(treatment1, treatment2), color = BSD_no_zero)) +
     scale_color_manual(values = c("yes" = "red", "no" = "black")) +
-    geom_errorbarh(aes(xmin = BSD_ci_low, xmax = BSD_ci_high), height = 0.2) +
+    geom_errorbarh(aes(xmin = BSD_ci_low, xmax = BSD_ci_high), height = 0.3) +
     geom_point(size = 1) +
     labs(x = "Confidence Interval", y = "BSD", color = legend_str) +
     xlim(x_min, x_max)
 
-  HSD_plot = ggplot(results, aes(x = diff, y = paste(treatment1, treatment2), color = HSD_significant)) +
+  HSD_plot = ggplot(results, aes(x = diff, y = paste(treatment1, treatment2), color = HSD_no_zero)) +
     scale_color_manual(values = c("yes" = "red", "no" = "black")) +
-    geom_errorbarh(aes(xmin = HSD_ci_low, xmax = HSD_ci_high), height = 0.2) +
+    geom_errorbarh(aes(xmin = HSD_ci_low, xmax = HSD_ci_high), height = 0.3) +
     geom_point(size = 1) +
     labs(x = "Confidence Interval", y = "Tukey HSD", color = legend_str) +
     xlim(x_min, x_max)
 
   if (method == "LSD")
   {
+    print(results[,c("treatment1","treatment2","diff","LSD_ci_low","LSD_ci_high","LSD_no_zero")])
     LSD_plot
+
   }
   else if (method == "BSD")
   {
+    print(results[,c("treatment1","treatment2","diff","BSD_ci_low","BSD_ci_high","BSD_no_zero")])
     BSD_plot
   }
   else if (method == "HSD"){
+    print(results[,c("treatment1","treatment2","diff","HSD_ci_low","HSD_ci_high","HSD_no_zero")])
     HSD_plot
   }
   else{
+    print(results)
     grid.arrange(LSD_plot, BSD_plot, HSD_plot, ncol=1)
   }
 }
