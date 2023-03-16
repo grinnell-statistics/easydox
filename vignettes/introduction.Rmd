@@ -123,7 +123,7 @@ dox_resid(aov2, Memory, plot = 1)
 ```
 
 ```{r}
-dox_main(Score~Major+Wordlist+Distracter, Memory, label="Mean")
+dox_main(Score~Major+Wordlist+Distracter, Memory, label="Effect")
 ```
 
 ```{r}
@@ -132,7 +132,7 @@ dox_main(Score~Major+Wordlist+Distracter, Memory, label="Effect")
 
 
 ```{r}
-dox_inter(Score~Wordlist+Distracter, Memory, label="Mean")
+dox_inter(Score~Wordlist+Distracter, Memory, label="Effect")
 ```
 
 ```{r}

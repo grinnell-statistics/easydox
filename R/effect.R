@@ -61,7 +61,10 @@ dox_main = function(formula, dataset, label="Mean", ylim){
     y_min = min(df3$Mean_Response,y_min)
     y_max = max(df3$Mean_Response,y_max) }
 
-  y_max=y_max*1.02
+  if (label=="Mean" | label =="Effect"){
+    y_max=y_max+(y_max-y_min)*0.15
+  }
+
 
   ## main plot for x1
   p1 <- ggplot(df1, aes(.data[[x1]], Mean_Response)) +
@@ -185,7 +188,9 @@ dox_inter = function(formula, dataset, facet = NULL, label="Mean"){
 
   y_min = min(df$Mean_Response)
   y_max = max(df$Mean_Response)
-  y_max = y_max*1.02
+  if (label=="Mean" | label =="Effect"){
+    y_max=y_max+(y_max-y_min)*0.15
+  }
 
 
   # calculate means
