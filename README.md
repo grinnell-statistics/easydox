@@ -24,7 +24,7 @@ dox_boxplot = function(y~x, dataset, color=NULL, facet = NULL)
 # scatterplot
 dox_scatterplot = function(y~x, dataset, color=NULL, facet = NULL, jitter = FALSE)
 
-# interactive variance table
+# interactive standard deviation table
 dox_table = function(y~x1+x2(optional)+x3(optional), dataset)
 ```
 

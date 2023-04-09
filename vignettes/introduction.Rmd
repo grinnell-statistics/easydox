@@ -40,7 +40,7 @@ dox_scatterplot(LogStrength ~ Brand, Towels2, color = Water)
 dox_scatterplot(LogStrength ~ Brand, Towels2, color = Water, jitter = 0.15)
 ```
 
-#### An interactive table to show variances of different groups
+#### An interactive table to show standard deviations of different groups
 
 ```{r}
 dox_table(LogStrength ~ Brand + Water, Towels2)

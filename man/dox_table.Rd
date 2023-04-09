@@ -2,7 +2,7 @@
 % Please edit documentation in R/assumptions.R
 \name{dox_table}
 \alias{dox_table}
-\title{An interactive table to show variances of different groups}
+\title{An interactive table to show standard deviations of different groups}
 \usage{
 dox_table(formula, dataset)
 }
@@ -15,6 +15,6 @@ dox_table(formula, dataset)
 an interactive variance table
 }
 \description{
-This function gives an interactive table to show variances of different groups.
+This function gives an interactive table to show standard deviations of different groups.
 It can help check the within groups equal variances assumptions. You can click column names to sort.
 }

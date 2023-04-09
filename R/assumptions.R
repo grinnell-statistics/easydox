@@ -95,9 +95,9 @@ dox_scatterplot = function(formula, dataset, color=NULL, facet = NULL, jitter = 
 
 
 
-#' An interactive table to show variances of different groups
+#' An interactive table to show standard deviations of different groups
 #'
-#' This function gives an interactive table to show variances of different groups.
+#' This function gives an interactive table to show standard deviations of different groups.
 #' It can help check the within groups equal variances assumptions. You can click column names to sort.
 #' @param formula y~x1+x2(optional)+x3(optional)
 #' @param dataset the dataset that contains the experiment information
@@ -138,7 +138,7 @@ dox_table = function(formula, dataset){
   }
 
   summary_table = data_groupby %>%
-    summarise(GroupVariance=var(.data[[response]]),
+    summarise(StandardDeviation=sd(.data[[response]]),
               SampleSize=n(), .groups = 'drop')
   summary_df = as.data.frame(summary_table)
   summary_df = summary_df %>%
