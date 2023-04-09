@@ -4,10 +4,12 @@
 \alias{dox_aov}
 \title{An ANOVA summary table with total DF & SS}
 \usage{
-dox_aov(anova_model)
+dox_aov(formula, dataset)
 }
 \arguments{
-\item{anova_model}{the anova model}
+\item{formula}{formula used in ANOVA}
+
+\item{dataset}{the dataset that contains the experiment information}
 }
 \value{
 a html table

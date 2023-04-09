@@ -160,7 +160,7 @@ dox_table = function(formula, dataset){
 #' This function gives four plots to check the "independent and identically distributed observations"
 #' and "normality" assumption in ANOVA. 1.a qqplot for residuals; 2.a histogram for residuals;
 #' 3.residual versus fit plot; 4.residual versus order plot
-#' @param anova_model the anova model
+#' @param formula formula used in ANOVA
 #' @param dataset the dataset that contains the experiment information
 #' @param plot which of the four plots to show. Default is to show all four
 #' @param bins the number of bins in histogram
@@ -168,7 +168,10 @@ dox_table = function(formula, dataset){
 #' @importFrom ggplot2 ggplot aes geom_point geom_hline xlab ylab stat_qq stat_qq_line labs geom_histogram
 #' @importFrom gridExtra grid.arrange
 #' @export
-dox_resid = function(anova_model, dataset, plot = "all", bins = 30){
+dox_resid = function(formula, dataset, plot = "all", bins = 30){
+
+  anova_model=aov(formula, dataset)
+
   # not split-plot design
   if(!is.null(anova_model$residuals)){
     # res vs fit

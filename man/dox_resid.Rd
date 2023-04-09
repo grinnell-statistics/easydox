@@ -4,10 +4,10 @@
 \alias{dox_resid}
 \title{Residual vs fit/order plots}
 \usage{
-dox_resid(anova_model, dataset, plot = "all", bins = 30)
+dox_resid(formula, dataset, plot = "all", bins = 30)
 }
 \arguments{
-\item{anova_model}{the anova model}
+\item{formula}{formula used in ANOVA}
 
 \item{dataset}{the dataset that contains the experiment information}
 

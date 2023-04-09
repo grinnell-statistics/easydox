@@ -1,12 +1,14 @@
 #' An ANOVA summary table with total DF & SS
 #'
 #' This function gives an ANOVA summary table with total degrees of freedom and sum of squares
-#' @param anova_model the anova model
+#' @param formula formula used in ANOVA
+#' @param dataset the dataset that contains the experiment information
 #' @return a html table
 #' @importFrom dplyr %>%
 #' @importFrom kableExtra kable kable_styling
 #' @export
-dox_aov=function(anova_model){
+dox_aov=function(formula, dataset){
+  anova_model=aov(formula, dataset)
   if(length(summary(anova_model)) > 1){
     stop("This function only works for ANOVA with one summary table. Designs like split-plot do not work.")
   }
