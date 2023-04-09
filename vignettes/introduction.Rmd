@@ -62,23 +62,23 @@ dox_resid(aov1, Towels2, plot = 2, bins = 40)
 #### Main Effect Plots
 
 ```{r, message = FALSE}
-dox_main(LogStrength ~ Brand + Water, Towels2, label="Mean")
+dox_main(LogStrength ~ Brand + Water, Towels2, label="Mean", text_size = 14)
 ```
 
 If you are only interested in one treatment (or you have a 3-way ANOVA), you can simply add (or reduce) parameters in the function inputs.
 
 ```{r, message = FALSE}
-dox_main(LogStrength ~ Brand + Water, Towels2, label="Effect")
+dox_main(LogStrength ~ Brand + Water, Towels2, label="Effect", text_size = 14)
 ```
 
 #### Interaction Effect Plot
 
 ```{r}
-dox_inter(LogStrength ~ Brand + Water, Towels2, label="Mean")
+dox_inter(LogStrength ~ Brand + Water, Towels2, label="Mean", text_size = 14)
 ```
 
 ```{r}
-dox_inter(LogStrength ~ Brand + Water, Towels2, label="Effect")
+dox_inter(LogStrength ~ Brand + Water, Towels2, label="Effect", text_size = 14)
 ```
 
 #### ANOVA Table
@@ -123,20 +123,20 @@ dox_resid(aov2, Memory, plot = 1)
 ```
 
 ```{r}
-dox_main(Score~Major+Wordlist+Distracter, Memory, label="Effect")
+dox_main(Score~Major+Wordlist+Distracter, Memory, label="Effect", text_size = 14)
 ```
 
 ```{r}
-dox_main(Score~Major+Wordlist+Distracter, Memory, label="Effect")
+dox_main(Score~Major+Wordlist+Distracter, Memory, label="Effect", text_size = 14)
 ```
 
 
 ```{r}
-dox_inter(Score~Wordlist+Distracter, Memory, label="Effect")
+dox_inter(Score~Wordlist+Distracter, Memory, label="Effect", text_size = 14)
 ```
 
 ```{r}
-dox_inter(Score~Wordlist+Distracter, Memory, label="Effect")
+dox_inter(Score~Wordlist+Distracter, Memory, label="Effect", text_size = 14)
 ```
 
 

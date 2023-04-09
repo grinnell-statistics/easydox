@@ -5,13 +5,14 @@
 #' @param formula y~x1+x2(optional)+x3(optional)
 #' @param dataset the dataset that contains the experiment information
 #' @param label Label "Mean" or "Effect"
+#' @param text_size text size of the x-axis
 #' @param ylim a vector of the range of the y-axis
 #' @return main effect plots
 #' @importFrom ggplot2 ggplot aes geom_line theme geom_point coord_cartesian element_text element_blank
 #' @importFrom dplyr group_by summarise %>%
 #' @importFrom gridExtra grid.arrange
 #' @export
-dox_main = function(formula, dataset, label="Mean", ylim){
+dox_main = function(formula, dataset, label="Mean", text_size=12, ylim){
   response = all.vars(formula)[1]
   x1 = all.vars(formula)[2]
   x2 = all.vars(formula)[3]
@@ -69,7 +70,7 @@ dox_main = function(formula, dataset, label="Mean", ylim){
   ## main plot for x1
   p1 <- ggplot(df1, aes(.data[[x1]], Mean_Response)) +
     geom_line(aes(group = 1)) +
-    theme(axis.title=element_text(size=14,face="bold"),axis.text.x = element_text(size = 12, angle = 45))+
+    theme(axis.title=element_text(size=14,face="bold"),axis.text.x = element_text(size = text_size))+
     geom_point()
 
   if(missing(ylim)){
@@ -92,7 +93,7 @@ dox_main = function(formula, dataset, label="Mean", ylim){
   ## main plot for x2
   if(!is.na(x2)){
     p2 <- ggplot(df2, aes(.data[[x2]], Mean_Response)) +
-      theme(axis.title=element_text(size=14,face="bold"),axis.title.y = element_blank(),axis.text.x = element_text(size = 12, angle = 45))+
+      theme(axis.title=element_text(size=14,face="bold"),axis.title.y = element_blank(),axis.text.x = element_text(size = text_size))+
       geom_line(aes(group = 1)) +
       geom_point()
 
@@ -118,7 +119,7 @@ dox_main = function(formula, dataset, label="Mean", ylim){
   ## main plot for x3
   if(!is.na(x3)){
     p3 <- ggplot(df3, aes(.data[[x3]], Mean_Response)) +
-      theme(axis.title=element_text(size=14,face="bold"),axis.title.y = element_blank(),axis.text.x = element_text(size = 12, angle = 45))+
+      theme(axis.title=element_text(size=14,face="bold"),axis.title.y = element_blank(),axis.text.x = element_text(size = text_size))+
       geom_line(aes(group = 1)) +
       geom_point()
 
@@ -157,11 +158,12 @@ dox_main = function(formula, dataset, label="Mean", ylim){
 #' @param dataset the dataset that contains the experiment information
 #' @param facet faceted by this factor (optional)
 #' @param label Label "Mean" or "Effect"
+#' @param text_size text size of the x-axis
 #' @return interaction effect plot
 #' @importFrom ggplot2 ggplot aes geom_line theme geom_point element_text labs facet_grid vars
 #' @importFrom dplyr group_by summarise %>%
 #' @export
-dox_inter = function(formula, dataset, facet = NULL, label="Mean"){
+dox_inter = function(formula, dataset, facet = NULL, label="Mean", text_size = 12){
   response = all.vars(formula)[1]
   x1 = all.vars(formula)[2]
   x2 = all.vars(formula)[3]
@@ -216,10 +218,10 @@ dox_inter = function(formula, dataset, facet = NULL, label="Mean"){
 
   p1 = ggplot(df, aes(.data[[x1]], Mean_Response, color = .data[[x2]])) +
     theme(axis.title=element_text(size=14,face="bold"),
-          axis.text.x = element_text(size = 12, angle = 45))+
+          axis.text.x = element_text(size = text_size))+
     geom_line(aes(group = .data[[x2]])) +
     geom_point() +
-    labs(title="Interaction Plot")+facet_grid(vars({{facet}})) +
+    facet_grid(vars({{facet}})) +
     coord_cartesian(ylim = c(y_min, y_max))
 
 

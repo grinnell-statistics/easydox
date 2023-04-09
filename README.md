@@ -40,10 +40,10 @@ dox_resid = function(anova_model, dataset, plot = 1, bins = 30)
 **Main Effect and Interaction Effect Plots**
 ```
 # Main Effect Plots
-dox_main = function(y~x1+x2(optional)+x3(optional), dataset, label="Mean", ylim(optional))
+dox_main = function(y~x1+x2(optional)+x3(optional), dataset, label="Mean", ylim(optional), text_size=12)
 
 # Interaction Effect Plots
-dox_inter = function(y~x1+x2, dataset, facet = NULL, label="Mean")
+dox_inter = function(y~x1+x2, dataset, facet = NULL, label="Mean", text_size=12)
 ```
 
 **ANOVA \& PostHoc**

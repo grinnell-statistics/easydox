@@ -4,7 +4,7 @@
 \alias{dox_inter}
 \title{Interaction Effect Plot}
 \usage{
-dox_inter(formula, dataset, facet = NULL, label = "Mean")
+dox_inter(formula, dataset, facet = NULL, label = "Mean", text_size = 12)
 }
 \arguments{
 \item{formula}{y~x1+x2}
@@ -14,6 +14,8 @@ dox_inter(formula, dataset, facet = NULL, label = "Mean")
 \item{facet}{faceted by this factor (optional)}
 
 \item{label}{Label "Mean" or "Effect"}
+
+\item{text_size}{text size of the x-axis}
 }
 \value{
 interaction effect plot
