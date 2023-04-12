@@ -48,6 +48,13 @@ dox_table(LogStrength ~ Brand + Water, Towels2)
 
 You can sort the GroupVariance or other columns by clicking the column name.
 
+
+#### Summary Statistics to Check Missing Data or Balanced Design
+
+```{r}
+dox_sumstats(LogStrength ~ Brand + Water, Towels2)
+```
+
 #### IID and Normality Assumption Checking
 
 ```{r}
@@ -109,6 +116,10 @@ dox_scatterplot(Score~Major, Memory, facet = Wordlist)
 
 ```{r}
 dox_table(Score~Major+Wordlist+Distracter, Memory)
+```
+
+```{r}
+dox_sumstats(Score~Major+Wordlist+Distracter, Memory)
 ```
 
 ```{r}

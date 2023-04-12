@@ -275,7 +275,7 @@ dox_resid = function(formula, dataset, plot = "all", bins = 30){
 #' @importFrom mosaic favstats
 #' @importFrom stringr str_replace
 #' @export
-dox_sumstat = function(formula, dataset){
+dox_sumstats = function(formula, dataset){
   formula_str = deparse(substitute(formula))
   formula_str=str_replace(formula_str, "\\*", "+")
   favstats(as.formula(formula_str), data=dataset)
