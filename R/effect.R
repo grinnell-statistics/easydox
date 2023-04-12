@@ -17,6 +17,7 @@ dox_main = function(formula, dataset, label="Mean", text_size=12, ylim){
   x1 = all.vars(formula)[2]
   x2 = all.vars(formula)[3]
   x3 = all.vars(formula)[4]
+  x4 = all.vars(formula)[5]
   u = mean(dataset[[response]])
   if(is.numeric(dataset[[x1]])){
     error_message = paste("Variable \"", x1, "\" needs to be a factor. Currently numeric.")
@@ -30,6 +31,11 @@ dox_main = function(formula, dataset, label="Mean", text_size=12, ylim){
 
   if(is.numeric(dataset[[x3]])){
     error_message = paste("Variable \"", x3, "\" needs to be a factor. Currently numeric.")
+    stop(error_message)
+  }
+
+  if(is.numeric(dataset[[x4]])){
+    error_message = paste("Variable \"", x4, "\" needs to be a factor. Currently numeric.")
     stop(error_message)
   }
 
@@ -61,6 +67,14 @@ dox_main = function(formula, dataset, label="Mean", text_size=12, ylim){
       summarise(Mean_Response = mean(.data[[response]]))
     y_min = min(df3$Mean_Response,y_min)
     y_max = max(df3$Mean_Response,y_max) }
+
+  ## mean for x4
+  if(!is.na(x4)){
+    df4 <- dataset %>%
+      group_by(.data[[x4]]) %>%
+      summarise(Mean_Response = mean(.data[[response]]))
+    y_min = min(df4$Mean_Response,y_min)
+    y_max = max(df4$Mean_Response,y_max) }
 
   if (label=="Mean" | label =="Effect"){
     y_max=y_max+(y_max-y_min)*0.15
@@ -138,9 +152,34 @@ dox_main = function(formula, dataset, label="Mean", text_size=12, ylim){
     }
   }
 
+  ## main plot for x4
+  if(!is.na(x4)){
+    p4 <- ggplot(df4, aes(.data[[x4]], Mean_Response)) +
+      theme(axis.title=element_text(size=14,face="bold"),axis.title.y = element_blank(),axis.text.x = element_text(size = text_size))+
+      geom_line(aes(group = 1)) +
+      geom_point()
+
+    if(missing(ylim)){
+      p4 <- p4+ coord_cartesian(ylim = c(y_min, y_max))
+    }
+    else{
+      p4 <- p4+coord_cartesian(ylim = ylim)
+    }
+
+    if(label=="Mean"){
+      p4 <- p4+geom_text(aes(label=ifelse(((abs(Mean_Response) > 1e4) | (abs(Mean_Response) < 0.01)), sprintf('%.3e', Mean_Response), round(Mean_Response,4))),vjust = -1)
+    }
+    else if(label=="Effect"){
+      p4 <- p4+geom_text(aes(label=ifelse(((abs(Mean_Response-u) > 1e4) | (abs(Mean_Response-u) < 0.01)), sprintf('%.3e', Mean_Response-u), round(Mean_Response-u,4))),vjust = -1)
+    }
+  }
+
 
   ## Plot
-  if(!is.na(x2) && !is.na(x3)){
+  if(!is.na(x2) && !is.na(x3) && !is.na(x4)){
+    grid.arrange(p1, p2, p3, p4, nrow = 1)
+  }
+  else if(!is.na(x2) && !is.na(x3)){
     grid.arrange(p1, p2, p3,nrow = 1)
   }
   else if (!is.na(x2)){
