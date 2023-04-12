@@ -11,6 +11,8 @@
 dox_boxplot = function(formula, dataset, color=NULL, facet = NULL){
   response = all.vars(formula)[1]
   x1 = all.vars(formula)[2]
+  x2 = all.vars(formula)[3]
+
   if(is.numeric(dataset[[x1]])){
     error_message = paste("Variable \"", x1, "\" needs to be a factor. Currently numeric.")
     stop(error_message)
@@ -27,11 +29,19 @@ dox_boxplot = function(formula, dataset, color=NULL, facet = NULL){
     stop(error_message)
   }
 
-  ggplot(data = dataset, aes(x = .data[[x1]], y = .data[[response]])) +
+  if(color_str=="NULL" && !is.na(x2)){
+    color_str=x2
+  }
+
+  p1=ggplot(data = dataset, aes(x = .data[[x1]], y = .data[[response]])) +
     geom_boxplot() +
-    aes(colour = {{color}}) +
     theme(axis.title=element_text(size=14,face="bold"), axis.text.x = element_text(size = 12, angle = 45))+facet_grid(vars({{facet}}))
-}
+
+  if(color_str!="NULL"){
+    p1=p1+aes(colour = .data[[color_str]])
+  }
+  p1
+  }
 
 
 #' A scatterplot to check the equal variances assumption in ANOVA
@@ -49,6 +59,9 @@ dox_boxplot = function(formula, dataset, color=NULL, facet = NULL){
 dox_scatterplot = function(formula, dataset, color=NULL, facet = NULL, jitter = FALSE){
   response = all.vars(formula)[1]
   x1 = all.vars(formula)[2]
+  x2 = all.vars(formula)[3]
+
+
   if(is.numeric(dataset[[x1]])){
     error_message = paste("Variable \"", x1, "\" needs to be a factor. Currently numeric.")
     stop(error_message)
@@ -65,9 +78,13 @@ dox_scatterplot = function(formula, dataset, color=NULL, facet = NULL, jitter = 
     stop(error_message)
   }
 
+  if(color_str=="NULL" && !is.na(x2)){
+    color_str=x2
+  }
+
 
   if (!(jitter)){
-    ggplot(dataset,  aes(x = .data[[x1]], y = .data[[response]], color={{color}})) +
+    p1=ggplot(dataset,  aes(x = .data[[x1]], y = .data[[response]])) +
       geom_point() +
       stat_summary(
         fun = "mean",
@@ -80,7 +97,7 @@ dox_scatterplot = function(formula, dataset, color=NULL, facet = NULL, jitter = 
   }
 
   else{
-    ggplot(dataset,  aes(x = .data[[x1]], y = .data[[response]], color={{color}})) +
+    p1=ggplot(dataset,  aes(x = .data[[x1]], y = .data[[response]])) +
       geom_jitter(width = {{jitter}}) +
       stat_summary(
         fun = "mean",
@@ -91,6 +108,12 @@ dox_scatterplot = function(formula, dataset, color=NULL, facet = NULL, jitter = 
         fill = "red"
       )+theme(axis.title=element_text(size=14,face="bold"),axis.text.x = element_text(size = 12, angle = 45))+facet_grid(vars({{facet}}))
   }
+
+  if(color_str!="NULL"){
+    p1=p1+aes(colour = .data[[color_str]])
+  }
+  p1
+
 }
 
 
