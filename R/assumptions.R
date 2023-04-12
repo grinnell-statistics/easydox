@@ -263,3 +263,20 @@ dox_resid = function(formula, dataset, plot = "all", bins = 30){
   else {residual_order}
 
 }
+
+
+
+#' Summary Statistics
+#'
+#' This function applies the favstats function in mosaic package and gives summary statistics.
+#' @param formula y~x1+x2
+#' @param dataset the dataset that contains the experiment information
+#' @return A table that gives summary statistics about y partitioned by treatments
+#' @importFrom mosaic favstats
+#' @importFrom stringr str_replace
+#' @export
+dox_sumstat = function(formula, dataset){
+  formula_str = deparse(substitute(formula))
+  formula_str=str_replace(formula_str, "\\*", "+")
+  favstats(as.formula(formula_str), data=dataset)
+}
