@@ -37,6 +37,11 @@ dox_resid = function(anova_formula, dataset, plot = "all", bins = 30)
 dox_resid = function(anova_formula, dataset, plot = 1, bins = 30)
 ```
 
+3) missing data or balanced design
+```
+dox_sumstats = function(y~x1+x2+x3+x4, dataset)
+```
+
 **Main Effect and Interaction Effect Plots**
 ```
 # Main Effect Plots
