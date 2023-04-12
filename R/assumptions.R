@@ -134,6 +134,7 @@ dox_table = function(formula, dataset){
   x1 = all.vars(formula)[2]
   x2 = all.vars(formula)[3]
   x3 = all.vars(formula)[4]
+  x4 = all.vars(formula)[5]
 
   if(is.numeric(dataset[[x1]])){
     error_message = paste("Variable \"", x1, "\" needs to be a factor. Currently numeric.")
@@ -150,14 +151,22 @@ dox_table = function(formula, dataset){
     stop(error_message)
   }
 
+  if(is.numeric(dataset[[x4]])){
+    error_message = paste("Variable \"", x4, "\" needs to be a factor. Currently numeric.")
+    stop(error_message)
+  }
+
   if (is.na(x2)){
     data_groupby = group_by(dataset, .data[[x1]])
   }
   else if (is.na(x3)){
     data_groupby = group_by(dataset, .data[[x1]], .data[[x2]])
   }
-  else{
+  else if(is.na(x4)){
     data_groupby = group_by(dataset, .data[[x1]], .data[[x2]],.data[[x3]])
+  }
+  else{
+    data_groupby = group_by(dataset, .data[[x1]], .data[[x2]],.data[[x3]],.data[[x4]])
   }
 
   summary_table = data_groupby %>%
