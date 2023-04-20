@@ -153,3 +153,4 @@ dox_inter(Score~Wordlist+Distracter, Memory, label="Effect", text_size = 14)
 ```{r}
 dox_pairs(Score~Major, Memory)
 ```
+

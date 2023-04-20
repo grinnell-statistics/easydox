@@ -39,7 +39,17 @@ dox_boxplot = function(formula, dataset, color=NULL, facet = NULL){
 
   if(color_str!="NULL"){
     p1=p1+aes(colour = .data[[color_str]])
+
+    # p1=p1+stat_summary(aes(group = interaction(.data[[x1]], .data[[color_str]])),
+    #                    fun = mean,
+    #                    geom = "point",
+    #                    shape = 20,
+    #                    size = 4,
+    #                    color = "red",
+    #                    fill = "red",
+    #                    show.legend = FALSE)
   }
+
   p1
   }
 
@@ -85,28 +95,12 @@ dox_scatterplot = function(formula, dataset, color=NULL, facet = NULL, jitter = 
 
   if (!(jitter)){
     p1=ggplot(dataset,  aes(x = .data[[x1]], y = .data[[response]])) +
-      geom_point() +
-      stat_summary(
-        fun = "mean",
-        geom = "point",
-        col = "black",
-        size = 2,
-        shape = 24,
-        fill = "red"
-      )+theme(axis.title=element_text(size=14,face="bold"),axis.text.x = element_text(size = 12, angle = 45))+facet_grid(vars({{facet}}))
+      geom_point() +theme(axis.title=element_text(size=14,face="bold"),axis.text.x = element_text(size = 12, angle = 45))+facet_grid(vars({{facet}}))
   }
 
   else{
     p1=ggplot(dataset,  aes(x = .data[[x1]], y = .data[[response]])) +
-      geom_jitter(width = {{jitter}}) +
-      stat_summary(
-        fun = "mean",
-        geom = "point",
-        col = "black",
-        size = 2,
-        shape = 24,
-        fill = "red"
-      )+theme(axis.title=element_text(size=14,face="bold"),axis.text.x = element_text(size = 12, angle = 45))+facet_grid(vars({{facet}}))
+      geom_jitter(width = {{jitter}})+theme(axis.title=element_text(size=14,face="bold"),axis.text.x = element_text(size = 12, angle = 45))+facet_grid(vars({{facet}}))
   }
 
   if(color_str!="NULL"){
@@ -179,8 +173,8 @@ dox_table = function(formula, dataset){
 
   reactable(summary_df,defaultColDef = colDef(cell = data_bars(summary_df, box_shadow = TRUE, round_edges = TRUE,
                                                                text_position = "outside-base",
-                                                               fill_color = c("#e81cff", "#40c9ff"),
-                                                               background = "#e5e5e5",fill_gradient = TRUE)))
+                                                               fill_color = c("#40c9ff"),
+                                                               background = "#e5e5e5",fill_gradient = FALSE)))
 
   #as.datatable(formattable(summary_df, list(SampleSize = color_bar("#80ed99"),GroupVariance = color_bar("#f28482"))))
 

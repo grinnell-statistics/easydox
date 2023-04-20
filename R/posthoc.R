@@ -30,6 +30,11 @@ dox_aov=function(formula, dataset){
   # )
   kable(format(anova_results, digits = 4), align = 'r',
         caption = "ANOVA Summary", escape = F, format.args = list(big.mark = ","))  %>% kable_styling()
+
+  # output_list <- list(resid = anova_model$residuals)
+  #
+  # # Return the list
+  # return(output_list)
 }
 
 
@@ -152,23 +157,31 @@ dox_pairs <- function(formula,dataset, alpha = 0.05, method = "ALL") {
     labs(x = "Confidence Interval", y = "Tukey HSD", color = legend_str) +
     xlim(x_min, x_max)
 
+  results_display = results %>%
+    mutate_if(is.numeric, round, digits = 2)
+
+  results_LSD=results_display[,c("treatment1","treatment2","diff","LSD_ci_low","LSD_ci_high","LSD_no_zero")]
+  results_BSD=results_display[,c("treatment1","treatment2","diff","BSD_ci_low","BSD_ci_high","BSD_no_zero")]
+  results_HSD=results_display[,c("treatment1","treatment2","diff","HSD_ci_low","HSD_ci_high","HSD_no_zero")]
+
   if (method == "LSD")
   {
-    print(results[,c("treatment1","treatment2","diff","LSD_ci_low","LSD_ci_high","LSD_no_zero")])
+    print(results_LSD)
     LSD_plot
-
   }
   else if (method == "BSD")
   {
-    print(results[,c("treatment1","treatment2","diff","BSD_ci_low","BSD_ci_high","BSD_no_zero")])
+    print(results_BSD)
     BSD_plot
   }
   else if (method == "HSD"){
-    print(results[,c("treatment1","treatment2","diff","HSD_ci_low","HSD_ci_high","HSD_no_zero")])
+    print(results_HSD)
     HSD_plot
   }
   else{
-    print(results)
     grid.arrange(LSD_plot, BSD_plot, HSD_plot, ncol=1)
+    print(results_LSD)
+    print(results_BSD)
+    print(results_HSD)
   }
 }
