@@ -22,3 +22,10 @@ confidence interval plots
 This function plots the confidence intervals of pairwise comparisons using Fisher least significant difference (LSD),
 Bonferroni significant difference (BSD), and Tukey honest significant difference (HSD) methods.
 }
+\examples{
+dox_pairs(LogStrength~Water, Towels2)
+# If you want to adjust the alpha level
+dox_pairs(LogStrength~Water, Towels2, alpha = 0.01)
+# If you are only interested in LSD
+dox_pairs(LogStrength~Water, Towels2, method = "LSD")
+}

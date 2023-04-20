@@ -23,3 +23,8 @@ interaction effect plot
 \description{
 This function gives the interaction effect plots for two treatments in an experiment.
 }
+\examples{
+dox_inter(LogStrength ~ Brand + Water, Towels2, label="Mean", text_size = 14)
+# If you want the label to be effect and have a larger size for the x-axis
+dox_inter(LogStrength ~ Brand + Water, Towels2, label="Effect", text_size = 14)
+}

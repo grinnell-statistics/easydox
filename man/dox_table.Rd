@@ -12,9 +12,14 @@ dox_table(formula, dataset)
 \item{dataset}{the dataset that contains the experiment information}
 }
 \value{
-an interactive variance table
+an interactive table of standard deviations
 }
 \description{
 This function gives an interactive table to show standard deviations of different groups.
 It can help check the within groups equal variances assumptions. You can click column names to sort.
+}
+\examples{
+# Note that "Run examples" won't work because
+# of calling the reactable package
+dox_table(LogStrength ~ Brand + Water, Towels2)
 }

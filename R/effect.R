@@ -12,6 +12,10 @@
 #' @importFrom dplyr group_by summarise %>%
 #' @importFrom gridExtra grid.arrange
 #' @export
+#' @examples
+#' dox_main(LogStrength ~ Brand + Water, Towels2, label="Mean")
+#' # If you want the label to be effect and have a larger size for the x-axis
+#' dox_main(LogStrength ~ Brand + Water, Towels2, label="Effect", text_size = 14)
 dox_main = function(formula, dataset, label="Mean", text_size=12, ylim){
   response = all.vars(formula)[1]
   x1 = all.vars(formula)[2]
@@ -202,6 +206,10 @@ dox_main = function(formula, dataset, label="Mean", text_size=12, ylim){
 #' @importFrom ggplot2 ggplot aes geom_line theme geom_point element_text labs facet_grid vars
 #' @importFrom dplyr group_by summarise %>%
 #' @export
+#' @examples
+#' dox_inter(LogStrength ~ Brand + Water, Towels2, label="Mean", text_size = 14)
+#' # If you want the label to be effect and have a larger size for the x-axis
+#' dox_inter(LogStrength ~ Brand + Water, Towels2, label="Effect", text_size = 14)
 dox_inter = function(formula, dataset, facet = NULL, label="Mean", text_size = 12){
   response = all.vars(formula)[1]
   x1 = all.vars(formula)[2]

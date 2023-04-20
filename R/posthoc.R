@@ -7,6 +7,8 @@
 #' @importFrom dplyr %>%
 #' @importFrom kableExtra kable kable_styling
 #' @export
+#' @examples
+#' dox_aov(LogStrength ~ Brand + Water, Towels2)
 dox_aov=function(formula, dataset){
   anova_model=aov(formula, dataset)
   if(length(summary(anova_model)) > 1){
@@ -53,6 +55,12 @@ dox_aov=function(formula, dataset){
 #' @importFrom rlang enquo quo_name parse_expr eval_tidy
 #' @import ggplot2
 #' @export
+#' @examples
+#' dox_pairs(LogStrength~Water, Towels2)
+#' # If you want to adjust the alpha level
+#' dox_pairs(LogStrength~Water, Towels2, alpha = 0.01)
+#' # If you are only interested in LSD
+#' dox_pairs(LogStrength~Water, Towels2, method = "LSD")
 dox_pairs <- function(formula,dataset, alpha = 0.05, method = "ALL") {
   # Get the string version
   target_str = all.vars(formula)[1]

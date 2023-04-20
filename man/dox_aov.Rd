@@ -17,3 +17,6 @@ a html table
 \description{
 This function gives an ANOVA summary table with total degrees of freedom and sum of squares
 }
+\examples{
+dox_aov(LogStrength ~ Brand + Water, Towels2)
+}

@@ -20,4 +20,10 @@ a box plot
 }
 \description{
 This function gives a box plot to check the within groups equal variances assumptions.
+It will color by x2 is x2 exists in the formula and color= is not specified.
+}
+\examples{
+dox_boxplot(LogStrength ~ Brand, Towels2, color = Water)
+# this is equivalent to
+dox_boxplot(LogStrength ~ Brand + Water, Towels2)
 }

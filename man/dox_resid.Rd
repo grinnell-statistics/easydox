@@ -23,3 +23,8 @@ This function gives four plots to check the "independent and identically distrib
 and "normality" assumption in ANOVA. 1.a qqplot for residuals; 2.a histogram for residuals;
 3.residual versus fit plot; 4.residual versus order plot
 }
+\examples{
+dox_resid(LogStrength~Brand*Water, Towels2)
+# If you want to check a specific plot, use plot =
+dox_resid(LogStrength~Brand*Water, Towels2, plot = 2, bins = 40)
+}

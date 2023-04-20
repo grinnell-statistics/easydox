@@ -17,3 +17,6 @@ A table that gives summary statistics about y partitioned by treatments
 \description{
 This function applies the favstats function in mosaic package and gives summary statistics.
 }
+\examples{
+dox_sumstats(LogStrength ~ Brand + Water, Towels2)
+}

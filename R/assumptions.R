@@ -1,6 +1,7 @@
 #' A box plot to check the equal variances assumption in ANOVA.
 #'
 #' This function gives a box plot to check the within groups equal variances assumptions.
+#' It will color by x2 is x2 exists in the formula and color= is not specified.
 #' @param formula y~x
 #' @param dataset the dataset that contains the experiment information
 #' @param color colored by this factor (optional)
@@ -8,6 +9,11 @@
 #' @return a box plot
 #' @importFrom ggplot2 ggplot aes geom_boxplot theme element_text facet_grid vars
 #' @export
+#' @examples
+#' dox_boxplot(LogStrength ~ Brand, Towels2, color = Water)
+#' # this is equivalent to
+#' dox_boxplot(LogStrength ~ Brand + Water, Towels2)
+
 dox_boxplot = function(formula, dataset, color=NULL, facet = NULL){
   response = all.vars(formula)[1]
   x1 = all.vars(formula)[2]
@@ -65,6 +71,10 @@ dox_boxplot = function(formula, dataset, color=NULL, facet = NULL){
 #' @return a scatterplot
 #' @importFrom ggplot2 ggplot aes geom_point theme stat_summary element_text facet_grid vars geom_jitter
 #' @export
+#' @examples
+#' dox_scatterplot(LogStrength ~ Brand, Towels2, color = Water)
+#' # if you want to use jitter
+#' dox_scatterplot(LogStrength ~ Brand, Towels2, color = Water, jitter = 0.15)
 
 dox_scatterplot = function(formula, dataset, color=NULL, facet = NULL, jitter = FALSE){
   response = all.vars(formula)[1]
@@ -118,11 +128,15 @@ dox_scatterplot = function(formula, dataset, color=NULL, facet = NULL, jitter = 
 #' It can help check the within groups equal variances assumptions. You can click column names to sort.
 #' @param formula y~x1+x2(optional)+x3(optional)
 #' @param dataset the dataset that contains the experiment information
-#' @return an interactive variance table
+#' @return an interactive table of standard deviations
 #' @importFrom dplyr group_by summarise %>% mutate_if n
 #' @importFrom reactable reactable colDef
 #' @importFrom reactablefmtr data_bars
 #' @export
+#' @examples
+#' # Note that "Run examples" won't work because
+#' # of calling the reactable package
+#' dox_table(LogStrength ~ Brand + Water, Towels2)
 dox_table = function(formula, dataset){
   response = all.vars(formula)[1]
   x1 = all.vars(formula)[2]
@@ -194,6 +208,10 @@ dox_table = function(formula, dataset){
 #' @importFrom ggplot2 ggplot aes geom_point geom_hline xlab ylab stat_qq stat_qq_line labs geom_histogram
 #' @importFrom gridExtra grid.arrange
 #' @export
+#' @examples
+#' dox_resid(LogStrength~Brand*Water, Towels2)
+#' # If you want to check a specific plot, use plot =
+#' dox_resid(LogStrength~Brand*Water, Towels2, plot = 2, bins = 40)
 dox_resid = function(formula, dataset, plot = "all", bins = 30){
 
   anova_model=aov(formula, dataset)
@@ -269,6 +287,8 @@ dox_resid = function(formula, dataset, plot = "all", bins = 30){
 #' @importFrom mosaic favstats
 #' @importFrom stringr str_replace
 #' @export
+#' @examples
+#' dox_sumstats(LogStrength ~ Brand + Water, Towels2)
 dox_sumstats = function(formula, dataset){
   formula_str = deparse(substitute(formula))
   formula_str=str_replace(formula_str, "\\*", "+")

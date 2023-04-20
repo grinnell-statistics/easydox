@@ -23,3 +23,8 @@ a scatterplot
 \description{
 This function gives a scatterplot to check the within groups equal variances assumptions.
 }
+\examples{
+dox_scatterplot(LogStrength ~ Brand, Towels2, color = Water)
+# if you want to use jitter
+dox_scatterplot(LogStrength ~ Brand, Towels2, color = Water, jitter = 0.15)
+}

@@ -24,3 +24,8 @@ main effect plots
 This function gives the main effect plots for one or more treatments in an experiment.
 If more than 1 treatment is given and ylim is not specified, plots will share the same y-axis range.
 }
+\examples{
+dox_main(LogStrength ~ Brand + Water, Towels2, label="Mean")
+# If you want the label to be effect and have a larger size for the x-axis
+dox_main(LogStrength ~ Brand + Water, Towels2, label="Effect", text_size = 14)
+}
