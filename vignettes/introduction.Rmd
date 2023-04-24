@@ -30,6 +30,15 @@ In most of the functions, the function paramaters follow the pattern of *y\~x1+x
 dox_boxplot(LogStrength ~ Brand, Towels2, color = Water)
 ```
 
+```{r}
+dox_boxplot(LogStrength ~ Brand, Towels2, facet = Water)
+```
+
+```{r}
+dox_boxplot(LogStrength ~ Brand, Towels2, facet = Brand~Water)
+```
+
+
 #### A scatterplot to check the equal variances assumption in ANOVA
 
 ```{r}
@@ -37,8 +46,14 @@ dox_scatterplot(LogStrength ~ Brand, Towels2, color = Water)
 ```
 
 ```{r}
-dox_scatterplot(LogStrength ~ Brand, Towels2, color = Water, jitter = 0.15)
+dox_scatterplot(LogStrength ~ Brand, Towels2, color = Water, jitter = 0.05)
 ```
+
+```{r}
+dox_scatterplot(LogStrength ~ Brand, Towels2, facet = Water, jitter = 0.15)
+```
+
+
 
 #### An interactive table to show standard deviations of different groups
 
@@ -80,7 +95,7 @@ dox_main(LogStrength ~ Brand + Water, Towels2, label="Effect", text_size = 14)
 #### Interaction Effect Plot
 
 ```{r}
-dox_inter(LogStrength ~ Brand + Water, Towels2, label="Mean", text_size = 14)
+dox_inter(LogStrength ~ Brand + Water, Towels2, label="Mean",text_size = 14)
 ```
 
 ```{r}

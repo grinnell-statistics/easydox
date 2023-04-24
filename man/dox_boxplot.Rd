@@ -26,4 +26,8 @@ It will color by x2 is x2 exists in the formula and color= is not specified.
 dox_boxplot(LogStrength ~ Brand, Towels2, color = Water)
 # this is equivalent to
 dox_boxplot(LogStrength ~ Brand + Water, Towels2)
+
+# if you want to use facet
+dox_boxplot(LogStrength ~ Brand, Towels2, facet = Water)
+dox_boxplot(LogStrength ~ Brand, Towels2, facet = Brand~Water)
 }

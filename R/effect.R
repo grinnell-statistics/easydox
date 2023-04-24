@@ -199,7 +199,6 @@ dox_main = function(formula, dataset, label="Mean", text_size=12, ylim){
 #' This function gives the interaction effect plots for two treatments in an experiment.
 #' @param formula y~x1+x2
 #' @param dataset the dataset that contains the experiment information
-#' @param facet faceted by this factor (optional)
 #' @param label Label "Mean" or "Effect"
 #' @param text_size text size of the x-axis
 #' @return interaction effect plot
@@ -210,7 +209,7 @@ dox_main = function(formula, dataset, label="Mean", text_size=12, ylim){
 #' dox_inter(LogStrength ~ Brand + Water, Towels2, label="Mean", text_size = 14)
 #' # If you want the label to be effect and have a larger size for the x-axis
 #' dox_inter(LogStrength ~ Brand + Water, Towels2, label="Effect", text_size = 14)
-dox_inter = function(formula, dataset, facet = NULL, label="Mean", text_size = 12){
+dox_inter = function(formula, dataset, label="Mean", text_size = 12){
   response = all.vars(formula)[1]
   x1 = all.vars(formula)[2]
   x2 = all.vars(formula)[3]
@@ -225,14 +224,9 @@ dox_inter = function(formula, dataset, facet = NULL, label="Mean", text_size = 1
     stop(error_message)
   }
 
-  facet_str = deparse(substitute(facet))
-  if(facet_str != "NULL" && is.numeric(dataset[,facet_str])){
-    error_message = paste("Variable \"", facet_str, "\" needs to be a factor. Currently numeric.")
-    stop(error_message)
-  }
 
   df <- dataset %>%
-    group_by(.data[[x1]], .data[[x2]], {{facet}}) %>%
+    group_by(.data[[x1]], .data[[x2]]) %>%
     summarise(Mean_Response = mean(.data[[response]]),.groups = 'drop')
 
   y_min = min(df$Mean_Response)
@@ -268,7 +262,6 @@ dox_inter = function(formula, dataset, facet = NULL, label="Mean", text_size = 1
           axis.text.x = element_text(size = text_size))+
     geom_line(aes(group = .data[[x2]])) +
     geom_point() +
-    facet_grid(vars({{facet}})) +
     coord_cartesian(ylim = c(y_min, y_max))
 
 

@@ -26,5 +26,9 @@ This function gives a scatterplot to check the within groups equal variances ass
 \examples{
 dox_scatterplot(LogStrength ~ Brand, Towels2, color = Water)
 # if you want to use jitter
-dox_scatterplot(LogStrength ~ Brand, Towels2, color = Water, jitter = 0.15)
+dox_scatterplot(LogStrength ~ Brand, Towels2, color = Water, jitter = 0.05)
+
+# if you want to use facet
+dox_scatterplot(LogStrength ~ Brand, Towels2, facet = Water, jitter = 0.15)
+dox_scatterplot(LogStrength ~ Brand, Towels2, facet = Brand~Water, jitter = 0.15)
 }

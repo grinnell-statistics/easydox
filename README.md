@@ -48,7 +48,7 @@ dox_sumstats = function(y~x1+x2+x3+x4, dataset)
 dox_main = function(y~x1+x2+x3+x4, dataset, label="Mean", ylim(optional), text_size=12)
 
 # Interaction Effect Plots
-dox_inter = function(y~x1+x2, dataset, facet = NULL, label="Mean", text_size=12)
+dox_inter = function(y~x1+x2, dataset, label="Mean", text_size=12)
 ```
 
 **ANOVA \& PostHoc**

@@ -8,11 +8,17 @@
 #' @param facet faceted by this factor (optional)
 #' @return a box plot
 #' @importFrom ggplot2 ggplot aes geom_boxplot theme element_text facet_grid vars
+#' @importFrom rlang is_formula
 #' @export
 #' @examples
 #' dox_boxplot(LogStrength ~ Brand, Towels2, color = Water)
 #' # this is equivalent to
 #' dox_boxplot(LogStrength ~ Brand + Water, Towels2)
+#'
+#' # if you want to use facet
+#' dox_boxplot(LogStrength ~ Brand, Towels2, facet = Water)
+# # if you want to use two-dimensional facet
+#' dox_boxplot(LogStrength ~ Brand, Towels2, facet = Brand~Water)
 
 dox_boxplot = function(formula, dataset, color=NULL, facet = NULL){
   response = all.vars(formula)[1]
@@ -29,19 +35,27 @@ dox_boxplot = function(formula, dataset, color=NULL, facet = NULL){
     stop(error_message)
   }
 
-  facet_str = deparse(substitute(facet))
-  if(facet_str != "NULL" && is.numeric(dataset[,facet_str])){
-    error_message = paste("Variable \"", facet_str, "\" needs to be a factor. Currently numeric.")
-    stop(error_message)
-  }
-
   if(color_str=="NULL" && !is.na(x2)){
     color_str=x2
   }
 
   p1=ggplot(data = dataset, aes(x = .data[[x1]], y = .data[[response]])) +
     geom_boxplot() +
-    theme(axis.title=element_text(size=14,face="bold"), axis.text.x = element_text(size = 12, angle = 45))+facet_grid(vars({{facet}}))
+    theme(axis.title=element_text(size=14,face="bold"), axis.text.x = element_text(size = 12, angle = 45))
+
+
+  facet_str = deparse(substitute(facet))
+  if (grepl("~", facet_str)){
+    p1 = p1+facet_grid(facet_str)
+  }
+  else if (facet_str != "NULL"){
+    if(facet_str != "NULL" && is.numeric(dataset[,facet_str])){
+      error_message = paste("Variable \"", facet_str, "\" needs to be a factor. Currently numeric.")
+      stop(error_message)
+    }
+    facet_formula = as.formula(paste(". ~ ",facet_str))
+    p1=p1+facet_grid(facet_formula)
+  }
 
   if(color_str!="NULL"){
     p1=p1+aes(colour = .data[[color_str]])
@@ -70,11 +84,17 @@ dox_boxplot = function(formula, dataset, color=NULL, facet = NULL){
 #' @param jitter the width of jitter or FALSE (not to use jitter)
 #' @return a scatterplot
 #' @importFrom ggplot2 ggplot aes geom_point theme stat_summary element_text facet_grid vars geom_jitter
+#' @importFrom rlang is_formula
 #' @export
 #' @examples
 #' dox_scatterplot(LogStrength ~ Brand, Towels2, color = Water)
 #' # if you want to use jitter
-#' dox_scatterplot(LogStrength ~ Brand, Towels2, color = Water, jitter = 0.15)
+#' dox_scatterplot(LogStrength ~ Brand, Towels2, color = Water, jitter = 0.05)
+#'
+#' # if you want to use facet
+#' dox_scatterplot(LogStrength ~ Brand, Towels2, facet = Water, jitter = 0.15)
+#  # if you want to use two-dimensional facet
+#' dox_scatterplot(LogStrength ~ Brand, Towels2, facet = Brand~Water, jitter = 0.15)
 
 dox_scatterplot = function(formula, dataset, color=NULL, facet = NULL, jitter = FALSE){
   response = all.vars(formula)[1]
@@ -92,25 +112,31 @@ dox_scatterplot = function(formula, dataset, color=NULL, facet = NULL, jitter = 
     stop(error_message)
   }
 
-  facet_str = deparse(substitute(facet))
-  if(facet_str != "NULL" && is.numeric(dataset[,facet_str])){
-    error_message = paste("Variable \"", facet_str, "\" needs to be a factor. Currently numeric.")
-    stop(error_message)
-  }
-
-  if(color_str=="NULL" && !is.na(x2)){
-    color_str=x2
-  }
-
-
   if (!(jitter)){
     p1=ggplot(dataset,  aes(x = .data[[x1]], y = .data[[response]])) +
-      geom_point() +theme(axis.title=element_text(size=14,face="bold"),axis.text.x = element_text(size = 12, angle = 45))+facet_grid(vars({{facet}}))
+      geom_point() +theme(axis.title=element_text(size=14,face="bold"),axis.text.x = element_text(size = 12, angle = 45))
   }
 
   else{
     p1=ggplot(dataset,  aes(x = .data[[x1]], y = .data[[response]])) +
-      geom_jitter(width = {{jitter}})+theme(axis.title=element_text(size=14,face="bold"),axis.text.x = element_text(size = 12, angle = 45))+facet_grid(vars({{facet}}))
+      geom_jitter(width = {{jitter}})+theme(axis.title=element_text(size=14,face="bold"),axis.text.x = element_text(size = 12, angle = 45))
+  }
+
+  facet_str = deparse(substitute(facet))
+  if (grepl("~", facet_str)){
+    p1 = p1+facet_grid(facet_str)
+  }
+  else if (facet_str != "NULL"){
+    if(facet_str != "NULL" && is.numeric(dataset[,facet_str])){
+      error_message = paste("Variable \"", facet_str, "\" needs to be a factor. Currently numeric.")
+      stop(error_message)
+    }
+    facet_formula = as.formula(paste(". ~ ",facet_str))
+    p1=p1+facet_grid(facet_formula)
+  }
+
+  if(color_str=="NULL" && !is.na(x2)){
+    color_str=x2
   }
 
   if(color_str!="NULL"){
