@@ -73,12 +73,9 @@ dox_sumstats(LogStrength ~ Brand + Water, Towels2)
 #### IID and Normality Assumption Checking
 
 ```{r}
-Towels_copy = dox_resid(LogStrength~Brand*Water, Towels2, model_name="model1")
+Towels_copy = dox_resid(LogStrength~Brand*Water, Towels2)
 ```
 
-```{r}
-names(Towels_copy)
-```
 
 ```{r}
 dox_resid(LogStrength~Brand*Water, Towels2, plot = 2, bins = 40)
