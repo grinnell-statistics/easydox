@@ -96,7 +96,7 @@ dox_main(LogStrength ~ Brand + Water, Towels2, label="Effect", text_size = 14)
 #### Interaction Effect Plot
 
 ```{r}
-dox_inter(LogStrength ~ Brand + Water, Towels2, label="Mean",text_size = 14)
+dox_inter(LogStrength ~ Water + Brand, Towels2, label="Mean",text_size = 14)
 ```
 
 ```{r}
