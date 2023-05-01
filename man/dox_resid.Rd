@@ -4,7 +4,7 @@
 \alias{dox_resid}
 \title{Residual vs fit/order plots}
 \usage{
-dox_resid(formula, dataset, plot = "all", bins = 30)
+dox_resid(formula, dataset, plot = "all", bins = 30, model_name = "NULL")
 }
 \arguments{
 \item{formula}{formula used in ANOVA}
@@ -14,6 +14,8 @@ dox_resid(formula, dataset, plot = "all", bins = 30)
 \item{plot}{which of the four plots to show. Default is to show all four}
 
 \item{bins}{the number of bins in histogram}
+
+\item{model_name}{model name used in the column names for residuals and fitted values}
 }
 \value{
 A qqplot and a histogram for residuals; a residual versus fit plot and a residual versus order plot
@@ -21,7 +23,8 @@ A qqplot and a histogram for residuals; a residual versus fit plot and a residua
 \description{
 This function gives four plots to check the "independent and identically distributed observations"
 and "normality" assumption in ANOVA. 1.a qqplot for residuals; 2.a histogram for residuals;
-3.residual versus fit plot; 4.residual versus order plot
+3.residual versus fit plot; 4.residual versus order plot.
+Also, this function invisibly returns the dataset with residuals and fitted values.
 }
 \examples{
 dox_resid(LogStrength~Brand*Water, Towels2)

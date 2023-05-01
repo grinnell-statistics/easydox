@@ -225,25 +225,32 @@ dox_table = function(formula, dataset){
 #'
 #' This function gives four plots to check the "independent and identically distributed observations"
 #' and "normality" assumption in ANOVA. 1.a qqplot for residuals; 2.a histogram for residuals;
-#' 3.residual versus fit plot; 4.residual versus order plot
+#' 3.residual versus fit plot; 4.residual versus order plot.
+#' Also, this function invisibly returns the dataset with residuals and fitted values.
 #' @param formula formula used in ANOVA
 #' @param dataset the dataset that contains the experiment information
 #' @param plot which of the four plots to show. Default is to show all four
 #' @param bins the number of bins in histogram
+#' @param model_name model name used in the column names for residuals and fitted values
 #' @return A qqplot and a histogram for residuals; a residual versus fit plot and a residual versus order plot
 #' @importFrom ggplot2 ggplot aes geom_point geom_hline xlab ylab stat_qq stat_qq_line labs geom_histogram
 #' @importFrom gridExtra grid.arrange
 #' @export
 #' @examples
 #' dox_resid(LogStrength~Brand*Water, Towels2)
+#' # If you want to get the dataset with residuals and fitted values
+#' Towels_copy = dox_resid(LogStrength~Brand*Water, Towels2, model_name="model1")
 #' # If you want to check a specific plot, use plot =
 #' dox_resid(LogStrength~Brand*Water, Towels2, plot = 2, bins = 40)
-dox_resid = function(formula, dataset, plot = "all", bins = 30){
+dox_resid = function(formula, dataset, plot = "all", bins = 30, model_name = "NULL"){
 
   anova_model=aov(formula, dataset)
 
   # not split-plot design
   if(!is.null(anova_model$residuals)){
+    fits  = anova_model$fitted.values
+    resids  = anova_model$residuals
+
     # res vs fit
     residual_fitted = ggplot(anova_model, aes(x = .fitted, y = .resid)) +
       geom_point() +
@@ -265,7 +272,7 @@ dox_resid = function(formula, dataset, plot = "all", bins = 30){
 
     # res histogram
     hist = ggplot(residual_df, aes(x=residual)) + geom_histogram(bins=bins, fill="lightblue")+ labs(title="Histogram for Error Terms")
-  }
+    }
   # split-plot design
   else{
     fits  = anova_model$Within$fitted.values
@@ -299,6 +306,20 @@ dox_resid = function(formula, dataset, plot = "all", bins = 30){
   else if({{plot}} == 2) {hist}
   else if({{plot}} == 3) {residual_fitted}
   else {residual_order}
+
+  if(model_name!="NULL"){
+    col_resid= paste(model_name,"residuals")
+    col_fits= paste(model_name,"fits")
+    dataset[col_resid]=resids
+    dataset[col_fits]=fits
+    invisible(dataset)
+  }
+  else{
+    dataset$residuals=resids
+    dataset$fits=fits
+    invisible(dataset)
+  }
+
 
 }
 

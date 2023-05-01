@@ -73,7 +73,11 @@ dox_sumstats(LogStrength ~ Brand + Water, Towels2)
 #### IID and Normality Assumption Checking
 
 ```{r}
-dox_resid(LogStrength~Brand*Water, Towels2)
+Towels_copy = dox_resid(LogStrength~Brand*Water, Towels2, model_name="model1")
+```
+
+```{r}
+names(Towels_copy)
 ```
 
 ```{r}
@@ -99,13 +103,13 @@ dox_inter(LogStrength ~ Brand + Water, Towels2, label="Mean",text_size = 14)
 ```
 
 ```{r}
-dox_inter(LogStrength ~ Brand + Water, Towels2, label="Effect", text_size = 14)
+dox_inter(LogStrength ~ Water + Brand, Towels2, label="Effect", text_size = 14)
 ```
 
 #### ANOVA Table
 
 ```{r}
-dox_aov(LogStrength ~ Brand + Water, Towels2)
+dox_aov(LogStrength ~ Brand * Water, Towels2)
 ```
 
 #### Pairwise Comparison
