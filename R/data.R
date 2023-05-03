@@ -199,3 +199,77 @@
 #' Or more parents may have been around on the weekend and may have been more positive than students when
 #' rating the cookies.
 "Cookies"
+
+#' Corn: Split-Plot Design
+#'
+#' Many seed companies and state-sponsored agricultural research centers have large testing areas
+#' that have been shown to be similar to other plots of land throughout their state. In a large testing
+#' area, eight 20-acre plots of land were randomly assigned to a nitrogen application rate (0, 70, 140,
+#' or 210 pounds of nitrogen per acre). Each of these 20-acre plots was also subdivided into five
+#' 4-acre subplots. Within each 20-acre plot, the subplots were assigned to be planted with one species
+#' of hybrid corn (A, B, C, D, or E). At the end of the season, the fields were harvested and the yield
+#' in bushels per acre was recorded.
+"Corn"
+
+#' Cookies2: Block Design
+#'
+#' Two students wanted to test whether ingredients (butter, Fleischmann’s corn oil margarine,
+#' or unflavored Crisco), cooking time (short or long) or cookie type (chocolate chip or gingersnap)
+#' influenced taste ratings. Both main effects and interactions were of interest.
+#' Twelve volunteers were found who were each willing to taste
+#' 12 cookies in random order (one taste for each of the two cookie types,
+#' the three ingredient types, and the two cooking times).
+#' Each volunteer ranked all 12 cookies on a scale from 1 to 10 (10 being the best).
+"Cookies2"
+
+#' Football: Split-Plot Design
+#'Ben, Hugh, and Alex wanted to determine if the size of the “football” made a
+#'difference in scoring accuracy in the game of paper football. (Details of the simple
+#'tabletop game can be found at http:// www.paperfootball.us.) In addition, these students
+#'were interested in knowing if the effect of football size was dependent on a player’s experience level.
+#'
+#'The researchers set up a goal that was 8 inches above a table and 10 inches wide.
+#'The subjects kicked/flicked the football from 42 inches away from the goal.
+#'
+#'There were 18 volunteers, who self-identified as experienced or inexperienced players.
+#'After a few practice kicks, each subject kicked 20 small and 20 large footballs in random order
+#'(flipping a coin before each kick) at the goal. The response for this study was the proportion
+#'of successful goals.
+"Football"
+
+
+#' Colors: Split-Plot Design
+#'
+#' Kastner et al. studied how the brain recognizes the shape and color of an object. They found that the
+#' process of identifying the shape and color of an item is carried out not simultaneously but in steps.
+#'
+#' Two students decided to investigate the impact of color distraction on a shape matching game
+#' called Shapesplosion. In this game, subjects are asked to match shapes by placing specifically
+#' shaped pegs into the matching hole as quickly as possible. These student researchers selected
+#' eight female science majors and eight female non-science majors at their college.
+#' Each of the 16 subjects played four games (each of the following four games in random order):
+#'
+#' Factor 1 (game complexity): the Shapesplosion game with 15 pieces (pegs) or the game with 18 pieces
+#'
+#' Factor 2 (color distracter): the Shapesplosion game where the peg color matches the hole
+#' color or the game where the pegs are a different color than the hole
+#'
+#' The Time it took (in seconds) to complete each game was recorded.
+"Colors"
+
+
+#' Colors2: Split-Plot Design
+#'
+#' In addition to the 16 females tested in the 'Colors' dataset, 16 males were also tested in this dataset.
+"Colors2"
+
+
+#' Flower: Block Design
+#'
+#' Students in an introductory statistics class tested the impact of different types of
+#' water solutions on the lon- gevity of cut flowers. They purchased 18 white carnations from three different
+#' randomly selected  stores and randomly assigned each flower to one of three treatments
+#' (plain water, one aspirin crushed and added
+#' to the water, and a floral compound provided by the flower shop) and then measured how many days
+#' it took until the flower wilted.
+"Flower"
