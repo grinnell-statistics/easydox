@@ -3,7 +3,7 @@
 \docType{data}
 \name{Movies}
 \alias{Movies}
-\title{Movies Dataset}
+\title{Movies: Two-way Balanced Factorial Design}
 \format{
 A data frame with 210 rows and 4 columns:
 \describe{

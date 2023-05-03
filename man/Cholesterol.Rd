@@ -3,14 +3,15 @@
 \docType{data}
 \name{Cholesterol}
 \alias{Cholesterol}
-\title{Cholesterol Dataset}
+\title{Cholesterol: Three-way Balanced Factorial Design}
 \format{
-A data frame with 210 rows and 4 columns:
+A data frame with 72 rows and 5 columns:
 \describe{
-\item{Movie}{Movie name}
-\item{Total.Gross}{Gross earnings}
-\item{Genre}{Genre of the movie}
-\item{Rating}{Rating of the movie}
+\item{Patient}{Patient number}
+\item{Exercises}{Exercise or not}
+\item{Diet}{Diet or not}
+\item{Drug}{Types of drugs}
+\item{Cholesterol}{Milligrams per deciliter: a measure of cholesterol level}
 }
 }
 \usage{
@@ -18,12 +19,11 @@ Cholesterol
 }
 \description{
 Cholesterol is a waxy substance found in blood and cell membranes.
-All animals need some choles- terol in their system;
+All animals need some cholesterol in their system;
 however, too much cholesterol can cause heart attacks and strokes.
 A study was conducted to determine how exercise, diet, and three types of drugs impact cholesterol levels.
 Seventy-two patients at a nearby hospital who had been diagnosed with high cholesterol
 (a level greater than 240 milligrams per deciliter) consented to be in the study.
 Each of the 72 patients was randomly assigned to a specific treatment, and after six months the patients’ cholesterol levels were measured again.
-These measurements are provided in the Cholesterol data set.
 }
 \keyword{datasets}

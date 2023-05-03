@@ -3,7 +3,7 @@
 \docType{data}
 \name{Popcorn}
 \alias{Popcorn}
-\title{Popcorn Dataset}
+\title{Popcorn: Three-way Balanced Factorial Design}
 \format{
 A data frame with 32 rows and 5 columns:
 \describe{

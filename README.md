@@ -69,16 +69,20 @@ dox_pairs = function(y~x, dataset, alpha = 0.05, method = "All")
 data(package = "easydox")
 ```
 
-**One-way/Two-way/Three-way ANOVA**
+**Balanced Factorial Design**
 ```
 Bacteria
 Cholesterol
-Cups
 MemoryA
 Movies
 Popcorn
 Soda
 Towels2
+```
+
+**Fractional Factorial Design**
+```
+Cups
 ```
 
 **Block Design/Split-Plot Design**
