@@ -4,7 +4,7 @@
 \alias{dox_pairs}
 \title{Confidence intervals of pairwise comparisons}
 \usage{
-dox_pairs(formula, dataset, alpha = 0.05, method = "ALL")
+dox_pairs(formula, dataset, alpha = 0.05, method = "All")
 }
 \arguments{
 \item{formula}{target~treatment}

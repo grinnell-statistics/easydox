@@ -31,7 +31,7 @@ dox_table = function(y~x1+x2+x3+x4, dataset)
 
 2) normally distributed residuals \& independent and identically distributed observations
 ```
-dox_resid = function(anova_formula, dataset, plot = "all", bins = 30)
+dox_resid = function(anova_formula, dataset, plot = "All", bins = 30)
 
 # or you can pick one plot
 dox_resid = function(anova_formula, dataset, plot = 1, bins = 30)
@@ -56,9 +56,9 @@ dox_inter = function(y~x1+x2, dataset, label="Mean", text_size=12)
 # ANOVA Table with Total DF \& SS
 dox_aov = function(anova_formula, dataset)
 
-# Confidence Intervals using Fisher Least Siginificant Difference (LSD), 
-# Bonferroni Significant Difference (BSD), and Tukey Honest Siginificant Difference (HSD)
-dox_pairs = function(y~x, dataset, alpha = 0.05, method = "ALL")
+# Confidence Intervals using Fisher Least Significant Difference (LSD), 
+# Bonferroni Significant Difference (BSD), and Tukey Honest Significant Difference (HSD)
+dox_pairs = function(y~x, dataset, alpha = 0.05, method = "All")
 ```
 
 

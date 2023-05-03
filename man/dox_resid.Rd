@@ -4,7 +4,7 @@
 \alias{dox_resid}
 \title{Residual vs fit/order plots}
 \usage{
-dox_resid(formula, dataset, plot = "all", bins = 30, model_name = "NULL")
+dox_resid(formula, dataset, plot = "All", bins = 30)
 }
 \arguments{
 \item{formula}{formula used in ANOVA}
@@ -28,6 +28,8 @@ Also, this function invisibly returns the dataset with residuals and fitted valu
 }
 \examples{
 dox_resid(LogStrength~Brand*Water, Towels2)
+# If you want to get the dataset with residuals and fitted values
+Towels_copy = dox_resid(LogStrength~Brand*Water, Towels2, model_name="model1")
 # If you want to check a specific plot, use plot =
 dox_resid(LogStrength~Brand*Water, Towels2, plot = 2, bins = 40)
 }

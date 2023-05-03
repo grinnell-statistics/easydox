@@ -73,7 +73,7 @@ dox_sumstats(LogStrength ~ Brand + Water, Towels2)
 #### IID and Normality Assumption Checking
 
 ```{r}
-Towels_copy = dox_resid(LogStrength~Brand*Water, Towels2)
+dox_resid(LogStrength~Brand*Water, Towels2)
 ```
 
 

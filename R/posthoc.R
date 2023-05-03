@@ -61,7 +61,7 @@ dox_aov=function(formula, dataset){
 #' dox_pairs(LogStrength~Water, Towels2, alpha = 0.01)
 #' # If you are only interested in LSD
 #' dox_pairs(LogStrength~Water, Towels2, method = "LSD")
-dox_pairs <- function(formula,dataset, alpha = 0.05, method = "ALL") {
+dox_pairs <- function(formula,dataset, alpha = 0.05, method = "All") {
   # Get the string version
   target_str = all.vars(formula)[1]
   treatment_str = all.vars(formula)[2]

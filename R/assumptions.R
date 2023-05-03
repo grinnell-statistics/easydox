@@ -242,7 +242,7 @@ dox_table = function(formula, dataset){
 #' Towels_copy = dox_resid(LogStrength~Brand*Water, Towels2, model_name="model1")
 #' # If you want to check a specific plot, use plot =
 #' dox_resid(LogStrength~Brand*Water, Towels2, plot = 2, bins = 40)
-dox_resid = function(formula, dataset, plot = "all", bins = 30, model_name = "NULL"){
+dox_resid = function(formula, dataset, plot = "All", bins = 30){
 
   anova_model=aov(formula, dataset)
 
@@ -300,26 +300,12 @@ dox_resid = function(formula, dataset, plot = "all", bins = 30, model_name = "NU
 
   }
 
-  if ({{plot}} == "all")
+  if ({{plot}} == "All")
   {grid.arrange(qqplot, hist, residual_fitted, residual_order, ncol=2)}
   else if({{plot}} == 1) {qqplot}
   else if({{plot}} == 2) {hist}
   else if({{plot}} == 3) {residual_fitted}
   else {residual_order}
-
-  if(model_name!="NULL"){
-    col_resid= paste(model_name,"residuals")
-    col_fits= paste(model_name,"fits")
-    dataset[col_resid]=resids
-    dataset[col_fits]=fits
-    invisible(dataset)
-  }
-  else{
-    dataset$residuals=resids
-    dataset$fits=fits
-    invisible(dataset)
-  }
-
 
 }
 
