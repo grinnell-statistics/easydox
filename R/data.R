@@ -223,6 +223,7 @@
 "Cookies2"
 
 #' Football: Split-Plot Design
+#'
 #'Ben, Hugh, and Alex wanted to determine if the size of the “football” made a
 #'difference in scoring accuracy in the game of paper football. (Details of the simple
 #'tabletop game can be found at http:// www.paperfootball.us.) In addition, these students
@@ -273,3 +274,41 @@
 #' to the water, and a floral compound provided by the flower shop) and then measured how many days
 #' it took until the flower wilted.
 "Flower"
+
+#' C5Popcorn: Block Design
+#'
+#' Two students in a design of experiments course wanted to test if the price and the storage location
+#'  of popcorn influenced the percentage of kernels that popped. The students purchased three boxes
+#'  of both an expensive and a generic popcorn brand (labeled Exp and Gen). Each box contained six
+#'  microwavable bags of popcorn. Two bags were randomly selected from each box and stored for one week,
+#'  one in the refrigerator (Frig) and the other at room temperature (Room).
+#'  The bags were popped in random order according to the instructions on the box, and
+#'  the percentage of popped kernels was calculated for each bag.
+"C5Popcorn"
+
+#' Handwash: Block Design
+#'
+#' Two students are interested in the effectiveness of three types of cleansers. They also sort CFU counts
+#'  into three blocks (representing low, medium, and high CFU counts).
+"Handwash"
+
+#' Memory: Split-Plot Design
+#'
+#' Two students in a statistics course, Josh and Ann, were interested in conducting an experiment
+#' to help them better understand memory. For each test, Josh and Ann decided to test what psychologists
+#' call free recall by asking each subject to read through a list of 20 words for 30 seconds,
+#' work through a distracter, and then recall as many words as he or she could.
+#' Josh and Ann asked each subject to take all four tests in random order, with a short break between tests.
+#'
+#' In this experiment, each unit is a test that is randomly assigned to one of the four factor-level combinations listed below:
+#'
+#' 1. Abstract word list and mathematics distracter
+#'
+#' 2. Abstract word list and poetry distracter
+#'
+#' 3. Concrete word list and mathematics distracter
+#'
+#' 4. Concrete word list and poetry distracter
+#'
+#' Also, students are randomly selected from four different majors.
+"Memory"
