@@ -235,6 +235,7 @@ dox_table = function(formula, dataset){
 #' @return A qqplot and a histogram for residuals; a residual versus fit plot and a residual versus order plot
 #' @importFrom ggplot2 ggplot aes geom_point geom_hline xlab ylab stat_qq stat_qq_line labs geom_histogram
 #' @importFrom gridExtra grid.arrange
+#' @importFrom dplyr group_by summarise %>% n
 #' @export
 #' @examples
 #' dox_resid(LogStrength~Brand*Water, Towels2)
@@ -243,6 +244,15 @@ dox_table = function(formula, dataset){
 #' # If you want to check a specific plot, use plot =
 #' dox_resid(LogStrength~Brand*Water, Towels2, plot = 2, bins = 40)
 dox_resid = function(formula, dataset, plot = "All", bins = 30){
+  # give warnings if the experiment is not balanced
+  counts_table <- dataset %>%
+    group_by(across(all.vars(formula)[-1])) %>%
+    summarise(n = n())
+
+  if(!all(counts_table$n[1] == counts_table$n)){
+    warning("Your experiment is not balanced and the result can be misleading. The aov() function used here conducts Type I ANOVA, which only works for balanced design. We recommend using Anova() in the 'car' package to conduct Type II/III ANOVA.")
+    print(counts_table)
+  }
 
   anova_model=aov(formula, dataset)
 

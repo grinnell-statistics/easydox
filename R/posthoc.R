@@ -6,6 +6,7 @@
 #' @return a html table
 #' @importFrom dplyr %>%
 #' @importFrom kableExtra kable kable_styling
+#' @importFrom dplyr group_by summarise %>% n
 #' @export
 #' @examples
 #' dox_aov(LogStrength ~ Brand + Water, Towels2)
@@ -13,6 +14,16 @@ dox_aov=function(formula, dataset){
   anova_model=aov(formula, dataset)
   if(length(summary(anova_model)) > 1){
     stop("This function only works for ANOVA with one summary table. Designs like split-plot do not work.")
+  }
+
+  # give warnings if the experiment is not balanced
+  counts_table <- dataset %>%
+    group_by(across(all.vars(formula)[-1])) %>%
+    summarise(n = n())
+
+  if(!all(counts_table$n[1] == counts_table$n)){
+    warning("Your experiment is not balanced and the result can be misleading. The aov() function used here conducts Type I ANOVA, which only works for balanced design. We recommend using Anova() in the 'car' package to conduct Type II/III ANOVA.")
+    print(counts_table)
   }
 
 

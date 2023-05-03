@@ -63,8 +63,14 @@ dox_pairs = function(y~x, dataset, alpha = 0.05, method = "All")
 
 
 # Datasets Available in the Package
+
+**View All Datasets**
 ```
-# one-way/two-way/three-way anova
+data(package = "easydox")
+```
+
+**One-way/Two-way/Three-way ANOVA**
+```
 Bacteria
 Cholesterol
 Cups
@@ -73,8 +79,10 @@ Movies
 Popcorn
 Soda
 Towels2
+```
 
-# block design/split-plot design
+**Block Design/Split-Plot Design**
+```
 C5Popcorn
 Colors
 Colors2
@@ -89,6 +97,8 @@ Music
 Tennis
 ```
 
+# Shiny App
+We also build a [Shiny App](https://huandongchang.shinyapps.io/ExperimentalAnalysis/) to help users without any R programming background. It provides two examples and also allows users to upload their own dataset.
 
 # Example
 You can find a complete example
