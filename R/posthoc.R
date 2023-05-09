@@ -11,6 +11,7 @@
 #' @examples
 #' dox_aov(LogStrength ~ Brand + Water, Towels2)
 dox_aov=function(formula, dataset){
+  formula=as.formula(formula)
   anova_model=aov(formula, dataset)
   if(length(summary(anova_model)) > 1){
     stop("This function only works for ANOVA with one summary table. Designs like split-plot do not work.")
@@ -73,6 +74,7 @@ dox_aov=function(formula, dataset){
 #' # If you are only interested in LSD
 #' dox_pairs(LogStrength~Water, Towels2, method = "LSD")
 dox_pairs <- function(formula,dataset, alpha = 0.05, method = "All") {
+  formula=as.formula(formula)
   # Get the string version
   target_str = all.vars(formula)[1]
   treatment_str = all.vars(formula)[2]

@@ -27,30 +27,37 @@ In most of the functions, the function paramaters follow the pattern of *y\~x1+x
 #### A box plot to check the equal variances assumption in ANOVA
 
 ```{r}
-dox_boxplot(LogStrength ~ Brand, Towels2, color = Water)
+model1=LogStrength ~ Brand
+dox_boxplot(model1, Towels2, color = Water)
 ```
 
 ```{r}
-dox_boxplot(LogStrength ~ Brand, Towels2, facet = Water)
+# Most functions in easydox returns ggplot2 objects, so you can customize it
+dox_boxplot(model1, Towels2, color = Water) + ylim(5, 9)
+```
+
+
+```{r}
+dox_boxplot(model1, Towels2, facet = Water)
 ```
 
 ```{r}
-dox_boxplot(LogStrength ~ Brand, Towels2, facet = Brand~Water)
+dox_boxplot(model1, Towels2, facet = Brand~Water)
 ```
 
 
 #### A scatterplot to check the equal variances assumption in ANOVA
 
 ```{r}
-dox_scatterplot(LogStrength ~ Brand, Towels2, color = Water)
+dox_scatterplot(model1, Towels2, color = Water)
 ```
 
 ```{r}
-dox_scatterplot(LogStrength ~ Brand, Towels2, color = Water, jitter = 0.05)
+dox_scatterplot(model1, Towels2, color = Water, jitter = 0.05)
 ```
 
 ```{r}
-dox_scatterplot(LogStrength ~ Brand, Towels2, facet = Water, jitter = 0.15)
+dox_scatterplot(model1, Towels2, facet = Water, jitter = 0.15)
 ```
 
 
@@ -58,7 +65,8 @@ dox_scatterplot(LogStrength ~ Brand, Towels2, facet = Water, jitter = 0.15)
 #### An interactive table to show standard deviations of different groups
 
 ```{r}
-dox_table(LogStrength ~ Brand + Water, Towels2)
+model2=LogStrength~Brand*Water
+dox_table(model2, Towels2)
 ```
 
 You can sort the GroupVariance or other columns by clicking the column name.
@@ -67,46 +75,46 @@ You can sort the GroupVariance or other columns by clicking the column name.
 #### Summary Statistics to Check Missing Data or Balanced Design
 
 ```{r}
-dox_sumstats(LogStrength ~ Brand + Water, Towels2)
+dox_sumstats(model2, Towels2)
 ```
 
 #### IID and Normality Assumption Checking
 
 ```{r}
-dox_resid(LogStrength~Brand*Water, Towels2)
+dox_resid(model2, Towels2)
 ```
 
 
 ```{r}
-dox_resid(LogStrength~Brand*Water, Towels2, plot = 2, bins = 40)
+dox_resid(model2, Towels2, plot = 2, bins = 40)
 ```
 
 #### Main Effect Plots
 
 ```{r, message = FALSE}
-dox_main(LogStrength ~ Brand + Water, Towels2, label="Mean", text_size = 14)
+dox_main(model2, Towels2, label="Mean", text_size = 14)
 ```
 
 If you are only interested in one treatment (or you have a 3-way ANOVA), you can simply add (or reduce) parameters in the function inputs.
 
 ```{r, message = FALSE}
-dox_main(LogStrength ~ Brand + Water, Towels2, label="Effect", text_size = 14)
+dox_main(model2, Towels2, label="Effect", text_size = 14)
 ```
 
 #### Interaction Effect Plot
 
 ```{r}
-dox_inter(LogStrength ~ Water + Brand, Towels2, label="Mean",text_size = 14)
+dox_inter(model2, Towels2, label="Mean",text_size = 14)
 ```
 
 ```{r}
-dox_inter(LogStrength ~ Water + Brand, Towels2, label="Effect", text_size = 14)
+dox_inter(model2, Towels2, label="Effect", text_size = 14)
 ```
 
 #### ANOVA Table
 
 ```{r}
-dox_aov(LogStrength ~ Brand * Water, Towels2)
+dox_aov(model2, Towels2)
 ```
 
 #### Pairwise Comparison

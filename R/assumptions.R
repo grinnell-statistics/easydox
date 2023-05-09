@@ -21,6 +21,7 @@
 #' dox_boxplot(LogStrength ~ Brand, Towels2, facet = Brand~Water)
 
 dox_boxplot = function(formula, dataset, color=NULL, facet = NULL){
+  formula=as.formula(formula)
   response = all.vars(formula)[1]
   x1 = all.vars(formula)[2]
   x2 = all.vars(formula)[3]
@@ -97,6 +98,7 @@ dox_boxplot = function(formula, dataset, color=NULL, facet = NULL){
 #' dox_scatterplot(LogStrength ~ Brand, Towels2, facet = Brand~Water, jitter = 0.15)
 
 dox_scatterplot = function(formula, dataset, color=NULL, facet = NULL, jitter = FALSE){
+  formula=as.formula(formula)
   response = all.vars(formula)[1]
   x1 = all.vars(formula)[2]
   x2 = all.vars(formula)[3]
@@ -164,6 +166,7 @@ dox_scatterplot = function(formula, dataset, color=NULL, facet = NULL, jitter = 
 #' # of calling the reactable package
 #' dox_table(LogStrength ~ Brand + Water, Towels2)
 dox_table = function(formula, dataset){
+  formula=as.formula(formula)
   response = all.vars(formula)[1]
   x1 = all.vars(formula)[2]
   x2 = all.vars(formula)[3]
@@ -244,6 +247,7 @@ dox_table = function(formula, dataset){
 #' # If you want to check a specific plot, use plot =
 #' dox_resid(LogStrength~Brand*Water, Towels2, plot = 2, bins = 40)
 dox_resid = function(formula, dataset, plot = "All", bins = 30){
+  formula=as.formula(formula)
   # give warnings if the experiment is not balanced
   counts_table <- dataset %>%
     group_by(across(all.vars(formula)[-1])) %>%
@@ -333,6 +337,7 @@ dox_resid = function(formula, dataset, plot = "All", bins = 30){
 #' @examples
 #' dox_sumstats(LogStrength ~ Brand + Water, Towels2)
 dox_sumstats = function(formula, dataset){
+  formula=as.formula(formula)
   formula_str = deparse(substitute(formula))
   formula_str=str_replace(formula_str, "\\*", "+")
   favstats(as.formula(formula_str), data=dataset)

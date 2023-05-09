@@ -17,6 +17,7 @@
 #' # If you want the label to be effect and have a larger size for the x-axis
 #' dox_main(LogStrength ~ Brand + Water, Towels2, label="Effect", text_size = 14)
 dox_main = function(formula, dataset, label="Mean", text_size=12, ylim){
+  formula=as.formula(formula)
   response = all.vars(formula)[1]
   x1 = all.vars(formula)[2]
   x2 = all.vars(formula)[3]
@@ -210,6 +211,7 @@ dox_main = function(formula, dataset, label="Mean", text_size=12, ylim){
 #' # If you want the label to be effect and have a larger size for the x-axis
 #' dox_inter(LogStrength ~ Brand + Water, Towels2, label="Effect", text_size = 14)
 dox_inter = function(formula, dataset, label="Mean", text_size = 12){
+  formula=as.formula(formula)
   response = all.vars(formula)[1]
   x1 = all.vars(formula)[2]
   x2 = all.vars(formula)[3]
