@@ -10,6 +10,182 @@
 #' @export
 #' @examples
 #' dox_aov(LogStrength ~ Brand + Water, Towels2)
+
+
+dox_split_aov=function(formula, dataset){
+  formula=as.formula(formula)
+  model_1=aov(formula, dataset)
+  if(length(summary(model_1)) > 1){
+    warning("This function is now working for a Split-Plot design")
+  }
+  
+  # give warnings if the experiment is not balanced
+  counts_table <- dataset %>%
+    group_by(across(all.vars(formula)[-1])) %>%
+    summarise(n = n())
+  
+  if(!all(counts_table$n[1] == counts_table$n)){
+    warning("Your experiment is not balanced and the result can be misleading. The aov() function used here conducts Type I ANOVA, which only works for balanced design. We recommend using Anova() in the 'car' package to conduct Type II/III ANOVA.")
+    print(counts_table)
+  }
+  tab_len<- length(summary(model_1))
+  res_df<- do.call(data.frame,summary(model_1)[[tab_len]])
+  DF_res<-res_df[["Residuals","Df"]]
+  MS_res<- res_df[["Residuals","Mean.Sq"]]
+  
+  #Finding out the F-statistic and p-value for the Whole plot error term
+  nested_list<- summary(model_1)[[tab_len-1]]
+  nested_df<- do.call(data.frame,nested_list)
+  F_nested_df<- nested_df$Mean.Sq/MS_res
+  DF_nested_df<- nested_df$Df
+  p_nested_df<- pf(F_nested_df,DF_nested_df,DF_res,lower.tail = FALSE)
+  nested_df[["Residuals","F.value"]]<- F_nested_df
+  nested_df[["Residuals","Pr..F."]]<- p_nested_df
+  rownames(nested_df)<- "Whole Plot Error"
+  
+  
+  stack_df<-rbind(nested_df,res_df)
+  
+  # Finding out the F_statistic and p-value for the other whole plot and split plot variables
+  for (index in (tab_len-2):1){
+    row_list<-summary(model_1)[[index]]
+    row_df<- do.call(data.frame,row_list)
+    F_df<- row_df$Mean.Sq/nested_df$Mean.Sq
+    print(names(row_df))
+    p_df<- pf(F_df,row_df$Df,DF_res,lower.tail = FALSE)
+    rname<-rownames(row_df)
+    row_df$F.value<- F_df
+    row_df$Pr..F.<- p_df
+    stack_df<- rbind(row_df,stack_df)
+  }
+  
+  lastest_rownames = c(rownames(stack_df),"Total")
+  extra_row <- c(sum(stack_df$Df), sum(stack_df[["Sum.Sq"]]),NA,NA,NA)
+  stack_df<-rbind(stack_df, extra_row)
+  rownames(stack_df) <- lastest_rownames
+  
+  stack_df[] <- lapply(stack_df, function(x) if(is.numeric(x)) round(x, 4) else x)
+  
+  
+  
+  
+  
+  #printing the ANOVA summary table from the stacked dataframe
+  print(kable(format(stack_df, digits = 4), align = 'r',
+        caption = "ANOVA Summary", escape = F, format.args = list(big.mark = ","))  %>% kable_styling())
+  
+  
+  #This part onwards deals with the calculation of the residuals and fitted values of any split plot model
+  
+  #differentiating between the response and explanatory variables
+  vars<- all.vars(formula)
+  y<-vars[1] #response variable
+  x<-vars[-1] #independent variables
+  term_labels<- terms(formula,keep.order=TRUE)
+  c<-attr(term_labels,"term.labels")
+  
+  #defining three lists as placeholders for interaction terms, error terms and main effect terms respectively
+  int <- list()
+  err<- list()
+  main<-list()
+  for (item in c){
+    if (grepl(":",item)){
+      int[[item]]<- strsplit(item,":")[[1]]
+    } else if (grepl("Error\\(",item)){
+      t<-gsub("^Error\\(|\\)$", "", item)
+      parts<- strsplit(t,"/")[[1]]
+      before <- unlist(strsplit(parts[1], "\\*"))
+      after <- gsub("as.factor\\((.*)\\)", "\\1", parts[2])
+      err[[item]] <- list(
+        before = before,
+        after  = after
+      )
+      
+    } else{
+      main[[item]]<-item
+    }
+  }
+  
+  
+  main<-unlist(main)
+  int<-unlist(int)
+  
+  #defining the grand mean from the mean of the response variable
+  gm <- mean(dataset[[y]])
+  
+  
+  #separating/parsing the error term into before and after parts
+  err[[1]]$after<- gsub("\\s+", "", err[[1]]$after)
+  err[[1]]$before<- gsub("\\s+", "", err[[1]]$before)
+  
+  
+  #calculating the averages and effect sizes of the main plot variables
+  for (index in seq_along(main)){
+    fmla<- as.formula(paste(y,"~",main[[index]]))
+    means<-  aggregate(fmla, data = dataset, FUN = mean)
+    dataset[[paste0("avg_",main[[index]])]] <- means[[y]][
+      match(dataset[[main[[index]]]], means[[main[[index]]]])
+    ]
+    dataset[[paste0("effect_",main[[index]])]] <- dataset[[paste0("avg_",main[[index]])]] -gm
+    
+  }
+  
+  
+  #calculating the averages and effect sizes of the interaction variables
+  for (i in seq(1,length(int),by=2)){
+    pair<- int[i:(i+1)]
+    fmla_int<- as.formula(paste(y,"~",pair[[1]],"*",pair[[2]]))
+    means<-  aggregate(fmla_int, data = dataset, FUN = mean)
+    dataset[[paste0("avg_inter_",pair[[1]],"_",pair[[2]])]] <- means[[y]][
+      match(
+        interaction(dataset[[pair[[1]]]], dataset[[pair[[2]]]]),
+        interaction(means[[pair[[1]]]], means[[pair[[2]]]])
+      )
+    ]
+    dataset[[paste0("effect_",pair[[1]],"_",pair[[2]])]] <- dataset[[paste0("avg_inter_",pair[[1]],"_",pair[[2]])]]-
+      dataset[[paste0("avg_",pair[[1]])]] - dataset[[paste0("avg_",pair[[2]])]] +gm
+  }
+  
+  
+  #calculating the averages and effect sizes of the error term variables
+  fmla_err<- as.formula(paste(y,"~",err[[1]]$after))
+  means_err<-  aggregate(fmla_err, data = dataset, FUN = mean)
+  dataset[[paste0("avg_wp_err_", err[[1]]$after)]] <- means_err[[y]][
+    match(dataset[[err[[1]]$after]], means_err[[err[[1]]$after]])
+  ]
+  
+  if (length(err[[1]]$before) == 1){
+    dataset[[paste0("effect_",err[[1]]$after)]] <- dataset[[paste0("avg_wp_err_",err[[1]]$after)]]  - dataset[[paste0("avg_",err[[1]]$before)]]
+  } else if (length(err[[1]]$before) ==2){
+    dataset[[paste0("effect_",err[[1]]$after)]] <- dataset[[paste0("avg_wp_err_",err[[1]]$after)]] - dataset[[paste0("avg_inter_",err[[1]]$before[1],"_",err[[1]]$before[2])]]
+  }
+  
+  
+  #aggregating all the effect sizes columsn for final calculation
+  cols<- grep("^effect", names(dataset))
+  
+  
+  #computing the fitted values and the residuals of the model
+  dataset$fits <-  rowSums(dataset[,cols])+gm
+  dataset$residuals<- dataset[[y]]- dataset$fits
+  list(res=dataset$residuals,
+       fits=dataset$fits)
+  
+  
+  
+  
+}
+
+
+
+
+
+
+
+
+
+
+
 dox_aov=function(formula, dataset){
   formula=as.formula(formula)
   anova_model=aov(formula, dataset)
