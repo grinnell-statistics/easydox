@@ -1,15 +1,15 @@
-#' An ANOVA summary table with total DF & SS
+#' An ANOVA summary table specifically for SPlit Plot designs
 #'
 #' This function gives an ANOVA summary table with total degrees of freedom and sum of squares
 #' @param formula formula used in ANOVA
 #' @param dataset the dataset that contains the experiment information
-#' @return a html table
+#' @return a html table and residuals,fitted values
 #' @importFrom dplyr %>%
 #' @importFrom kableExtra kable kable_styling
 #' @importFrom dplyr group_by summarise %>% n
 #' @export
 #' @examples
-#' dox_aov(LogStrength ~ Brand + Water, Towels2)
+#' dox_split_aov(LogStrength ~ Brand + Water, Towels2)
 
 
 dox_split_aov=function(formula, dataset){
@@ -180,7 +180,18 @@ dox_split_aov=function(formula, dataset){
 
 
 
-
+#' An ANOVA summary table with total DF & SS
+#'
+#' This function gives an ANOVA summary table with total degrees of freedom and sum of squares
+#' @param formula formula used in ANOVA
+#' @param dataset the dataset that contains the experiment information
+#' @return a html table
+#' @importFrom dplyr %>%
+#' @importFrom kableExtra kable kable_styling
+#' @importFrom dplyr group_by summarise %>% n
+#' @export
+#' @examples
+#' dox_aov(LogStrength ~ Brand + Water, Towels2)
 
 
 
