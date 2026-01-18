@@ -8,8 +8,6 @@
 #' @importFrom kableExtra kable kable_styling
 #' @importFrom dplyr group_by summarise %>% n
 #' @export
-#' @examples
-#' dox_split_aov(LogStrength ~ Brand + Water, Towels2)
 dox_split_aov=function(formula, dataset){
   formula=as.formula(formula)
   model_1=aov(formula, dataset)
