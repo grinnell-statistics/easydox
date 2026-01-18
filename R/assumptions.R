@@ -246,52 +246,138 @@ dox_table = function(formula, dataset){
 #' Towels_copy = dox_resid(LogStrength~Brand*Water, Towels2, model_name="model1")
 #' # If you want to check a specific plot, use plot =
 #' dox_resid(LogStrength~Brand*Water, Towels2, plot = 2, bins = 40)
-dox_resid = function(formula, dataset, plot = "All", bins = 30){
+dox_resid = function(formula, dataset, plot = "All", bins = 10){
   formula=as.formula(formula)
   # give warnings if the experiment is not balanced
   counts_table <- dataset %>%
     group_by(across(all.vars(formula)[-1])) %>%
     summarise(n = n())
-
+  
   if(!all(counts_table$n[1] == counts_table$n)){
     warning("Your experiment is not balanced and the result can be misleading. The aov() function used here conducts Type I ANOVA, which only works for balanced design. We recommend using Anova() in the 'car' package to conduct Type II/III ANOVA.")
     print(counts_table)
   }
-
+  
   anova_model=aov(formula, dataset)
-
+  
   # not split-plot design
   if(!is.null(anova_model$residuals)){
+    print("Non SPLIT PLOT")
     fits  = anova_model$fitted.values
     resids  = anova_model$residuals
-
+    
     # res vs fit
     residual_fitted = ggplot(anova_model, aes(x = .fitted, y = .resid)) +
       geom_point() +
       geom_hline(yintercept = 0)+xlab("fitted value")+ylab("residual")+ labs(title="Residual vs Fit")
-
+    
     # res vs order
     dataset$rownum = 1:dim(dataset)[1]
     residual_order = ggplot(anova_model, aes(x=dataset$rownum, y = .resid)) +
       geom_point() +
       geom_hline(yintercept = 0)+xlab("row number")+ylab("residual")+ labs(title="Residual vs Order")
-
+    
     # res qqplot
     residual_df = as.data.frame(anova_model$residuals)
     colnames(residual_df) = c("residual")
     qqplot <- ggplot(residual_df, aes(sample = residual))
     qqplot = qqplot + stat_qq() + stat_qq_line() +
       labs(title = "QQ Plot for Error Terms", x = "Theoretical", y = "Sample")
-
-
+    
+    
     # res histogram
     hist = ggplot(residual_df, aes(x=residual)) + geom_histogram(bins=bins, fill="lightblue")+ labs(title="Histogram for Error Terms")
-    }
+  }
   # split-plot design
   else{
-    fits  = anova_model$Within$fitted.values
-    resids  = anova_model$Within$residuals
+    print("SPLIT PLOT")
+    #This part calculating the residuals and fitted values for split plot designs is taken from the split_aov()
+    vars<- all.vars(formula)
+    y<-vars[1]
+    x<-vars[-1]
+    term_labels<- terms(formula,keep.order=TRUE)
+    c<-attr(term_labels,"term.labels")
+    
+    
+    int <- list()
+    err<- list()
+    main<-list()
+    for (item in c){
+      if (grepl(":",item)){
+        int[[item]]<- strsplit(item,":")[[1]]
+      } else if (grepl("Error\\(",item)){
+        t<-gsub("^Error\\(|\\)$", "", item)
+        parts<- strsplit(t,"/")[[1]]
+        before <- unlist(strsplit(parts[1], "\\*"))
+        after <- gsub("as.factor\\((.*)\\)", "\\1", parts[2])
+        err[[item]] <- list(
+          before = before,
+          after  = after
+        )
+        
+      } else{
+        main[[item]]<-item
+      }
+    }
+    
+    
+    main<-unlist(main)
+    int<-unlist(int)
+    gm <- mean(dataset[[y]])
+    err[[1]]$after<- gsub("\\s+", "", err[[1]]$after)
+    err[[1]]$before<- gsub("\\s+", "", err[[1]]$before)
+    
+    
+    
+    for (index in seq_along(main)){
+      fmla<- as.formula(paste(y,"~",main[[index]]))
+      means<-  aggregate(fmla, data = dataset, FUN = mean)
+      dataset[[paste0("avg_",main[[index]])]] <- means[[y]][
+        match(dataset[[main[[index]]]], means[[main[[index]]]])
+      ]
+      dataset[[paste0("effect_",main[[index]])]] <- dataset[[paste0("avg_",main[[index]])]] -gm
+      
+    }
+    
+    
+    
+    for (i in seq(1,length(int),by=2)){
+      pair<- int[i:(i+1)]
+      fmla_int<- as.formula(paste(y,"~",pair[[1]],"*",pair[[2]]))
+      means<-  aggregate(fmla_int, data = dataset, FUN = mean)
+      dataset[[paste0("avg_inter_",pair[[1]],"_",pair[[2]])]] <- means[[y]][
+        match(
+          interaction(dataset[[pair[[1]]]], dataset[[pair[[2]]]]),
+          interaction(means[[pair[[1]]]], means[[pair[[2]]]])
+        )
+      ]
+      dataset[[paste0("effect_",pair[[1]],"_",pair[[2]])]] <- dataset[[paste0("avg_inter_",pair[[1]],"_",pair[[2]])]]-
+        dataset[[paste0("avg_",pair[[1]])]] - dataset[[paste0("avg_",pair[[2]])]] +gm
+    }
+    
+    
+    
+    fmla_err<- as.formula(paste(y,"~",err[[1]]$after))
+    means_err<-  aggregate(fmla_err, data = dataset, FUN = mean)
+    dataset[[paste0("avg_wp_err_", err[[1]]$after)]] <- means_err[[y]][
+      match(dataset[[err[[1]]$after]], means_err[[err[[1]]$after]])
+    ]
+    
+    if (length(err[[1]]$before) == 1){
+      dataset[[paste0("effect_",err[[1]]$after)]] <- dataset[[paste0("avg_wp_err_",err[[1]]$after)]]  - dataset[[paste0("avg_",err[[1]]$before)]]
+    } else if (length(err[[1]]$before) ==2){
+      dataset[[paste0("effect_",err[[1]]$after)]] <- dataset[[paste0("avg_wp_err_",err[[1]]$after)]] - dataset[[paste0("avg_inter_",err[[1]]$before[1],"_",err[[1]]$before[2])]]
+    }
+    
+    
+    
+    cols<- grep("^effect", names(dataset))
+    
+    fits <-  rowSums(dataset[,cols])+gm
+    resids<- dataset[[y]]- fits
+    #creating a dataframe with the residuals and fitted values
     aov_data = data.frame(fits,resids)
+    print(aov_data)
     # res vs fit
     residual_fitted = ggplot(aov_data,aes(x = fits, y = resids)) +
       geom_point() +
@@ -301,18 +387,27 @@ dox_resid = function(formula, dataset, plot = "All", bins = 30){
     residual_order = ggplot(aov_data, aes(x=rownum, y = resids)) +
       geom_point() +
       geom_hline(yintercept = 0)+xlab("row number")+ylab("residual")+ labs(title="Residual vs Order")
-
+    
     # res qqplot
     residual_df = as.data.frame(resids)
     colnames(residual_df) = c("residual")
     qqplot <- ggplot(residual_df, aes(sample = residual))
     qqplot = qqplot + stat_qq() + stat_qq_line() +
       labs(title = "QQ Plot for Error Terms", x = "Theoretical", y = "Sample")
-
+    
     # res histogram
     hist = ggplot(residual_df, aes(x=residual)) + geom_histogram(bins=bins, fill="lightblue")+ labs(title="Histogram for Error Terms")
-
+    
   }
+  
+  if ({{plot}} == "All")
+  {grid.arrange(qqplot, hist, residual_fitted, residual_order, ncol=2)}
+  else if({{plot}} == 1) {qqplot}
+  else if({{plot}} == 2) {hist}
+  else if({{plot}} == 3) {residual_fitted}
+  else {residual_order}
+  
+}
 
   if ({{plot}} == "All")
   {grid.arrange(qqplot, hist, residual_fitted, residual_order, ncol=2)}
