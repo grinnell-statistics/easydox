@@ -247,7 +247,7 @@ dox_table = function(formula, dataset){
 #' # If you want to check a specific plot, use plot =
 #' dox_resid(LogStrength~Brand*Water, Towels2, plot = 2, bins = 40)
 
-dox_resida = function(formula, dataset, plot = "All", bins = 10){
+dox_resid = function(formula, dataset, plot = "All", bins = 10){
   formula=as.formula(formula)
   # give warnings if the experiment is not balanced
   counts_table <- dataset %>%
