@@ -246,7 +246,8 @@ dox_table = function(formula, dataset){
 #' Towels_copy = dox_resid(LogStrength~Brand*Water, Towels2, model_name="model1")
 #' # If you want to check a specific plot, use plot =
 #' dox_resid(LogStrength~Brand*Water, Towels2, plot = 2, bins = 40)
-dox_resid = function(formula, dataset, plot = "All", bins = 10){
+
+dox_resida = function(formula, dataset, plot = "All", bins = 10){
   formula=as.formula(formula)
   # give warnings if the experiment is not balanced
   counts_table <- dataset %>%
@@ -280,13 +281,18 @@ dox_resid = function(formula, dataset, plot = "All", bins = 10){
     # res qqplot
     residual_df = as.data.frame(anova_model$residuals)
     colnames(residual_df) = c("residual")
-    qqplot <- ggplot(residual_df, aes(sample = residual))
-    qqplot = qqplot + stat_qq() + stat_qq_line() +
-      labs(title = "QQ Plot for Error Terms", x = "Theoretical", y = "Sample")
+    qqplot1 <- ggplot(residual_df, aes(sample = residual))
+    qqplot1 = qqplot1 + stat_qq() #+ stat_qq_line() 
+    ty<-ggplot_build(qqplot1)
+    data<-ty$data[[1]]
+    df<-data.frame(x=data$y,y=data$x)
+    #reversing the standard qqplot
+    pl<-ggplot(df,aes(x=x,y=y))+geom_point()+geom_abline() +
+      labs(title = "QQ Plot for Error Terms", x = "Sample", y = "Theoretical")
     
     
     # res histogram
-    hist = ggplot(residual_df, aes(x=residual)) + geom_histogram(bins=bins, fill="lightblue")+ labs(title="Histogram for Error Terms")
+    hist1 = ggplot(residual_df, aes(x=residual)) + geom_histogram(bins=bins, fill="lightblue")+ labs(title="Histogram for Error Terms")
   }
   # split-plot design
   else{
@@ -377,7 +383,7 @@ dox_resid = function(formula, dataset, plot = "All", bins = 10){
     resids<- dataset[[y]]- fits
     #creating a dataframe with the residuals and fitted values
     aov_data = data.frame(fits,resids)
-    print(aov_data)
+    #print(aov_data)
     # res vs fit
     residual_fitted = ggplot(aov_data,aes(x = fits, y = resids)) +
       geom_point() +
@@ -391,19 +397,23 @@ dox_resid = function(formula, dataset, plot = "All", bins = 10){
     # res qqplot
     residual_df = as.data.frame(resids)
     colnames(residual_df) = c("residual")
-    qqplot <- ggplot(residual_df, aes(sample = residual))
-    qqplot = qqplot + stat_qq() + stat_qq_line() +
-      labs(title = "QQ Plot for Error Terms", x = "Theoretical", y = "Sample")
-    
+    qqplot1 <- ggplot(residual_df, aes(sample = residual))
+    qqplot1 = qqplot1 + stat_qq() #+ stat_qq_line() 
+    ty<-ggplot_build(qqplot1)
+    data<-ty$data[[1]]
+    df<-data.frame(x=data$y,y=data$x)
+    #reversing the standard qqplot
+    pl<-ggplot(df,aes(x=x,y=y))+geom_point()+geom_abline() +
+      labs(title = "QQ Plot for Error Terms", x = "Sample", y = "Theoretical")
     # res histogram
-    hist = ggplot(residual_df, aes(x=residual)) + geom_histogram(bins=bins, fill="lightblue")+ labs(title="Histogram for Error Terms")
+    hist1 = ggplot(residual_df, aes(x=residual)) + geom_histogram(bins=bins, fill="lightblue")+ labs(title="Histogram for Error Terms")
     
   }
   
   if ({{plot}} == "All")
-  {grid.arrange(qqplot, hist, residual_fitted, residual_order, ncol=2)}
-  else if({{plot}} == 1) {qqplot}
-  else if({{plot}} == 2) {hist}
+  {grid.arrange(pl, hist1, residual_fitted, residual_order, ncol=2)}
+  else if({{plot}} == 1) {pl}
+  else if({{plot}} == 2) {hist1}
   else if({{plot}} == 3) {residual_fitted}
   else {residual_order}
   
