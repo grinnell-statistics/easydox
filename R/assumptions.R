@@ -246,7 +246,6 @@ dox_table = function(formula, dataset){
 #' Towels_copy = dox_resid(LogStrength~Brand*Water, Towels2, model_name="model1")
 #' # If you want to check a specific plot, use plot =
 #' dox_resid(LogStrength~Brand*Water, Towels2, plot = 2, bins = 40)
-
 dox_resid = function(formula, dataset, plot = "All", bins = 10){
   formula=as.formula(formula)
   # give warnings if the experiment is not balanced
