@@ -5,7 +5,7 @@ When you analyze and visualize your experiments, are you always bored with creat
 ```
 # install.packages("devtools")
 # install.packages("gridExtra")
-devtools::install_github("HuandongChang/easydox")
+devtools::install_github("grinnell-statistics/easydox")
 ```
 
 # Motivation
@@ -117,4 +117,6 @@ You can find a complete example
 # References
 Tanaka, Emi, and Dewi Amaliah. "Current state and prospects of R-packages for the design of experiments." arXiv preprint arXiv:2206.07532 (2022).
 
+# Developmental Credits
+Huangdong Chang, Shonda Kuiper, Ankur Roy
 
