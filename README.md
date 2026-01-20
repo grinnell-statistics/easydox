@@ -29,7 +29,7 @@ dox_table = function(y~x1+x2+x3+x4, dataset)
 ```
 
 
-2) normally distributed residuals \& independent and identically distributed observations
+2) normally distributed residuals \& independent and identically distributed observations. This works for split plot designs as well.
 ```
 dox_resid = function(anova_formula, dataset, plot = "All", bins = 30)
 
@@ -59,6 +59,10 @@ dox_aov = function(anova_formula, dataset)
 # Confidence Intervals using Fisher Least Significant Difference (LSD), 
 # Bonferroni Significant Difference (BSD), and Tukey Honest Significant Difference (HSD)
 dox_pairs = function(y~x, dataset, alpha = 0.05, method = "All")
+
+# ANOVA Table along with residuals and fitted values specifically for SPLIT_PLOT designs
+dox_split_aov(model_formula,dataset)
+
 ```
 
 
