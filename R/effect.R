@@ -211,68 +211,97 @@ dox_main = function(formula, dataset, label="Mean", text_size=12, ylim){
 #' # If you want the label to be effect and have a larger size for the x-axis
 #' dox_inter(LogStrength ~ Brand + Water, Towels2, label="Effect", text_size = 14)
 dox_inter = function(formula, dataset, label="Mean", text_size = 12){
-  formula=as.formula(formula)
-  response = all.vars(formula)[1]
-  x1 = all.vars(formula)[2]
-  x2 = all.vars(formula)[3]
-
-  if(is.numeric(dataset[[x1]])){
-    error_message = paste("Variable \"", x1, "\" needs to be a factor. Currently numeric.")
-    stop(error_message)
+  #formula=as.formula(formula)
+  #response = all.vars(formula)[1]
+  #x1 = all.vars(formula)[2]
+  #x2 = all.vars(formula)[3]
+  vars<- all.vars(formula)
+  response<-vars[1]
+  term_labels<- terms(formula,keep.order=TRUE)
+  c<-attr(term_labels,"term.labels")
+  int <- list()
+  err<- list()
+  main<-vector()
+  for (item in c){
+    if (grepl(":",item)){
+      int[[item]]<- strsplit(item,":")[[1]]
+    } else if (grepl("Error\\(",item)){
+      t<-gsub("^Error\\(|\\)$", "", item)
+      parts<- strsplit(t,"/")[[1]]
+      before <- unlist(strsplit(parts[1], "\\*"))
+      after <- gsub("as.factor\\((.*)\\)", "\\1", parts[2])
+      err[[item]] <- list(
+        before = before,
+        after  = after
+      )
+      
+    } else{
+      main<- append(main,item)
+    }
   }
-
-  if(is.numeric(dataset[[x2]])){
-    error_message = paste("Variable \"", x2, "\" needs to be a factor. Currently numeric.")
-    stop(error_message)
+  p<-vector()
+  pairs <- t(combn(main, 2))
+  for (index in seq_along(main)){
+    x1<-pairs[index,][1]
+    x2<-pairs[index,][2]
+    if(is.numeric(dataset[[x1]])){
+      error_message = paste("Variable \"", x1, "\" needs to be a factor. Currently numeric.")
+      stop(error_message)
+    }
+    
+    if(is.numeric(dataset[[x2]])){
+      error_message = paste("Variable \"", x2, "\" needs to be a factor. Currently numeric.")
+      stop(error_message)
+    }
+    
+    
+    df <- dataset %>%
+      group_by(.data[[x1]], .data[[x2]]) %>%
+      summarise(Mean_Response = mean(.data[[response]]),.groups = 'drop')
+    
+    y_min = min(df$Mean_Response)
+    y_max = max(df$Mean_Response)
+    if (label=="Mean" | label =="Effect"){
+      y_max=y_max+(y_max-y_min)*0.15
+    }
+    # calculate means
+    x1_mean <- dataset %>%
+      group_by(.data[[x1]]) %>%
+      summarise(x1_mean = mean(.data[[response]]))
+    
+    x2_mean <- dataset %>%
+      group_by(.data[[x2]]) %>%
+      summarise(x2_mean = mean(.data[[response]]))
+    
+    inter_mean <- dataset %>%
+      group_by(.data[[x1]], .data[[x2]]) %>%
+      summarise(inter_mean = mean(.data[[response]]))
+    
+    u <- mean(dataset[[response]])
+    
+    # merge table
+    inter_mean = merge(inter_mean, x1_mean, by = x1, all.x = TRUE)
+    inter_mean = merge(inter_mean, x2_mean, by = x2, all.x = TRUE)
+    inter_mean$effect = inter_mean$inter_mean-inter_mean$x1_mean-inter_mean$x2_mean+u
+    interaction_effect = inter_mean$effect
+    
+    p1 = ggplot(df, aes(.data[[x1]], Mean_Response, color = .data[[x2]])) +
+      theme(axis.title=element_text(size=14,face="bold"),
+            axis.text.x = element_text(size = text_size))+
+      geom_line(aes(group = .data[[x2]])) +
+      geom_point() +
+      coord_cartesian(ylim = c(y_min, y_max))
+    
+    if(label=="Mean"){
+      p1 <- p1+geom_text(aes(label=ifelse(((abs(Mean_Response) > 1e4) | (abs(Mean_Response) < 0.01)), sprintf('%.4e', Mean_Response), round(Mean_Response,2))),vjust = -1)
+    }
+    
+    else if(label=="Effect"){
+      p1 <- p1+geom_text(aes(label=ifelse(((abs(interaction_effect) > 1e4) | (abs(interaction_effect) < 0.01)), sprintf('%.3e', interaction_effect), round(interaction_effect,4))),vjust = -1)
+    }
+    p<-append(p,p1)
   }
-
-
-  df <- dataset %>%
-    group_by(.data[[x1]], .data[[x2]]) %>%
-    summarise(Mean_Response = mean(.data[[response]]),.groups = 'drop')
-
-  y_min = min(df$Mean_Response)
-  y_max = max(df$Mean_Response)
-  if (label=="Mean" | label =="Effect"){
-    y_max=y_max+(y_max-y_min)*0.15
-  }
-
-
-  # calculate means
-  x1_mean <- dataset %>%
-    group_by(.data[[x1]]) %>%
-    summarise(x1_mean = mean(.data[[response]]))
-
-  x2_mean <- dataset %>%
-    group_by(.data[[x2]]) %>%
-    summarise(x2_mean = mean(.data[[response]]))
-
-  inter_mean <- dataset %>%
-    group_by(.data[[x1]], .data[[x2]]) %>%
-    summarise(inter_mean = mean(.data[[response]]))
-
-  u <- mean(dataset[[response]])
-
-  # merge table
-  inter_mean = merge(inter_mean, x1_mean, by = x1, all.x = TRUE)
-  inter_mean = merge(inter_mean, x2_mean, by = x2, all.x = TRUE)
-  inter_mean$effect = inter_mean$inter_mean-inter_mean$x1_mean-inter_mean$x2_mean+u
-  interaction_effect = inter_mean$effect
-
-  p1 = ggplot(df, aes(.data[[x1]], Mean_Response, color = .data[[x2]])) +
-    theme(axis.title=element_text(size=14,face="bold"),
-          axis.text.x = element_text(size = text_size))+
-    geom_line(aes(group = .data[[x2]])) +
-    geom_point() +
-    coord_cartesian(ylim = c(y_min, y_max))
-
-
-  if(label=="Mean"){
-    p1 <- p1+geom_text(aes(label=ifelse(((abs(Mean_Response) > 1e4) | (abs(Mean_Response) < 0.01)), sprintf('%.3e', Mean_Response), round(Mean_Response,4))),vjust = -1)
-  }
-
-  else if(label=="Effect"){
-    p1 <- p1+geom_text(aes(label=ifelse(((abs(interaction_effect) > 1e4) | (abs(interaction_effect) < 0.01)), sprintf('%.3e', interaction_effect), round(interaction_effect,4))),vjust = -1)
-  }
-  p1
+  p
+  
+  
 }
