@@ -210,7 +210,7 @@ dox_main = function(formula, dataset, label="Mean", text_size=12, ylim){
 #' dox_inter(LogStrength ~ Brand + Water, Towels2, label="Mean", text_size = 14)
 #' # If you want the label to be effect and have a larger size for the x-axis
 #' dox_inter(LogStrength ~ Brand + Water, Towels2, label="Effect", text_size = 14)
-dox_inter = function(formula, dataset, label="Mean", text_size = 12){
+dox_intera = function(formula, dataset, label="Mean", text_size = 12){
   #formula=as.formula(formula)
   #response = all.vars(formula)[1]
   #x1 = all.vars(formula)[2]
@@ -241,7 +241,7 @@ dox_inter = function(formula, dataset, label="Mean", text_size = 12){
   }
   p<-vector()
   pairs <- t(combn(main, 2))
-  for (index in seq_along(main)){
+  for (index in 1:dim(pairs)[1]){
     x1<-pairs[index,][1]
     x2<-pairs[index,][2]
     if(is.numeric(dataset[[x1]])){
@@ -301,7 +301,6 @@ dox_inter = function(formula, dataset, label="Mean", text_size = 12){
     }
     p<-append(p,p1)
   }
-  p
-  
+  p  
   
 }
