@@ -192,7 +192,7 @@ dox_aov=function(formula, dataset){
   formula=as.formula(formula)
   anova_model=aov(formula, dataset)
   if(length(summary(anova_model)) > 1){
-    stop("This function only works for ANOVA with one summary table. Designs like split-plot do not work.")
+    stop("This function only works for ANOVA with one summary table. Designs like split-plot do not work. For spli-plot designs use dox_split_aov()")
   }
 
   # give warnings if the experiment is not balanced
