@@ -281,13 +281,14 @@ dox_resid = function(formula, dataset, plot = "All", bins = 10){
     residual_df = as.data.frame(anova_model$residuals)
     colnames(residual_df) = c("residual")
     qqplot1 <- ggplot(residual_df, aes(sample = residual))
-    qqplot1 = qqplot1 + stat_qq() #+ stat_qq_line() 
-    ty<-ggplot_build(qqplot1)
-    data<-ty$data[[1]]
-    df<-data.frame(x=data$y,y=data$x)
-    #reversing the standard qqplot
-    pl<-ggplot(df,aes(x=x,y=y))+geom_point()+geom_abline() +
+    pl = qqplot1 + stat_qq() + stat_qq_line() +coord_flip() +
       labs(title = "QQ Plot for Error Terms", x = "Sample", y = "Theoretical")
+    #ty<-ggplot_build(qqplot1)
+    #data<-ty$data[[1]]
+    #df<-data.frame(x=data$y,y=data$x)
+    #reversing the standard qqplot
+    #pl<-ggplot(df,aes(x=x,y=y))+geom_point()+geom_abline() +
+     # labs(title = "QQ Plot for Error Terms", x = "Sample", y = "Theoretical")
     
     
     # res histogram
@@ -397,13 +398,14 @@ dox_resid = function(formula, dataset, plot = "All", bins = 10){
     residual_df = as.data.frame(resids)
     colnames(residual_df) = c("residual")
     qqplot1 <- ggplot(residual_df, aes(sample = residual))
-    qqplot1 = qqplot1 + stat_qq() #+ stat_qq_line() 
-    ty<-ggplot_build(qqplot1)
-    data<-ty$data[[1]]
-    df<-data.frame(x=data$y,y=data$x)
-    #reversing the standard qqplot
-    pl<-ggplot(df,aes(x=x,y=y))+geom_point()+geom_abline() +
+    pl = qqplot1 + stat_qq() + stat_qq_line() +
       labs(title = "QQ Plot for Error Terms", x = "Sample", y = "Theoretical")
+    #ty<-ggplot_build(qqplot1)
+    #data<-ty$data[[1]]
+    #df<-data.frame(x=data$y,y=data$x)
+    #reversing the standard qqplot
+    #pl<-ggplot(df,aes(x=x,y=y))+geom_point()+geom_abline() +
+      #labs(title = "QQ Plot for Error Terms", x = "Sample", y = "Theoretical")
     # res histogram
     hist1 = ggplot(residual_df, aes(x=residual)) + geom_histogram(bins=bins, fill="lightblue")+ labs(title="Histogram for Error Terms")
     
