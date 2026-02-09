@@ -2,6 +2,7 @@
 
 export(dox_aov)
 export(dox_boxplot)
+export(dox_contrast)
 export(dox_inter)
 export(dox_main)
 export(dox_pairs)
