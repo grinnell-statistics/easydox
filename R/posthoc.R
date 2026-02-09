@@ -384,3 +384,119 @@ dox_pairs <- function(formula,dataset, alpha = 0.05, method = "All") {
     print(results_HSD)
   }
 }
+
+
+
+#'Checking for contrasts and comparing between different treatment levels
+#' This function checks for contrasts between a pair or more set of different treatment level configurations
+#' mosaic library shoudl be installed and loaded
+#' dox_contrast(Time~Bulb, dataset=Lightbulb)
+#' @export                     
+dox_contrast <- function(formula,dataset, alpha = 0.05, method = "All") {
+  mat<-NULL
+  repeat{
+    formula=as.formula(formula)
+    # Get the string version
+    target_str = all.vars(formula)[1]
+    treatment_str = all.vars(formula)[2]
+    
+    alpha_str = deparse(substitute(alpha))
+    legend_str = paste("p-value < ", alpha_str)
+    
+    formula_str <- paste(target_str, "~", treatment_str)
+    formula_obj <- as.formula(formula_str)
+    anova_res <- aov(formula_obj, data = dataset)
+    
+    mse <- summary(anova_res)[[1]]["Mean Sq"][[1]][2] #mean error
+    
+    # Get the levels of the treatment variable
+    treatment_levels <- unique(dataset[[treatment_str]])
+    treatment_levels=as.character(treatment_levels)
+    
+    
+    
+    cat(paste0("There are ", length(treatment_levels)," coefficients possible\n"))
+    
+    print(treatment_levels)
+    cat(paste0("Enter the coefficients in the form of a vector e.g., c(1,0,-1)\n"))
+    input=readline();
+    coeffs <- eval(parse(text = input)) # taking the coeffs input as a vector
+    #coeffs <- as.numeric(strsplit(input,"\\s+")[[1]])
+    #coeffs=c(1,1,-1,-1)
+    if (length(coeffs) != length(treatment_levels)){
+      stop("Check the number of coefficient arguments you added.Exiting!! Restart\n")
+    }
+    cat("The mean values of the different treatment levels are:\n")
+    print(mean)
+    cdot=coeffs%*%mean
+    
+    
+    if (sum(coeffs)==0){
+      print("The given set of coefficients are permitted")
+    } else {
+      stop("Check the set of coefficients. They do not add to zero. Exiting!! Restart\n")
+    }
+    x<-favstats(formula ,data=dataset)
+    mean<-x[["mean"]]
+    n<-x[["n"]]
+    cat(paste0("Going ahead with t-statistic and p-value calculation\n"))
+    Sys.sleep(1)
+    coeff_sq=coeffs**2
+    inv_n=1/n
+    
+    cross_term<- coeff_sq%*%inv_n
+    t = cdot/(sqrt(mse*cross_term))
+    p<- 2*pt(t,sum(n-1))
+    
+    cat("Calculating confidence intervals\n")
+    Sys.sleep(1)
+    low_c<-cdot + qt(alpha/2,sum(n-1))*sqrt(mse*cross_term)
+    upp_c<-cdot + qt(1-alpha/2,sum(n-1))*sqrt(mse*cross_term)
+    
+    row_entry<-rbind(matrix(coeffs,nrow=length(coeffs)),t,p,low_c,upp_c)
+    mat <- cbind(mat, row_entry)
+    answer <- tolower(trimws(readline(prompt = "Do you want to run again? (y/n): ")))
+    
+    # Validate input
+    while (!answer %in% c("y", "n")) {
+      answer <- tolower(trimws(readline(prompt = "Please enter 'y' or 'n': ")))
+    }
+    
+    # Exit loop if user says no
+    if (answer == "n") {
+      cat("Exiting function.\n")
+      cat("The overall contrast matrix looks like \n")
+      Sys.sleep(2)
+      rownames(mat) <- c(paste0("c", 1:length(treatment_levels)), "t", "p","CI_l","CI_u")
+      print(mat) 
+      cat("** t stands for t-statistic, p for p-value, CI_l for lower confidence level and CI_u for upper confidence level\n")
+      break
+    } else {
+      #Asking the user to input the pair of coefficients to check for orthogonality
+      cat("Before entering the new set of coefficients, we would like to check for orthogonality. This would be most likely between a set you already entered and the one you are about to\n")
+      Sys.sleep(1)
+      #cat("Enter the pair of coefficient vectors to check for orthogonality before moving forward\n")
+      cat("Enter the first one\n")
+      input=readline();
+      coeffs1 <- eval(parse(text = input))
+      cat("Now enter the second one\n")
+      input= readline()
+      coeffs2 <- eval(parse(text = input))
+      res=coeffs1%*%coeffs2
+      if (res==0){
+        cat("They are orthogonal and compatible. You can continue\n")
+        Sys.sleep(1)
+      } else {
+        stop("Exiting. They are not orthogonal\n")
+      }
+      cat("Next iteration starting\n")
+      Sys.sleep(1)
+    }
+    
+  }
+  
+  
+  
+}              
+                       
+                      
