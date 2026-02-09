@@ -2,16 +2,16 @@
 % Please edit documentation in R/posthoc.R
 \name{dox_contrast}
 \alias{dox_contrast}
-\title{Checking for contrasts and comparing between different treatment levels
-This function checks for contrasts between a pair or more set of different treatment level configurations
-mosaic library shoudl be installed and loaded
-dox_contrast(Time~Bulb, dataset=Lightbulb)}
+\title{Checking for contrasts}
 \usage{
 dox_contrast(formula, dataset, alpha = 0.05, method = "All")
 }
+\arguments{
+\item{dataset}{the dataset that contains the experiment information}
+}
+\value{
+a html table and residuals,fitted values
+}
 \description{
-Checking for contrasts and comparing between different treatment levels
-This function checks for contrasts between a pair or more set of different treatment level configurations
-mosaic library shoudl be installed and loaded
-dox_contrast(Time~Bulb, dataset=Lightbulb)
+Checking for contrasts
 }
