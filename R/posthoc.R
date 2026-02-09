@@ -387,11 +387,14 @@ dox_pairs <- function(formula,dataset, alpha = 0.05, method = "All") {
 
 
 
-#'Checking for contrasts and comparing between different treatment levels
-#' This function checks for contrasts between a pair or more set of different treatment level configurations
-#' mosaic library shoudl be installed and loaded
-#' dox_contrast(Time~Bulb, dataset=Lightbulb)
-#' @export                     
+#' Checking for contrasts
+#'
+#' @param dataset the dataset that contains the experiment information
+#' @return a html table and residuals,fitted values
+#' @importFrom dplyr %>%
+#' @importFrom kableExtra kable kable_styling
+#' @importFrom mosaic
+#' @export                   
 dox_contrast <- function(formula,dataset, alpha = 0.05, method = "All") {
   mat<-NULL
   repeat{
