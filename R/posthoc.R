@@ -412,7 +412,9 @@ dox_contrast <- function(formula,dataset, alpha = 0.05, method = "All") {
     # Get the levels of the treatment variable
     treatment_levels <- unique(dataset[[treatment_str]])
     treatment_levels=as.character(treatment_levels)
-    
+    x<-favstats(formula ,data=dataset)
+    mean<-x[["mean"]]
+    n<-x[["n"]]
     
     
     cat(paste0("There are ", length(treatment_levels)," coefficients possible\n"))
@@ -436,9 +438,7 @@ dox_contrast <- function(formula,dataset, alpha = 0.05, method = "All") {
     } else {
       stop("Check the set of coefficients. They do not add to zero. Exiting!! Restart\n")
     }
-    x<-favstats(formula ,data=dataset)
-    mean<-x[["mean"]]
-    n<-x[["n"]]
+    
     cat(paste0("Going ahead with t-statistic and p-value calculation\n"))
     Sys.sleep(1)
     coeff_sq=coeffs**2
