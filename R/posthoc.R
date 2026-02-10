@@ -359,9 +359,9 @@ dox_pairs <- function(formula,dataset, alpha = 0.05, method = "All") {
   results_display = results %>%
     mutate_if(is.numeric, round, digits = 2)
 
-  results_LSD=results_display[,c("treatment1","treatment2","diff","LSD_ci_low","LSD_ci_high","LSD_no_zero")]
-  results_BSD=results_display[,c("treatment1","treatment2","diff","BSD_ci_low","BSD_ci_high","BSD_no_zero")]
-  results_HSD=results_display[,c("treatment1","treatment2","diff","HSD_ci_low","HSD_ci_high","HSD_no_zero")]
+  results_LSD=results_display[,c("treatment1","treatment2","diff","LSD_ci_low","LSD_ci_high","Reject H_0")]
+  results_BSD=results_display[,c("treatment1","treatment2","diff","BSD_ci_low","BSD_ci_high","Reject H_0")]
+  results_HSD=results_display[,c("treatment1","treatment2","diff","HSD_ci_low","HSD_ci_high","Reject H_0")]
 
   if (method == "LSD")
   {
@@ -398,7 +398,7 @@ dox_pairs <- function(formula,dataset, alpha = 0.05, method = "All") {
 dox_contrast <- function(formula,dataset,coeff, alpha = 0.05, method = "All") {
     mat<-NULL
     for (indx in 1:length(coeff)){
-      Sys.sleep(2)
+      #Sys.sleep(2)
       cat(paste0("Solving for the coefficient set ", indx, "\n"))
       coeffs= coeff[[indx]]
       formula=as.formula(formula)
@@ -429,7 +429,7 @@ dox_contrast <- function(formula,dataset,coeff, alpha = 0.05, method = "All") {
       #coeffs <- as.numeric(strsplit(input,"\\s+")[[1]])
       #coeffs=c(1,1,-1,-1)
       #coeffs=coeff
-      Sys.sleep(1)
+      #Sys.sleep(1)
       cat("The set of coefficients are:\n\n")
       print(coeffs)
       if (length(coeffs) != length(treatment_levels)){
@@ -447,7 +447,7 @@ dox_contrast <- function(formula,dataset,coeff, alpha = 0.05, method = "All") {
       }
       
       cat(paste0("Going ahead with t-statistic and p-value calculation\n"))
-      Sys.sleep(1)
+      #Sys.sleep(1)
       coeff_sq=coeffs**2
       inv_n=1/n
       
@@ -456,13 +456,13 @@ dox_contrast <- function(formula,dataset,coeff, alpha = 0.05, method = "All") {
       p<- 2*pt(t,sum(n-1))
       
       cat("Calculating confidence intervals\n\n\n")
-      Sys.sleep(1)
+      #Sys.sleep(1)
       low_c<-cdot + qt(alpha/2,sum(n-1))*sqrt(mse*cross_term)
       upp_c<-cdot + qt(1-alpha/2,sum(n-1))*sqrt(mse*cross_term)
       
-      row_entry<-rbind(matrix(coeffs,nrow=length(coeffs)),t,p,low_c,upp_c)
+      row_entry<-rbind(matrix(round(coeffs,2),nrow=length(coeffs)),round(t,2),round(p,2),round(low_c,2),round(upp_c,2))
       mat <- cbind(mat, row_entry)
-      Sys.sleep(1)
+      #Sys.sleep(1)
       
       
     }
