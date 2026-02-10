@@ -395,111 +395,96 @@ dox_pairs <- function(formula,dataset, alpha = 0.05, method = "All") {
 #' @importFrom kableExtra kable kable_styling
 #' @importFrom mosaic
 #' @export                   
-dox_contrast <- function(formula,dataset, alpha = 0.05, method = "All") {
-  mat<-NULL
-  repeat{
-    formula=as.formula(formula)
-    # Get the string version
-    target_str = all.vars(formula)[1]
-    treatment_str = all.vars(formula)[2]
-    
-    alpha_str = deparse(substitute(alpha))
-    legend_str = paste("p-value < ", alpha_str)
-    
-    formula_str <- paste(target_str, "~", treatment_str)
-    formula_obj <- as.formula(formula_str)
-    anova_res <- aov(formula_obj, data = dataset)
-    
-    mse <- summary(anova_res)[[1]]["Mean Sq"][[1]][2] #mean error
-    
-    # Get the levels of the treatment variable
-    treatment_levels <- unique(dataset[[treatment_str]])
-    treatment_levels=as.character(treatment_levels)
-    x<-favstats(formula ,data=dataset)
-    mean<-x[["mean"]]
-    n<-x[["n"]]
-    
-    
-    cat(paste0("There are ", length(treatment_levels)," coefficients possible\n"))
-    
-    print(treatment_levels)
-    cat(paste0("Enter the coefficients in the form of a vector e.g., c(1,0,-1)\n"))
-    input=readline();
-    coeffs <- eval(parse(text = input)) # taking the coeffs input as a vector
-    #coeffs <- as.numeric(strsplit(input,"\\s+")[[1]])
-    #coeffs=c(1,1,-1,-1)
-    if (length(coeffs) != length(treatment_levels)){
-      stop("Check the number of coefficient arguments you added.Exiting!! Restart\n")
-    }
-    cat("The mean values of the different treatment levels are:\n")
-    print(mean)
-    cdot=coeffs%*%mean
-    
-    
-    if (sum(coeffs)==0){
-      print("The given set of coefficients are permitted")
-    } else {
-      stop("Check the set of coefficients. They do not add to zero. Exiting!! Restart\n")
-    }
-    
-    cat(paste0("Going ahead with t-statistic and p-value calculation\n"))
-    Sys.sleep(1)
-    coeff_sq=coeffs**2
-    inv_n=1/n
-    
-    cross_term<- coeff_sq%*%inv_n
-    t = cdot/(sqrt(mse*cross_term))
-    p<- 2*pt(t,sum(n-1))
-    
-    cat("Calculating confidence intervals\n")
-    Sys.sleep(1)
-    low_c<-cdot + qt(alpha/2,sum(n-1))*sqrt(mse*cross_term)
-    upp_c<-cdot + qt(1-alpha/2,sum(n-1))*sqrt(mse*cross_term)
-    
-    row_entry<-rbind(matrix(coeffs,nrow=length(coeffs)),t,p,low_c,upp_c)
-    mat <- cbind(mat, row_entry)
-    answer <- tolower(trimws(readline(prompt = "Do you want to run again? (y/n): ")))
-    
-    # Validate input
-    while (!answer %in% c("y", "n")) {
-      answer <- tolower(trimws(readline(prompt = "Please enter 'y' or 'n': ")))
-    }
-    
-    # Exit loop if user says no
-    if (answer == "n") {
-      cat("Exiting function.\n")
-      cat("The overall contrast matrix looks like \n")
+dox_contrast <- function(formula,dataset,coeff, alpha = 0.05, method = "All") {
+    mat<-NULL
+    for (indx in 1:length(coeff)){
       Sys.sleep(2)
-      rownames(mat) <- c(paste0("c", 1:length(treatment_levels)), "t", "p","CI_l","CI_u")
-      print(mat) 
-      cat("** t stands for t-statistic, p for p-value, CI_l for lower confidence level and CI_u for upper confidence level\n")
-      break
-    } else {
-      #Asking the user to input the pair of coefficients to check for orthogonality
-      cat("Before entering the new set of coefficients, we would like to check for orthogonality. This would be most likely between a set you already entered and the one you are about to\n")
+      cat(paste0("Solving for the coefficient set ", indx, "\n"))
+      coeffs= coeff[[indx]]
+      formula=as.formula(formula)
+      # Get the string version
+      target_str = all.vars(formula)[1]
+      treatment_str = all.vars(formula)[2]
+      alpha_str = deparse(substitute(alpha))
+      legend_str = paste("p-value < ", alpha_str)
+      
+      formula_str <- paste(target_str, "~", treatment_str)
+      formula_obj <- as.formula(formula_str)
+      anova_res <- aov(formula_obj, data = dataset)
+      
+      mse <- summary(anova_res)[[1]]["Mean Sq"][[1]][2] #mean error
+      
+      # Get the levels of the treatment variable
+      treatment_levels <- unique(dataset[[treatment_str]])
+      treatment_levels=as.character(treatment_levels)
+      x<-favstats(formula ,data=dataset)
+      mean_data<-x[["mean"]]
+      n<-x[["n"]]
+      cat(paste0("There are ", length(treatment_levels)," coefficients possible\n"))
+      cat("The treatment levels are:\n")
+      print(treatment_levels)
+      #cat(paste0("Enter the coefficients in the form of a vector e.g., c(1,0,-1)\n"))
+      #input=readline();
+      #coeffs <- eval(parse(text = input)) # taking the coeffs input as a vector
+      #coeffs <- as.numeric(strsplit(input,"\\s+")[[1]])
+      #coeffs=c(1,1,-1,-1)
+      #coeffs=coeff
       Sys.sleep(1)
-      #cat("Enter the pair of coefficient vectors to check for orthogonality before moving forward\n")
-      cat("Enter the first one\n")
-      input=readline();
-      coeffs1 <- eval(parse(text = input))
-      cat("Now enter the second one\n")
-      input= readline()
-      coeffs2 <- eval(parse(text = input))
-      res=coeffs1%*%coeffs2
-      if (res==0){
-        cat("They are orthogonal and compatible. You can continue\n")
-        Sys.sleep(1)
-      } else {
-        stop("Exiting. They are not orthogonal\n")
+      cat("The set of coefficients are:\n\n")
+      print(coeffs)
+      if (length(coeffs) != length(treatment_levels)){
+        stop("Check the number of coefficient arguments you added.Exiting!! Restart\n")
       }
-      cat("Next iteration starting\n")
+      cat("The mean values of the different treatment levels are:\n")
+      print(mean_data)
+      cdot=coeffs%*%mean_data
+      
+      
+      if (sum(coeffs)==0){
+        cat("The given set of coefficients are permitted")
+      } else {
+        stop("Check the set of coefficients. They do not add to zero. Exiting!! Restart\n")
+      }
+      
+      cat(paste0("Going ahead with t-statistic and p-value calculation\n"))
       Sys.sleep(1)
+      coeff_sq=coeffs**2
+      inv_n=1/n
+      
+      cross_term<- coeff_sq%*%inv_n
+      t = cdot/(sqrt(mse*cross_term))
+      p<- 2*pt(t,sum(n-1))
+      
+      cat("Calculating confidence intervals\n\n\n")
+      Sys.sleep(1)
+      low_c<-cdot + qt(alpha/2,sum(n-1))*sqrt(mse*cross_term)
+      upp_c<-cdot + qt(1-alpha/2,sum(n-1))*sqrt(mse*cross_term)
+      
+      row_entry<-rbind(matrix(coeffs,nrow=length(coeffs)),t,p,low_c,upp_c)
+      mat <- cbind(mat, row_entry)
+      Sys.sleep(1)
+      
+      
     }
-    
-  }
-  
-  
-  
-}              
+    rownames(mat)<- c(paste0("c", 1:length(treatment_levels)), "t", "p","CI_l","CI_u")
+    cat("The overall contrast matrix with statistic values is\n\n")
+    print(mat)
+    cat("**  t stands for t-statistic, p for the p-value at the given alpha, CI_l for lower confidence level and CI_u for upper confidence level\n\n ")
+    #Checking for orthogonality
+    pairs<- combn(coeff,2,simplify = FALSE)
+    #print(pairs[[1]][1])
+    #print(pairs[[1]][2])
+    for (i in 1:length(pairs)){
+      x <- unlist(pairs[[i]])
+      res<-x[1:(length(x)/2)]%*%x[(length(x)/2+1):length(x)]
+      if (res==0){
+        cat(paste0("The pair of coefficients ",pairs[[i]][1]," and ",pairs[[i]][2]," are orthogonal\n\n"))
+      } else {
+        cat(paste0("The pair of coefficients ",pairs[[i]][1]," and ",pairs[[i]][2]," are not orthogonal. Check please!\n\n"))
+        
+      }
+      
+    }
+  }           
                        
                       
