@@ -4,7 +4,7 @@
 \alias{dox_contrast}
 \title{Checking for contrasts}
 \usage{
-dox_contrast(formula, dataset, alpha = 0.05, method = "All")
+dox_contrast(formula, dataset, coeff, alpha = 0.05, method = "All")
 }
 \arguments{
 \item{dataset}{the dataset that contains the experiment information}
