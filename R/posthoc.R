@@ -441,7 +441,7 @@ dox_contrast <- function(formula,dataset,coeff, alpha = 0.05, method = "All") {
       
       
       if (sum(coeffs)==0){
-        cat("The given set of coefficients are permitted")
+        cat("The given set of coefficients are permitted\n")
       } else {
         stop("Check the set of coefficients. They do not add to zero. Exiting!! Restart\n")
       }
