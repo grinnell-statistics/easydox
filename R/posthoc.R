@@ -430,13 +430,13 @@ dox_contrast <- function(formula,dataset,coeff, alpha = 0.05, method = "All") {
       #coeffs=c(1,1,-1,-1)
       #coeffs=coeff
       #Sys.sleep(1)
-      cat("The set of coefficients are:\n\n")
+      cat("The set of coefficients are:\n")
       print(coeffs)
       if (length(coeffs) != length(treatment_levels)){
         stop("Check the number of coefficient arguments you added.Exiting!! Restart\n")
       }
-      cat("The mean values of the different treatment levels are:\n")
-      print(mean_data)
+      #cat("The mean values of the different treatment levels are:\n")
+      #print(mean_data)
       cdot=coeffs%*%mean_data
       
       
@@ -450,23 +450,28 @@ dox_contrast <- function(formula,dataset,coeff, alpha = 0.05, method = "All") {
       #Sys.sleep(1)
       coeff_sq=coeffs**2
       inv_n=1/n
-      
+
       cross_term<- coeff_sq%*%inv_n
       t = cdot/(sqrt(mse*cross_term))
-      p<- 2*pt(t,sum(n-1))
+      p<- 2*pt(abs(t),sum(n-1),lower.tail = FALSE)
+      #print(cdot)
       
       cat("Calculating confidence intervals\n\n\n")
       #Sys.sleep(1)
       low_c<-cdot + qt(alpha/2,sum(n-1))*sqrt(mse*cross_term)
       upp_c<-cdot + qt(1-alpha/2,sum(n-1))*sqrt(mse*cross_term)
       
-      row_entry<-rbind(matrix(round(coeffs,2),nrow=length(coeffs)),round(t,2),round(p,2),round(low_c,2),round(upp_c,2))
-      mat <- cbind(mat, row_entry)
+      row_entry<-rbind(matrix(round(coeffs,2),nrow=length(coeffs)),round(cdot,2),round(t,2),signif(p,2),round(low_c,2),round(upp_c,2))
+      if (is.null(mat)){
+        mat<- row_entry
+      } else {
+        mat<- cbind(mat,row_entry)
+      }
       #Sys.sleep(1)
       
       
     }
-    rownames(mat)<- c(paste0("c", 1:length(treatment_levels)), "t", "p","CI_l","CI_u")
+    rownames(mat)<- c(paste0("c", 1:length(treatment_levels)),"Contrast", "t", "p","CI_l","CI_u")
     cat("The overall contrast matrix with statistic values is\n\n")
     print(mat)
     cat("**  t stands for t-statistic, p for the p-value at the given alpha, CI_l for lower confidence level and CI_u for upper confidence level\n\n ")
@@ -485,6 +490,5 @@ dox_contrast <- function(formula,dataset,coeff, alpha = 0.05, method = "All") {
       }
       
     }
-  }           
-                       
-                      
+  }
+ 
