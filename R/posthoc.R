@@ -414,7 +414,7 @@ dox_contrast <- function(formula,dataset,coeff, alpha = 0.05, method = "All") {
         
       #formula_str <- paste(target_str, "~", treatment_str)
       #formula_obj <- as.formula(formula_str)
-      anova_res <- aov(formula_obj, data = dataset)
+      anova_res <- aov(formula, data = dataset)
       
       mse <- summary(anova_res)[[1]]["Mean Sq"][[1]][2] #mean error
       cat(paste0("MSE:",mse,"\n"))
