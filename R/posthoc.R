@@ -403,17 +403,21 @@ dox_contrast <- function(formula,dataset,coeff, alpha = 0.05, method = "All") {
       coeffs= coeff[[indx]]
       formula=as.formula(formula)
       # Get the string version
-      target_str = all.vars(formula)[1]
+      #target_str = all.vars(formula)[1]
       treatment_str = all.vars(formula)[2]
       alpha_str = deparse(substitute(alpha))
       legend_str = paste("p-value < ", alpha_str)
-      
-      formula_str <- paste(target_str, "~", treatment_str)
-      formula_obj <- as.formula(formula_str)
+      if (!is.factor(dataset[[treatment_str]])){
+        warning("The treatment variable is not a factor. Converting to a factor.")
+        dataset[[treatment_str]] <- as.factor(dataset[[treatment_str]])
+      }
+        
+      #formula_str <- paste(target_str, "~", treatment_str)
+      #formula_obj <- as.formula(formula_str)
       anova_res <- aov(formula_obj, data = dataset)
       
       mse <- summary(anova_res)[[1]]["Mean Sq"][[1]][2] #mean error
-      
+      cat(paste0("MSE:",mse,"\n"))
       # Get the levels of the treatment variable
       treatment_levels <- unique(dataset[[treatment_str]])
       treatment_levels=as.character(treatment_levels)
