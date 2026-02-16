@@ -282,7 +282,7 @@ dox_resid = function(formula, dataset, plot = "All", bins = 10){
     colnames(residual_df) = c("residual")
     qqplot1 <- ggplot(residual_df, aes(sample = residual))
     pl = qqplot1 + stat_qq() + stat_qq_line() +coord_flip() +
-      labs(title = "QQ Plot for Error Terms", x = "Sample", y = "Theoretical")
+      labs(title = "QQ Plot for Error Terms", y = "Sample", x = "Theoretical")
     #ty<-ggplot_build(qqplot1)
     #data<-ty$data[[1]]
     #df<-data.frame(x=data$y,y=data$x)
@@ -399,7 +399,7 @@ dox_resid = function(formula, dataset, plot = "All", bins = 10){
     colnames(residual_df) = c("residual")
     qqplot1 <- ggplot(residual_df, aes(sample = residual))
     pl = qqplot1 + stat_qq() + stat_qq_line() + coord_flip()+
-      labs(title = "QQ Plot for Error Terms", x = "Sample", y = "Theoretical")
+      labs(title = "QQ Plot for Error Terms", y = "Sample", x = "Theoretical")
     #ty<-ggplot_build(qqplot1)
     #data<-ty$data[[1]]
     #df<-data.frame(x=data$y,y=data$x)
