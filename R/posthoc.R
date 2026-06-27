@@ -22,7 +22,7 @@ dox_split_aov=function(formula, dataset){
   
   if(!all(counts_table$n[1] == counts_table$n)){
     warning("Your experiment is not balanced and the result can be misleading. The aov() function used here conducts Type I ANOVA, which only works for balanced design. We recommend using Anova() in the 'car' package to conduct Type II/III ANOVA.")
-    print(counts_table)
+    #print(counts_table)
   }
   tab_len<- length(summary(model_1))
   res_df<- do.call(data.frame,summary(model_1)[[tab_len]])
@@ -47,7 +47,7 @@ dox_split_aov=function(formula, dataset){
     row_list<-summary(model_1)[[index]]
     row_df<- do.call(data.frame,row_list)
     F_df<- row_df$Mean.Sq/nested_df$Mean.Sq
-    print(names(row_df))
+    #print(names(row_df))
     p_df<- pf(F_df,row_df$Df,DF_res,lower.tail = FALSE)
     rname<-rownames(row_df)
     row_df$F.value<- F_df
@@ -162,16 +162,15 @@ dox_split_aov=function(formula, dataset){
   
   
   #computing the fitted values and the residuals of the model
-  dataset$fits <-  rowSums(dataset[,cols])+gm
-  dataset$residuals<- dataset[[y]]- dataset$fits
-  list(res=dataset$residuals,
-       fits=dataset$fits)
+  #dataset$fits <-  rowSums(dataset[,cols])+gm
+  #dataset$residuals<- dataset[[y]]- dataset$fits
+  #list(res=dataset$residuals,
+   #    fits=dataset$fits)
   
   
   
   
 }
-
 
 
 
