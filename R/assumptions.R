@@ -172,27 +172,27 @@ dox_table = function(formula, dataset){
   x2 = all.vars(formula)[3]
   x3 = all.vars(formula)[4]
   x4 = all.vars(formula)[5]
-
-  if(is.numeric(dataset[[x1]])){
+  
+  if(!is.na(x1) && is.numeric(dataset[[x1]])){
     error_message = paste("Variable \"", x1, "\" needs to be a factor. Currently numeric.")
     stop(error_message)
   }
-
-  if(is.numeric(dataset[[x2]])){
+  
+  if(!is.na(x2) && is.numeric(dataset[[x2]])){
     error_message = paste("Variable \"", x2, "\" needs to be a factor. Currently numeric.")
     stop(error_message)
   }
-
-  if(is.numeric(dataset[[x3]])){
+  
+  if(!is.na(x3) && is.numeric(dataset[[x3]])){
     error_message = paste("Variable \"", x3, "\" needs to be a factor. Currently numeric.")
     stop(error_message)
   }
-
-  if(is.numeric(dataset[[x4]])){
+  
+  if(!is.na(x4) && is.numeric(dataset[[x4]])){
     error_message = paste("Variable \"", x4, "\" needs to be a factor. Currently numeric.")
     stop(error_message)
   }
-
+  
   if (is.na(x2)){
     data_groupby = group_by(dataset, .data[[x1]])
   }
@@ -205,23 +205,25 @@ dox_table = function(formula, dataset){
   else{
     data_groupby = group_by(dataset, .data[[x1]], .data[[x2]],.data[[x3]],.data[[x4]])
   }
-
+  
   summary_table = data_groupby %>%
     summarise(StandardDeviation=sd(.data[[response]]),
               SampleSize=n(), .groups = 'drop')
   summary_df = as.data.frame(summary_table)
   summary_df = summary_df %>%
     mutate_if(is.numeric, round, digits = 2)
-
-
+  
+  
   reactable(summary_df,defaultColDef = colDef(cell = data_bars(summary_df, box_shadow = TRUE, round_edges = TRUE,
                                                                text_position = "outside-base",
                                                                fill_color = c("#40c9ff"),
                                                                background = "#e5e5e5",fill_gradient = FALSE)))
-
+  
   #as.datatable(formattable(summary_df, list(SampleSize = color_bar("#80ed99"),GroupVariance = color_bar("#f28482"))))
-
+  
 }
+
+
 
 
 #' Residual vs fit/order plots
