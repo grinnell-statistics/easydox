@@ -255,59 +255,59 @@ dox_pairs <- function(formula,dataset, alpha = 0.05, method = "All") {
   # Get the string version
   target_str = all.vars(formula)[1]
   treatment_str = all.vars(formula)[2]
-
+  
   alpha_str = deparse(substitute(alpha))
   legend_str = paste("p-value < ", alpha_str)
-
+  
   # Compute ANOVA to obtain MSE
   # response <- parse_expr(quo_name(enquo(target)))
   # x <- parse_expr(quo_name(enquo(treatment)))
   # anova_res=eval_tidy(expr(aov(!!response ~ !!x, data = dataset)))
-
+  
   # str aov
   formula_str <- paste(target_str, "~", treatment_str)
   formula_obj <- as.formula(formula_str)
   anova_res <- aov(formula_obj, data = dataset)
-
+  
   mse <- summary(anova_res)[[1]]["Mean Sq"][[1]][2]
-
+  
   # Get the levels of the treatment variable
   treatment_levels <- unique(dataset[[treatment_str]])
   treatment_levels=as.character(treatment_levels)
-
-
+  
+  
   # Obtain all pairs
   pairs <- as.data.frame(t(combn(treatment_levels, 2)))
   colnames(pairs) = c("treatment1","treatment2")
-
+  
   results <- list()
   for (i in 1:nrow(pairs)) {
     treatment1 <- pairs[i, "treatment1"]
     treatment2 <- pairs[i, "treatment2"]
-
+    
     # Extract two treatment groups
-    data1 <- dataset[dataset[[treatment_str]] == treatment1,target_str]
-    data2 <- dataset[dataset[[treatment_str]] == treatment2,target_str]
-
+    data1 <- dataset[dataset[[treatment_str]] == treatment1,target_str,drop=TRUE]
+    data2 <- dataset[dataset[[treatment_str]] == treatment2,target_str,drop=TRUE]
+    
     # Compute the sample sizes and means for the two treatment groups
     n1 <- length(data1)
     n2 <- length(data2)
     mean1 <- mean(data1)
     mean2 <- mean(data2)
-
+    
     # Compute the margin of error and confidence interval
     # LSD
     LSD_me <- qt(alpha/2, nrow(dataset) - length(treatment_levels), lower.tail = FALSE) * sqrt(mse * (1/n1 + 1/n2))
     LSD_ci <- c(mean1 - mean2 - LSD_me, mean1 - mean2 + LSD_me)
-
+    
     # BSD
     BSD_me <- qt(alpha/2/nrow(pairs), nrow(dataset) - length(treatment_levels), lower.tail = FALSE) * sqrt(mse * (1/n1 + 1/n2))
     BSD_ci <- c(mean1 - mean2 - BSD_me, mean1 - mean2 + BSD_me)
-
+    
     # Tukey HSD
     HSD_me <- qtukey(alpha,length(treatment_levels),nrow(dataset)-length(treatment_levels), lower.tail = FALSE)*sqrt(mse*(1/n1+1/n2))/sqrt(2)
     HSD_ci <- c(mean1 - mean2 - HSD_me, mean1 - mean2 + HSD_me)
-
+    
     # Store the results
     results[[i]] <- data.frame(
       treatment1 = treatment1,
@@ -321,17 +321,17 @@ dox_pairs <- function(formula,dataset, alpha = 0.05, method = "All") {
       HSD_ci_high = HSD_ci[2]
     )
   }
-
+  
   # Combine the results into a data frame
   results <- bind_rows(results)
   x_min = min(min(results$LSD_ci_low),min(results$BSD_ci_low),min(results$HSD_ci_low))
   x_max = max(max(results$LSD_ci_high),max(results$BSD_ci_high),max(results$HSD_ci_low))
-
+  
   # Add an indicator for statistical significance
   results$LSD_reject_H0 <- ifelse(results$LSD_ci_low > 0 | results$LSD_ci_high < 0, "yes", "no")
   results$BSD_reject_H0 <- ifelse(results$BSD_ci_low > 0 | results$BSD_ci_high < 0, "yes", "no")
   results$HSD_reject_H0 <- ifelse(results$HSD_ci_low > 0 | results$HSD_ci_high < 0, "yes", "no")
-
+  
   # Plot the confidence intervals
   LSD_plot = ggplot(results, aes(x = diff, y = paste(treatment1, treatment2), color = LSD_reject_H0)) +
     scale_color_manual(values = c("yes" = "red", "no" = "black")) +
@@ -339,29 +339,29 @@ dox_pairs <- function(formula,dataset, alpha = 0.05, method = "All") {
     geom_point(size = 1) +
     labs(x = "Confidence Interval", y = "LSD", color = legend_str) +
     xlim(x_min, x_max)
-
-
+  
+  
   BSD_plot = ggplot(results, aes(x = diff, y = paste(treatment1, treatment2), color = BSD_reject_H0)) +
     scale_color_manual(values = c("yes" = "red", "no" = "black")) +
     geom_errorbarh(aes(xmin = BSD_ci_low, xmax = BSD_ci_high), height = 0.3) +
     geom_point(size = 1) +
     labs(x = "Confidence Interval", y = "BSD", color = legend_str) +
     xlim(x_min, x_max)
-
+  
   HSD_plot = ggplot(results, aes(x = diff, y = paste(treatment1, treatment2), color = HSD_reject_H0)) +
     scale_color_manual(values = c("yes" = "red", "no" = "black")) +
     geom_errorbarh(aes(xmin = HSD_ci_low, xmax = HSD_ci_high), height = 0.3) +
     geom_point(size = 1) +
     labs(x = "Confidence Interval", y = "Tukey HSD", color = legend_str) +
     xlim(x_min, x_max)
-
+  
   results_display = results %>%
     mutate_if(is.numeric, round, digits = 2)
-
+  
   results_LSD=results_display[,c("treatment1","treatment2","diff","LSD_ci_low","LSD_ci_high","LSD_reject_H0")]
   results_BSD=results_display[,c("treatment1","treatment2","diff","BSD_ci_low","BSD_ci_high","BSD_reject_H0")]
   results_HSD=results_display[,c("treatment1","treatment2","diff","HSD_ci_low","HSD_ci_high","HSD_reject_H0")]
-
+  
   if (method == "LSD")
   {
     print(results_LSD)
@@ -383,7 +383,6 @@ dox_pairs <- function(formula,dataset, alpha = 0.05, method = "All") {
     print(results_HSD)
   }
 }
-
 
 
 #' Checking for contrasts
