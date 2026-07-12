@@ -165,7 +165,7 @@ dox_scatterplot = function(formula, dataset, color=NULL, facet = NULL, jitter = 
 #' # Note that "Run examples" won't work because
 #' # of calling the reactable package
 #' dox_table(LogStrength ~ Brand + Water, Towels2)
-dox_table = function(formula, dataset){
+dox_sd = function(formula, dataset){
   formula=as.formula(formula)
   response = all.vars(formula)[1]
   x1 = all.vars(formula)[2]
@@ -253,7 +253,7 @@ dox_resid = function(formula, dataset, plot = "All", bins = 10){
   # give warnings if the experiment is not balanced
   counts_table <- dataset %>%
     group_by(across(all.vars(formula)[-1])) %>%
-    summarise(n = n())
+    summarise(n = n(),.groups = "drop_last")
   
   if(!all(counts_table$n[1] == counts_table$n)){
     warning("Your experiment is not balanced and the result can be misleading. The aov() function used here conducts Type I ANOVA, which only works for balanced design. We recommend using Anova() in the 'car' package to conduct Type II/III ANOVA.")
@@ -264,7 +264,7 @@ dox_resid = function(formula, dataset, plot = "All", bins = 10){
   
   # not split-plot design
   if(!is.null(anova_model$residuals)){
-    print("Non SPLIT PLOT")
+    #print("Non SPLIT PLOT")
     fits  = anova_model$fitted.values
     resids  = anova_model$residuals
     
@@ -290,7 +290,7 @@ dox_resid = function(formula, dataset, plot = "All", bins = 10){
     #df<-data.frame(x=data$y,y=data$x)
     #reversing the standard qqplot
     #pl<-ggplot(df,aes(x=x,y=y))+geom_point()+geom_abline() +
-     # labs(title = "QQ Plot for Error Terms", x = "Sample", y = "Theoretical")
+    # labs(title = "QQ Plot for Error Terms", x = "Sample", y = "Theoretical")
     
     
     # res histogram
@@ -407,7 +407,7 @@ dox_resid = function(formula, dataset, plot = "All", bins = 10){
     #df<-data.frame(x=data$y,y=data$x)
     #reversing the standard qqplot
     #pl<-ggplot(df,aes(x=x,y=y))+geom_point()+geom_abline() +
-      #labs(title = "QQ Plot for Error Terms", x = "Sample", y = "Theoretical")
+    #labs(title = "QQ Plot for Error Terms", x = "Sample", y = "Theoretical")
     # res histogram
     hist1 = ggplot(residual_df, aes(x=residual)) + geom_histogram(bins=bins, fill="lightblue")+ labs(title="Histogram for Error Terms")
     
@@ -421,7 +421,6 @@ dox_resid = function(formula, dataset, plot = "All", bins = 10){
   else {residual_order}
   
 }
-
   
 
 
