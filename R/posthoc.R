@@ -18,7 +18,7 @@ dox_split_aov=function(formula, dataset){
   # give warnings if the experiment is not balanced
   counts_table <- dataset %>%
     group_by(across(all.vars(formula)[-1])) %>%
-    summarise(n = n())
+    summarise(n = n(),.groups = "drop_last")
   
   if(!all(counts_table$n[1] == counts_table$n)){
     warning("Your experiment is not balanced and the result can be misleading. The aov() function used here conducts Type I ANOVA, which only works for balanced design. We recommend using Anova() in the 'car' package to conduct Type II/III ANOVA.")
@@ -35,15 +35,17 @@ dox_split_aov=function(formula, dataset){
   F_nested_df<- nested_df$Mean.Sq/MS_res
   DF_nested_df<- nested_df$Df
   p_nested_df<- pf(F_nested_df,DF_nested_df,DF_res,lower.tail = FALSE)
-  nested_df[["Residuals","F.value"]]<- F_nested_df
-  nested_df[["Residuals","Pr..F."]]<- p_nested_df
+  #nested_df[["Residuals","F.value"]]<- F_nested_df
+  #nested_df[["Residuals","Pr..F."]]<- p_nested_df
+  nested_df$F.value<- F_nested_df
+  nested_df$Pr..F. <- p_nested_df
   rownames(nested_df)<- "Whole Plot Error"
   
   
   stack_df<-rbind(nested_df,res_df)
   
   # Finding out the F_statistic and p-value for the other whole plot and split plot variables
-  for (index in (tab_len-2):1){
+  for (index in rev(seq_len(tab_len-2))){
     row_list<-summary(model_1)[[index]]
     row_df<- do.call(data.frame,row_list)
     F_df<- row_df$Mean.Sq/nested_df$Mean.Sq
@@ -62,13 +64,19 @@ dox_split_aov=function(formula, dataset){
   
   stack_df[] <- lapply(stack_df, function(x) if(is.numeric(x)) round(x, 4) else x)
   
+  formatted <- format(stack_df, digits = 4)
+  formatted[is.na(stack_df)] <- ""
   
   
+  print(kable(formatted, align = 'r',
+        caption = "ANOVA Summary", escape = F, format.args = list(big.mark = ","))  %>%
+    kable_styling() %>%
+    row_spec(nrow(stack_df) - 1, hline_after = TRUE))
   
   
   #printing the ANOVA summary table from the stacked dataframe
-  print(kable(format(stack_df, digits = 4), align = 'r',
-        caption = "ANOVA Summary", escape = F, format.args = list(big.mark = ","))  %>% kable_styling())
+  # print(kable(format(stack_df, digits = 4), align = 'r',
+  #       caption = "ANOVA Summary", escape = F, format.args = list(big.mark = ","))  %>% kable_styling())
   
   
   #This part onwards deals with the calculation of the residuals and fitted values of any split plot model
@@ -174,7 +182,6 @@ dox_split_aov=function(formula, dataset){
 
 
 
-
 #' An ANOVA summary table with total DF & SS
 #'
 #' This function gives an ANOVA summary table with total degrees of freedom and sum of squares
@@ -193,35 +200,39 @@ dox_aov=function(formula, dataset){
   if(length(summary(anova_model)) > 1){
     stop("This function only works for ANOVA with one summary table. Designs like split-plot do not work. For spli-plot designs use dox_split_aov()")
   }
-
+  
   # give warnings if the experiment is not balanced
   counts_table <- dataset %>%
     group_by(across(all.vars(formula)[-1])) %>%
-    summarise(n = n())
-
+    summarise(n = n(),.groups = "drop_last")
+  
   if(!all(counts_table$n[1] == counts_table$n)){
     warning("Your experiment is not balanced and the result can be misleading. The aov() function used here conducts Type I ANOVA, which only works for balanced design. We recommend using Anova() in the 'car' package to conduct Type II/III ANOVA.")
     print(counts_table)
   }
-
-
+  
+  
   table <- summary(anova_model)[[1]]
   lastest_rownames = c(rownames(table),"Total")
-
-
+  
+  
   # Add extra row for sum of DF and SS
   extra_row <- c(sum(table$Df), sum(table[["Sum Sq"]]),NA,NA,NA)
   anova_results <- rbind(table, extra_row)
   rownames(anova_results) <- lastest_rownames
-  # options(knitr.kable.NA = '')
   # Create ANOVA summary table with kable
   # knitr::opts_chunk$set(
   #   out.width = "50%",
   #   out.height = "400px"
   # )
-  kable(format(anova_results, digits = 4), align = 'r',
-        caption = "ANOVA Summary", escape = F, format.args = list(big.mark = ","))  %>% kable_styling()
+  formatted <- format(anova_results, digits = 4)
+  formatted[is.na(anova_results)] <- ""
 
+  kable(formatted, align = 'r',
+        caption = "ANOVA Summary", escape = F, format.args = list(big.mark = ","))  %>%
+    kable_styling() %>%
+    row_spec(nrow(anova_results) - 1, hline_after = TRUE)
+  
   # output_list <- list(resid = anova_model$residuals)
   #
   # # Return the list
@@ -394,103 +405,110 @@ dox_pairs <- function(formula,dataset, alpha = 0.05, method = "All") {
 #' @importFrom mosaic
 #' @export                   
 dox_contrast <- function(formula,dataset,coeff, alpha = 0.05, method = "All") {
-    mat<-NULL
-    for (indx in 1:length(coeff)){
-      #Sys.sleep(2)
-      cat(paste0("Solving for the coefficient set ", indx, "\n"))
-      coeffs= coeff[[indx]]
-      formula=as.formula(formula)
-      # Get the string version
-      #target_str = all.vars(formula)[1]
-      treatment_str = all.vars(formula)[2]
-      alpha_str = deparse(substitute(alpha))
-      legend_str = paste("p-value < ", alpha_str)
-      if (!is.factor(dataset[[treatment_str]])){
-        warning("The treatment variable is not a factor. Converting to a factor.")
-        dataset[[treatment_str]] <- as.factor(dataset[[treatment_str]])
-      }
-        
-      #formula_str <- paste(target_str, "~", treatment_str)
-      #formula_obj <- as.formula(formula_str)
-      anova_res <- aov(formula, data = dataset)
-      
-      mse <- summary(anova_res)[[1]]["Mean Sq"][[1]][2] #mean error
-      cat(paste0("MSE:",mse,"\n"))
-      # Get the levels of the treatment variable
-      treatment_levels <- unique(dataset[[treatment_str]])
-      treatment_levels=as.character(treatment_levels)
-      x<-favstats(formula ,data=dataset)
-      mean_data<-x[["mean"]]
-      n<-x[["n"]]
-      cat(paste0("There are ", length(treatment_levels)," coefficients possible\n"))
-      cat("The treatment levels are:\n")
-      print(treatment_levels)
-      #cat(paste0("Enter the coefficients in the form of a vector e.g., c(1,0,-1)\n"))
-      #input=readline();
-      #coeffs <- eval(parse(text = input)) # taking the coeffs input as a vector
-      #coeffs <- as.numeric(strsplit(input,"\\s+")[[1]])
-      #coeffs=c(1,1,-1,-1)
-      #coeffs=coeff
-      #Sys.sleep(1)
-      cat("The set of coefficients are:\n")
-      print(coeffs)
-      if (length(coeffs) != length(treatment_levels)){
-        stop("Check the number of coefficient arguments you added.Exiting!! Restart\n")
-      }
-      #cat("The mean values of the different treatment levels are:\n")
-      #print(mean_data)
-      cdot=coeffs%*%mean_data
-      
-      
-      if (sum(coeffs)==0){
-        cat("The given set of coefficients are permitted\n")
-      } else {
-        stop("Check the set of coefficients. They do not add to zero. Exiting!! Restart\n")
-      }
-      
-      cat(paste0("Going ahead with t-statistic and p-value calculation\n"))
-      #Sys.sleep(1)
-      coeff_sq=coeffs**2
-      inv_n=1/n
-
-      cross_term<- coeff_sq%*%inv_n
-      t = cdot/(sqrt(mse*cross_term))
-      p<- 2*pt(abs(t),sum(n-1),lower.tail = FALSE)
-      #print(cdot)
-      
-      cat("Calculating confidence intervals\n\n\n")
-      #Sys.sleep(1)
-      low_c<-cdot + qt(alpha/2,sum(n-1))*sqrt(mse*cross_term)
-      upp_c<-cdot + qt(1-alpha/2,sum(n-1))*sqrt(mse*cross_term)
-      
-      row_entry<-rbind(matrix(round(coeffs,2),nrow=length(coeffs)),round(cdot,2),round(t,2),signif(p,2),round(low_c,2),round(upp_c,2))
-      if (is.null(mat)){
-        mat<- row_entry
-      } else {
-        mat<- cbind(mat,row_entry)
-      }
-      #Sys.sleep(1)
-      
-      
+  mat<-NULL
+  formula=as.formula(formula)
+  treatment_str = all.vars(formula)[2]
+  split_coeff<- setNames(as.list(seq_len(length(coeff))),paste0("C",seq_len(length(coeff))))
+  mod<-aov(formula,data=dataset)
+  split_arg <- setNames(list(split_coeff), treatment_str)
+  print(summary.aov(mod,split=split_arg))
+  
+  
+  for (indx in 1:length(coeff)){
+    #Sys.sleep(2)
+    cat(paste0("Solving for the coefficient set ", indx, "\n"))
+    coeffs= coeff[[indx]]
+    formula=as.formula(formula)
+    # Get the string version
+    #target_str = all.vars(formula)[1]
+    treatment_str = all.vars(formula)[2]
+    alpha_str = deparse(substitute(alpha))
+    legend_str = paste("p-value < ", alpha_str)
+    if (!is.factor(dataset[[treatment_str]])){
+      warning("The treatment variable is not a factor. Converting to a factor.")
+      dataset[[treatment_str]] <- as.factor(dataset[[treatment_str]])
     }
-    rownames(mat)<- c(paste0("c", 1:length(treatment_levels)),"Contrast", "t", "p","CI_l","CI_u")
-    cat("The overall contrast matrix with statistic values is\n\n")
-    print(mat)
-    cat("**  t stands for t-statistic, p for the p-value at the given alpha, CI_l for lower confidence level and CI_u for upper confidence level\n\n ")
-    #Checking for orthogonality
-    pairs<- combn(coeff,2,simplify = FALSE)
-    #print(pairs[[1]][1])
-    #print(pairs[[1]][2])
-    for (i in 1:length(pairs)){
-      x <- unlist(pairs[[i]])
-      res<-x[1:(length(x)/2)]%*%x[(length(x)/2+1):length(x)]
-      if (res==0){
-        cat(paste0("The pair of coefficients ",pairs[[i]][1]," and ",pairs[[i]][2]," are orthogonal\n\n"))
-      } else {
-        cat(paste0("The pair of coefficients ",pairs[[i]][1]," and ",pairs[[i]][2]," are not orthogonal. Check please!\n\n"))
-        
-      }
-      
+    #formula_str <- paste(target_str, "~", treatment_str)
+    #formula_obj <- as.formula(formula_str)
+    anova_res <- aov(formula, data = dataset)
+    
+    mse <- summary(anova_res)[[1]]["Mean Sq"][[1]][2] #mean error
+    cat(paste0("MSE:",mse,"\n"))
+    # Get the levels of the treatment variable
+    treatment_levels <- unique(dataset[[treatment_str]])
+    treatment_levels=as.character(treatment_levels)
+    x<-favstats(formula ,data=dataset)
+    mean_data<-x[["mean"]]
+    n<-x[["n"]]
+    cat(paste0("There are ", length(treatment_levels)," coefficients possible\n"))
+    cat("The treatment levels are:\n")
+    print(treatment_levels)
+    #cat(paste0("Enter the coefficients in the form of a vector e.g., c(1,0,-1)\n"))
+    #input=readline();
+    #coeffs <- eval(parse(text = input)) # taking the coeffs input as a vector
+    #coeffs <- as.numeric(strsplit(input,"\\s+")[[1]])
+    #coeffs=c(1,1,-1,-1)
+    #coeffs=coeff
+    #Sys.sleep(1)
+    cat("The set of coefficients are:\n")
+    print(coeffs)
+    if (length(coeffs) != length(treatment_levels)){
+      stop("Check the number of coefficient arguments you added.Exiting!! Restart\n")
     }
+    #cat("The mean values of the different treatment levels are:\n")
+    #print(mean_data)
+    cdot=coeffs%*%mean_data
+    
+    
+    if (sum(coeffs)==0){
+      cat("The given set of coefficients are permitted\n")
+    } else {
+      stop("Check the set of coefficients. They do not add to zero. Exiting!! Restart\n")
+    }
+    
+    cat(paste0("Going ahead with t-statistic and p-value calculation\n"))
+    #Sys.sleep(1)
+    coeff_sq=coeffs**2
+    inv_n=1/n
+    
+    cross_term<- coeff_sq%*%inv_n
+    t = cdot/(sqrt(mse*cross_term))
+    p<- 2*pt(abs(t),sum(n-1),lower.tail = FALSE)
+    #print(cdot)
+    
+    cat("Calculating confidence intervals\n\n\n")
+    #Sys.sleep(1)
+    low_c<-cdot + qt(alpha/2,sum(n-1))*sqrt(mse*cross_term)
+    upp_c<-cdot + qt(1-alpha/2,sum(n-1))*sqrt(mse*cross_term)
+    
+    row_entry<-rbind(matrix(round(coeffs,2),nrow=length(coeffs)),round(cdot,2),round(t,2),signif(p,2),round(low_c,2),round(upp_c,2))
+    if (is.null(mat)){
+      mat<- row_entry
+    } else {
+      mat<- cbind(mat,row_entry)
+    }
+    #Sys.sleep(1)
+    
+    
   }
+  rownames(mat)<- c(paste0("c", 1:length(treatment_levels)),"Contrast", "t", "p","CI_l","CI_u")
+  cat("The overall contrast matrix with statistic values is\n\n")
+  print(mat)
+  cat("**  t stands for t-statistic, p for the p-value at the given alpha, CI_l for lower confidence level and CI_u for upper confidence level\n\n ")
+  #Checking for orthogonality
+  pairs<- combn(coeff,2,simplify = FALSE)
+  #print(pairs[[1]][1])
+  #print(pairs[[1]][2])
+  for (i in 1:length(pairs)){
+    x <- unlist(pairs[[i]])
+    res<-x[1:(length(x)/2)]%*%x[(length(x)/2+1):length(x)]
+    if (res==0){
+      cat(paste0("The pair of coefficients ",pairs[[i]][1]," and ",pairs[[i]][2]," are orthogonal\n\n"))
+    } else {
+      cat(paste0("The pair of coefficients ",pairs[[i]][1]," and ",pairs[[i]][2]," are not orthogonal. Check please!\n\n"))
+      
+    }
+    
+  }
+}
  
