@@ -267,15 +267,16 @@ dox_resid = function(formula, dataset, plot = "All", bins = 10){
     #print("Non SPLIT PLOT")
     fits  = anova_model$fitted.values
     resids  = anova_model$residuals
-    
+    aov_data=data.frame(fits=fits,resids=resids)
     # res vs fit
-    residual_fitted = ggplot(anova_model, aes(x = .fitted, y = .resid)) +
+    residual_fitted = ggplot(aov_data, aes(x = fits, y = resids)) +
       geom_point() +
       geom_hline(yintercept = 0)+xlab("fitted value")+ylab("residual")+ labs(title="Residual vs Fit")
     
     # res vs order
     dataset$rownum = 1:dim(dataset)[1]
-    residual_order = ggplot(anova_model, aes(x=dataset$rownum, y = .resid)) +
+    aov_data$rownum=dataset$rownum
+    residual_order = ggplot(aov_data, aes(x=rownum, y = resids)) +
       geom_point() +
       geom_hline(yintercept = 0)+xlab("row number")+ylab("residual")+ labs(title="Residual vs Order")
     
@@ -420,8 +421,7 @@ dox_resid = function(formula, dataset, plot = "All", bins = 10){
   else if({{plot}} == 3) {residual_fitted}
   else {residual_order}
   
-}
-  
+}  
 
 
 
