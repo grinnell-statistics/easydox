@@ -256,7 +256,7 @@ dox_resid = function(formula, dataset, plot = "All", bins = 10){
     summarise(n = n(),.groups = "drop_last")
   
   if(!all(counts_table$n[1] == counts_table$n)){
-    warning("Your experiment is not balanced and the result can be misleading. The aov() function used here conducts Type I ANOVA, which only works for balanced design. We recommend using Anova() in the 'car' package to conduct Type II/III ANOVA.")
+    message("Your experiment is not balanced and the result can be misleading. The aov() function used here conducts Type I ANOVA, which only works for balanced design. We recommend using Anova() in the 'car' package to conduct Type II/III ANOVA.")
     print(counts_table)
   }
   
@@ -264,7 +264,7 @@ dox_resid = function(formula, dataset, plot = "All", bins = 10){
   
   # not split-plot design
   if(!is.null(anova_model$residuals)){
-    #print("Non SPLIT PLOT")
+    message("This is a Non SPLIT PLOT design")
     fits  = anova_model$fitted.values
     resids  = anova_model$residuals
     aov_data=data.frame(fits=fits,resids=resids)
@@ -299,7 +299,7 @@ dox_resid = function(formula, dataset, plot = "All", bins = 10){
   }
   # split-plot design
   else{
-    print("SPLIT PLOT")
+    message("This is a SPLIT PLOT design")
     #This part calculating the residuals and fitted values for split plot designs is taken from the split_aov()
     vars<- all.vars(formula)
     y<-vars[1]
@@ -307,7 +307,8 @@ dox_resid = function(formula, dataset, plot = "All", bins = 10){
     term_labels<- terms(formula,keep.order=TRUE)
     c<-attr(term_labels,"term.labels")
     
-    
+    #resdf<- easydox::dox_split_aov(formula,data=dataset)
+    #print(resdf$res)
     int <- list()
     err<- list()
     main<-list()
@@ -382,8 +383,10 @@ dox_resid = function(formula, dataset, plot = "All", bins = 10){
     
     cols<- grep("^effect", names(dataset))
     
-    fits <-  rowSums(dataset[,cols])+gm
-    resids<- dataset[[y]]- fits
+    #fits <-  rowSums(dataset[,cols])+gm
+    #resids<- dataset[[y]]- fits
+    fits=easydox::dox_split_aov(formula,data=dataset)$fits
+    resids<- easydox::dox_split_aov(formula,data=dataset)$res
     #creating a dataframe with the residuals and fitted values
     aov_data = data.frame(fits,resids)
     #print(aov_data)
@@ -421,9 +424,7 @@ dox_resid = function(formula, dataset, plot = "All", bins = 10){
   else if({{plot}} == 3) {residual_fitted}
   else {residual_order}
   
-}  
-
-
+}
 
 #' Summary Statistics
 #'
