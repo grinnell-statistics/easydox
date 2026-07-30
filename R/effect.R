@@ -15,8 +15,8 @@
 #' @examples
 #' dox_main(LogStrength ~ Brand + Water, Towels2, label="Mean")
 #' # If you want the label to be effect and have a larger size for the x-axis
-#' dox_main(LogStrength ~ Brand + Water, Towels2, label="Effect", text_size = 14)
-dox_main = function(formula, dataset, label="Mean", text_size=12, ylim){
+#' dox_main(LogStrength ~ Brand + Water, Towels2, label="Effect", text_size = 14,title1="default")
+dox_main = function(formula, dataset, label="Mean", text_size=text_size, ylim,title1=NULL,title2=NULL,title3=NULL,title4=NULL){
   formula=as.formula(formula)
   response = all.vars(formula)[1]
   x1 = all.vars(formula)[2]
@@ -24,6 +24,11 @@ dox_main = function(formula, dataset, label="Mean", text_size=12, ylim){
   x3 = all.vars(formula)[4]
   x4 = all.vars(formula)[5]
   u = mean(dataset[[response]])
+  
+  
+  
+  
+  
   if(!is.na(x1) && is.numeric(dataset[[x1]])){
     error_message = paste("Variable \"", x1, "\" needs to be a factor. Currently numeric.")
     stop(error_message)
@@ -51,35 +56,35 @@ dox_main = function(formula, dataset, label="Mean", text_size=12, ylim){
   ## mean for x1
   df1 <- dataset %>%
     group_by(.data[[x1]]) %>%
-    summarise(Mean_Response = mean(.data[[response]]))
+    summarise(MEAN = mean(.data[[response]]))
   
-  y_min = min(df1$Mean_Response)
-  y_max = max(df1$Mean_Response)
+  y_min = min(df1$MEAN)
+  y_max = max(df1$MEAN)
   
   ## mean for x2
   if(!is.na(x2)){
     df2 <- dataset %>%
       group_by(.data[[x2]]) %>%
-      summarise(Mean_Response = mean(.data[[response]]))
-    y_min = min(df2$Mean_Response,y_min)
-    y_max = max(df2$Mean_Response,y_max)
+      summarise(MEAN = mean(.data[[response]]))
+    y_min = min(df2$MEAN,y_min)
+    y_max = max(df2$MEAN,y_max)
   }
   
   ## mean for x3
   if(!is.na(x3)){
     df3 <- dataset %>%
       group_by(.data[[x3]]) %>%
-      summarise(Mean_Response = mean(.data[[response]]))
-    y_min = min(df3$Mean_Response,y_min)
-    y_max = max(df3$Mean_Response,y_max) }
+      summarise(MEAN = mean(.data[[response]]))
+    y_min = min(df3$MEAN,y_min)
+    y_max = max(df3$MEAN,y_max) }
   
   ## mean for x4
   if(!is.na(x4)){
     df4 <- dataset %>%
       group_by(.data[[x4]]) %>%
-      summarise(Mean_Response = mean(.data[[response]]))
-    y_min = min(df4$Mean_Response,y_min)
-    y_max = max(df4$Mean_Response,y_max) }
+      summarise(MEAN = mean(.data[[response]]))
+    y_min = min(df4$MEAN,y_min)
+    y_max = max(df4$MEAN,y_max) }
   
   if (label=="Mean" | label =="Effect"){
     y_max=y_max+(y_max-y_min)*0.15
@@ -87,10 +92,10 @@ dox_main = function(formula, dataset, label="Mean", text_size=12, ylim){
   
   
   ## main plot for x1
-  p1 <- ggplot(df1, aes(.data[[x1]], Mean_Response)) +
+  p1 <- ggplot(df1, aes(.data[[x1]], MEAN)) +
     geom_line(aes(group = 1)) +
-    theme(axis.title=element_text(size=14,face="bold"),axis.text.x = element_text(size = text_size))+
-    geom_point()
+    theme(axis.title=element_text(size=14,face="bold"),axis.text.y = element_text(size = text_size),axis.text.x = element_text(size = text_size))+
+    geom_point()+ggtitle(title1)
   
   if(missing(ylim)){
     p1 <- p1+coord_cartesian(ylim = c(y_min, y_max))
@@ -100,10 +105,10 @@ dox_main = function(formula, dataset, label="Mean", text_size=12, ylim){
   }
   
   if(label=="Mean"){
-    p1 <- p1+geom_text(aes(label=ifelse(((abs(Mean_Response) > 1e4) | (abs(Mean_Response) < 0.01)), sprintf('%.3e', Mean_Response), round(Mean_Response,4))),vjust = -1)
+    p1 <- p1+geom_text(aes(label=ifelse(abs(MEAN) < 0.01, format(round((MEAN),4),scientific=FALSE), format(round((MEAN), 2), scientific = FALSE))),vjust = -1)+ylab("Mean_Response")
   }
   else if(label=="Effect"){
-    p1 <- p1+geom_text(aes(label=ifelse(((abs(Mean_Response-u) > 1e4) | (abs(Mean_Response-u) < 0.01)), sprintf('%.3e', Mean_Response-u), round(Mean_Response-u,4))),vjust = -1)
+    p1 <- p1+geom_text(aes(label=ifelse(abs(MEAN-u) < 0.01, format(round((MEAN-u),4),scientific=FALSE), format(round((MEAN-u), 2), scientific = FALSE))),vjust = -1)+ylab("Effect size")
   }
   
   
@@ -111,10 +116,10 @@ dox_main = function(formula, dataset, label="Mean", text_size=12, ylim){
   
   ## main plot for x2
   if(!is.na(x2)){
-    p2 <- ggplot(df2, aes(.data[[x2]], Mean_Response)) +
-      theme(axis.title=element_text(size=14,face="bold"),axis.title.y = element_blank(),axis.text.x = element_text(size = text_size))+
+    p2 <- ggplot(df2, aes(.data[[x2]], MEAN)) +
+      theme(axis.title=element_text(size=14,face="bold"),axis.text.y = element_text(size = text_size),axis.text.x = element_text(size = text_size))+
       geom_line(aes(group = 1)) +
-      geom_point()
+      geom_point()+ggtitle(title2)
     
     
     if(missing(ylim)){
@@ -125,10 +130,10 @@ dox_main = function(formula, dataset, label="Mean", text_size=12, ylim){
     }
     
     if(label=="Mean"){
-      p2 <- p2+geom_text(aes(label=ifelse(((abs(Mean_Response) > 1e4) | (abs(Mean_Response) < 0.01)), sprintf('%.3e', Mean_Response), round(Mean_Response,4))),vjust = -1)
+      p2 <- p2+geom_text(aes(label=ifelse(abs(MEAN) < 0.01, format(round((MEAN),4),scientific=FALSE), format(round((MEAN), 2), scientific = FALSE))),vjust = -1)+ylab("Mean_Response")
     }
     else if(label=="Effect"){
-      p2 <- p2+geom_text(aes(label=ifelse(((abs(Mean_Response-u) > 1e4) | (abs(Mean_Response-u) < 0.01)), sprintf('%.3e', Mean_Response-u), round(Mean_Response-u,4))),vjust = -1)
+      p2 <- p2+geom_text(aes(label=ifelse(abs(MEAN-u) < 0.01, format(round((MEAN-u),4),scientific=FALSE), format(round((MEAN-u), 2), scientific = FALSE))),vjust = -1)+ylab("Effect size")
     }
   }
   
@@ -137,10 +142,10 @@ dox_main = function(formula, dataset, label="Mean", text_size=12, ylim){
   
   ## main plot for x3
   if(!is.na(x3)){
-    p3 <- ggplot(df3, aes(.data[[x3]], Mean_Response)) +
-      theme(axis.title=element_text(size=14,face="bold"),axis.title.y = element_blank(),axis.text.x = element_text(size = text_size))+
+    p3 <- ggplot(df3, aes(.data[[x3]], MEAN)) +
+      theme(axis.title=element_text(size=14,face="bold"),axis.text.y = element_text(size = text_size),axis.text.x = element_text(size = text_size))+
       geom_line(aes(group = 1)) +
-      geom_point()
+      geom_point()+ggtitle(title3)
     
     if(missing(ylim)){
       p3 <- p3+ coord_cartesian(ylim = c(y_min, y_max))
@@ -150,19 +155,19 @@ dox_main = function(formula, dataset, label="Mean", text_size=12, ylim){
     }
     
     if(label=="Mean"){
-      p3 <- p3+geom_text(aes(label=ifelse(((abs(Mean_Response) > 1e4) | (abs(Mean_Response) < 0.01)), sprintf('%.3e', Mean_Response), round(Mean_Response,4))),vjust = -1)
+      p3 <- p3+geom_text(aes(label=ifelse(abs(MEAN) < 0.01, format(round((MEAN),4),scientific=FALSE), format(round((MEAN), 2), scientific = FALSE))),vjust = -1)+ylab("Mean_Response")
     }
     else if(label=="Effect"){
-      p3 <- p3+geom_text(aes(label=ifelse(((abs(Mean_Response-u) > 1e4) | (abs(Mean_Response-u) < 0.01)), sprintf('%.3e', Mean_Response-u), round(Mean_Response-u,4))),vjust = -1)
+      p3 <- p3+geom_text(aes(label=ifelse(abs(MEAN-u) < 0.01, format(round((MEAN-u),4),scientific=FALSE), format(round((MEAN-u), 2), scientific = FALSE))),vjust = -1)+ylab("Effect size")
     }
   }
   
   ## main plot for x4
   if(!is.na(x4)){
-    p4 <- ggplot(df4, aes(.data[[x4]], Mean_Response)) +
-      theme(axis.title=element_text(size=14,face="bold"),axis.title.y = element_blank(),axis.text.x = element_text(size = text_size))+
+    p4 <- ggplot(df4, aes(.data[[x4]], MEAN)) +
+      theme(axis.title=element_text(size=14,face="bold"),axis.text.y = element_text(size = text_size),axis.text.x = element_text(size = text_size))+
       geom_line(aes(group = 1)) +
-      geom_point()
+      geom_point()+ggtitle(title4)
     
     if(missing(ylim)){
       p4 <- p4+ coord_cartesian(ylim = c(y_min, y_max))
@@ -172,10 +177,10 @@ dox_main = function(formula, dataset, label="Mean", text_size=12, ylim){
     }
     
     if(label=="Mean"){
-      p4 <- p4+geom_text(aes(label=ifelse(((abs(Mean_Response) > 1e4) | (abs(Mean_Response) < 0.01)), sprintf('%.3e', Mean_Response), round(Mean_Response,4))),vjust = -1)
+      p4 <- p4+geom_text(aes(label=ifelse(abs(MEAN) < 0.01, format(round((MEAN),4),scientific=FALSE), format(round((MEAN), 2), scientific = FALSE))),vjust = -1)+ylab("Mean_Response")
     }
     else if(label=="Effect"){
-      p4 <- p4+geom_text(aes(label=ifelse(((abs(Mean_Response-u) > 1e4) | (abs(Mean_Response-u) < 0.01)), sprintf('%.3e', Mean_Response-u), round(Mean_Response-u,4))),vjust = -1)
+      p4 <- p4+geom_text(aes(label=ifelse(abs(MEAN-u) < 0.01, format(round((MEAN-u),4),scientific=FALSE), format(round((MEAN-u), 2), scientific = FALSE))),vjust = -1)+ylab("Effect size")
     }
   }
   
@@ -194,6 +199,9 @@ dox_main = function(formula, dataset, label="Mean", text_size=12, ylim){
     p1
   }
 }
+
+
+
 #' Interaction Effect Plot
 #'
 #' This function gives the interaction effect plots for two treatments in an experiment.
