@@ -171,16 +171,19 @@ dox_split_aov=function(formula, dataset){
   #computing the fitted values and the residuals of the model
   dataset$fits <-  rowSums(dataset[,cols])+gm
   dataset$residuals<- dataset[[y]]- dataset$fits
+  print.split_aov_result <<- function(x, ...) {
+    print(x$tbl)
+    invisible(x)
+  }
   
-  return(list(tbl = tbl,
-              res = dataset$residuals,
-              fits = dataset$fits))
+  result <- list(tbl = tbl, res = dataset$residuals, fits = dataset$fits)
+  class(result) <- "split_aov_result"
+  return(result)
   
   
   
   
 }
-
 
 #' An ANOVA summary table with total DF & SS
 #'
