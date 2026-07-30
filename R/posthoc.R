@@ -12,7 +12,7 @@ dox_split_aov=function(formula, dataset){
   formula=as.formula(formula)
   model_1=aov(formula, dataset)
   if(length(summary(model_1)) == 1){
-    warning("This function only works for a Split-Plot design. Your formula does not have any Error() term. Use dox_aov() instead")
+    message("This function only works for a Split-Plot design. Your formula does not have any Error() term. Use dox_aov() instead")
   }
   
   # give warnings if the experiment is not balanced
@@ -21,7 +21,7 @@ dox_split_aov=function(formula, dataset){
     summarise(n = n(),.groups = "drop_last")
   
   if(!all(counts_table$n[1] == counts_table$n)){
-    warning("Your experiment is not balanced and the result can be misleading. The aov() function used here conducts Type I ANOVA, which only works for balanced design. We recommend using Anova() in the 'car' package to conduct Type II/III ANOVA.")
+    message("Your experiment is not balanced and the result can be misleading. The aov() function used here conducts Type I ANOVA, which only works for balanced design. We recommend using Anova() in the 'car' package to conduct Type II/III ANOVA.")
     #print(counts_table)
   }
   tab_len<- length(summary(model_1))
@@ -167,13 +167,14 @@ dox_split_aov=function(formula, dataset){
   
   #aggregating all the effect sizes columsn for final calculation
   cols<- grep("^effect", names(dataset))
-  tbl
   
   #computing the fitted values and the residuals of the model
-  #dataset$fits <-  rowSums(dataset[,cols])+gm
-  #dataset$residuals<- dataset[[y]]- dataset$fits
-  #list(res=dataset$residuals,
-   #    fits=dataset$fits)
+  dataset$fits <-  rowSums(dataset[,cols])+gm
+  dataset$residuals<- dataset[[y]]- dataset$fits
+  
+  return(list(tbl = tbl,
+              res = dataset$residuals,
+              fits = dataset$fits))
   
   
   
