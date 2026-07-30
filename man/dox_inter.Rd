@@ -4,7 +4,7 @@
 \alias{dox_inter}
 \title{Interaction Effect Plot}
 \usage{
-dox_inter(formula, dataset, label = "Mean", text_size = 12)
+dox_inter(formula, dataset, label = "Mean", text_size = 12, title = NULL)
 }
 \arguments{
 \item{formula}{y~x1+x2}

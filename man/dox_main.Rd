@@ -4,7 +4,17 @@
 \alias{dox_main}
 \title{Main Effect Plots}
 \usage{
-dox_main(formula, dataset, label = "Mean", text_size = 12, ylim)
+dox_main(
+  formula,
+  dataset,
+  label = "Mean",
+  text_size = text_size,
+  ylim,
+  title1 = NULL,
+  title2 = NULL,
+  title3 = NULL,
+  title4 = NULL
+)
 }
 \arguments{
 \item{formula}{y~x1+x2(optional)+x3(optional)}
@@ -27,5 +37,5 @@ If more than 1 treatment is given and ylim is not specified, plots will share th
 \examples{
 dox_main(LogStrength ~ Brand + Water, Towels2, label="Mean")
 # If you want the label to be effect and have a larger size for the x-axis
-dox_main(LogStrength ~ Brand + Water, Towels2, label="Effect", text_size = 14)
+dox_main(LogStrength ~ Brand + Water, Towels2, label="Effect", text_size = 14,title1="default")
 }
