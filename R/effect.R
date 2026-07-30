@@ -94,7 +94,7 @@ dox_main = function(formula, dataset, label="Mean", text_size=text_size, ylim,ti
   ## main plot for x1
   p1 <- ggplot(df1, aes(.data[[x1]], MEAN)) +
     geom_line(aes(group = 1)) +
-    theme(axis.title=element_text(size=14,face="bold"),axis.text.y = element_text(size = text_size),axis.text.x = element_text(size = text_size))+
+    theme(axis.title=element_text(size=14,face="bold"),axis.text.y = element_text(size = text_size),axis.text.x = element_text(size = text_size),plot.title = element_text(hjust=0.5))+
     geom_point()+ggtitle(title1)
   
   if(missing(ylim)){
@@ -117,7 +117,7 @@ dox_main = function(formula, dataset, label="Mean", text_size=text_size, ylim,ti
   ## main plot for x2
   if(!is.na(x2)){
     p2 <- ggplot(df2, aes(.data[[x2]], MEAN)) +
-      theme(axis.title=element_text(size=14,face="bold"),axis.text.y = element_text(size = text_size),axis.text.x = element_text(size = text_size))+
+      theme(axis.title=element_text(size=14,face="bold"),axis.text.y = element_text(size = text_size),axis.text.x = element_text(size = text_size),plot.title = element_text(hjust=0.5))+
       geom_line(aes(group = 1)) +
       geom_point()+ggtitle(title2)
     
@@ -143,7 +143,7 @@ dox_main = function(formula, dataset, label="Mean", text_size=text_size, ylim,ti
   ## main plot for x3
   if(!is.na(x3)){
     p3 <- ggplot(df3, aes(.data[[x3]], MEAN)) +
-      theme(axis.title=element_text(size=14,face="bold"),axis.text.y = element_text(size = text_size),axis.text.x = element_text(size = text_size))+
+      theme(axis.title=element_text(size=14,face="bold"),axis.text.y = element_text(size = text_size),axis.text.x = element_text(size = text_size),plot.title = element_text(hjust=0.5))+
       geom_line(aes(group = 1)) +
       geom_point()+ggtitle(title3)
     
@@ -165,7 +165,7 @@ dox_main = function(formula, dataset, label="Mean", text_size=text_size, ylim,ti
   ## main plot for x4
   if(!is.na(x4)){
     p4 <- ggplot(df4, aes(.data[[x4]], MEAN)) +
-      theme(axis.title=element_text(size=14,face="bold"),axis.text.y = element_text(size = text_size),axis.text.x = element_text(size = text_size))+
+      theme(axis.title=element_text(size=14,face="bold"),axis.text.y = element_text(size = text_size),axis.text.x = element_text(size = text_size),plot.title = element_text(hjust=0.5))+
       geom_line(aes(group = 1)) +
       geom_point()+ggtitle(title4)
     
@@ -217,7 +217,7 @@ dox_main = function(formula, dataset, label="Mean", text_size=text_size, ylim,ti
 #' dox_inter(LogStrength ~ Brand + Water, Towels2, label="Mean", text_size = 14)
 #' # If you want the label to be effect and have a larger size for the x-axis
 #' dox_inter(LogStrength ~ Brand + Water, Towels2, label="Effect", text_size = 14)
-dox_inter = function(formula, dataset, label="Mean", text_size = 12){
+dox_inter = function(formula, dataset, label="Mean", text_size = 12,title=NULL){
   #formula=as.formula(formula)
   #response = all.vars(formula)[1]
   #x1 = all.vars(formula)[2]
@@ -248,9 +248,11 @@ dox_inter = function(formula, dataset, label="Mean", text_size = 12){
   }
   p<-vector()
   pairs <- t(combn(main, 2))
-  for (index in 1:dim(pairs)[1]){
+  for (index in seq_along(main)){
     x1<-pairs[index,][1]
     x2<-pairs[index,][2]
+    #print(x1)
+    #print(x2)
     if(is.numeric(dataset[[x1]])){
       error_message = paste("Variable \"", x1, "\" needs to be a factor. Currently numeric.")
       stop(error_message)
@@ -264,7 +266,7 @@ dox_inter = function(formula, dataset, label="Mean", text_size = 12){
     
     df <- dataset %>%
       group_by(.data[[x1]], .data[[x2]]) %>%
-      summarise(Mean_Response = mean(.data[[response]]),.groups = 'drop')
+      summarise(Mean_Response = mean(.data[[response]]),.groups = 'drop_last')
     
     y_min = min(df$Mean_Response)
     y_max = max(df$Mean_Response)
@@ -274,15 +276,15 @@ dox_inter = function(formula, dataset, label="Mean", text_size = 12){
     # calculate means
     x1_mean <- dataset %>%
       group_by(.data[[x1]]) %>%
-      summarise(x1_mean = mean(.data[[response]]))
+      summarise(x1_mean = mean(.data[[response]]),.groups = 'drop_last')
     
     x2_mean <- dataset %>%
       group_by(.data[[x2]]) %>%
-      summarise(x2_mean = mean(.data[[response]]))
+      summarise(x2_mean = mean(.data[[response]]),.groups = 'drop_last')
     
     inter_mean <- dataset %>%
       group_by(.data[[x1]], .data[[x2]]) %>%
-      summarise(inter_mean = mean(.data[[response]]))
+      summarise(inter_mean = mean(.data[[response]]),.groups = 'drop_last')
     
     u <- mean(dataset[[response]])
     
@@ -293,21 +295,22 @@ dox_inter = function(formula, dataset, label="Mean", text_size = 12){
     interaction_effect = inter_mean$effect
     
     p1 = ggplot(df, aes(.data[[x1]], Mean_Response, color = .data[[x2]])) +
-      theme(axis.title=element_text(size=14,face="bold"),
-            axis.text.x = element_text(size = text_size))+
+      theme(axis.title=element_text(size=14,face="bold"),plot.title =element_text(hjust=0.5) ,
+            axis.text.x = element_text(size = text_size),axis.text.y=element_text(size=text_size))+
       geom_line(aes(group = .data[[x2]])) +
       geom_point() +
-      coord_cartesian(ylim = c(y_min, y_max))
+      coord_cartesian(ylim = c(y_min, y_max))+ggtitle(title)
     
     if(label=="Mean"){
-      p1 <- p1+geom_text(aes(label=ifelse(((abs(Mean_Response) > 1e4) | (abs(Mean_Response) < 0.01)), sprintf('%.4e', Mean_Response), round(Mean_Response,2))),vjust = -1)
+      p1 <- p1+ylab("Mean_Response")+geom_text(aes(label=ifelse(abs(Mean_Response)>0.01,format(round(Mean_Response,2),scientific=FALSE),format(round(Mean_Response,4),scientidic=FALSE))),vjust = -1)
     }
     
     else if(label=="Effect"){
-      p1 <- p1+geom_text(aes(label=ifelse(((abs(interaction_effect) > 1e4) | (abs(interaction_effect) < 0.01)), sprintf('%.3e', interaction_effect), round(interaction_effect,4))),vjust = -1)
+      p1 <- p1+geom_text(aes(label=ifelse(abs(interaction_effect)>0.01,format(round(interaction_effect,2),scientific=FALSE),format(round(interaction_effect,4),scientidic=FALSE))),vjust = -1)+ylab("Inter Effect")
     }
-    p<-append(p,p1)
+    #p<-append(p,p1)
   }
-  p  
+  p1
+  
   
 }
