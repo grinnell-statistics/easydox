@@ -249,8 +249,8 @@ dox_inter= function(formula, dataset, label="Mean", text_size = 12,title=NULL){
 
   p<-vector()
   pairs <- t(combn(main, 2))
-  
-  for (index in seq_along(main)){
+  #print(main)
+  for (index in seq_len(nrow(pairs))){
     x1<-pairs[index,][1]
     x2<-pairs[index,][2]
     #print(x1)
@@ -296,6 +296,7 @@ dox_inter= function(formula, dataset, label="Mean", text_size = 12,title=NULL){
     inter_mean$effect = inter_mean$inter_mean-inter_mean$x1_mean-inter_mean$x2_mean+u
     interaction_effect = inter_mean$effect
     df$Inter<-interaction_effect
+    #print(df$Mean_Response)
     #df <- merge(df, inter_mean[, c(x1, x2, "effect")], by = c(x1, x2), all.x = TRUE)
     p1 = ggplot(df, aes(.data[[x1]], Mean_Response, color = .data[[x2]])) +
       theme(axis.title=element_text(size=14,face="bold",hjust=0.5),plot.title =element_text(hjust=0.5) ,
@@ -305,13 +306,13 @@ dox_inter= function(formula, dataset, label="Mean", text_size = 12,title=NULL){
       coord_cartesian(ylim = c(y_min, y_max))+ggtitle(title)
     
     if(label=="Mean"){
-      p1 <- p1+ylab("Mean_Response")+geom_text(aes(label=ifelse(abs(Mean_Response)>0.01,format(round(Mean_Response,2),scientific=FALSE),format(round(Mean_Response,4),scientific=FALSE))),vjust = -1)
+      p1 <- p1+ylab("Mean_Response")+geom_text(aes(label=ifelse(abs(Mean_Response)>0.01,format(round(Mean_Response,2),scientific=FALSE),format(round(Mean_Response,4),scientific=FALSE))),vjust = -1,show.legend = FALSE)
     }
     
     else if(label=="Effect"){
-      p1 <- p1+ylab("Effect size")+geom_text(aes(label=ifelse(abs(Inter)>0.01,format(round(Inter,2),scientific=FALSE),format(round(Inter,4),scientific=FALSE))),vjust = -1)
+      p1 <- p1+ylab("Effect size")+geom_text(aes(label=ifelse(abs(Inter)>0.01,format(round(Inter,2),scientific=FALSE),format(round(Inter,4),scientific=FALSE))),vjust = -1,show.legend = FALSE)
     }
-    p<-append(p,p1)
+    p<-append(p,list(p1))
   }
   return(p)
   
