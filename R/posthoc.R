@@ -9,12 +9,18 @@
 #' @importFrom dplyr group_by summarise %>% n
 #' @export
 dox_split_aov=function(formula, dataset){
+  
   formula=as.formula(formula)
   model_1=aov(formula, dataset)
+  #summary(model_1)
+  
+  
+  
+  
+  
   if(length(summary(model_1)) == 1){
     message("This function only works for a Split-Plot design. Your formula does not have any Error() term. Use dox_aov() instead")
   }
-  
   # give warnings if the experiment is not balanced
   counts_table <- dataset %>%
     group_by(across(all.vars(formula)[-1])) %>%
@@ -26,12 +32,13 @@ dox_split_aov=function(formula, dataset){
   }
   tab_len<- length(summary(model_1))
   res_df<- do.call(data.frame,summary(model_1)[[tab_len]])
-  DF_res<-res_df[["Residuals","Df"]]
-  MS_res<- res_df[["Residuals","Mean.Sq"]]
+  DF_res<-res_df[nrow(res_df),"Df"]
+  MS_res<- res_df[nrow(res_df),"Mean.Sq"]
   
   #Finding out the F-statistic and p-value for the Whole plot error term
   nested_list<- summary(model_1)[[tab_len-1]]
   nested_df<- do.call(data.frame,nested_list)
+  nested_df<-nested_df[nrow(nested_df),]
   F_nested_df<- nested_df$Mean.Sq/MS_res
   DF_nested_df<- nested_df$Df
   p_nested_df<- pf(F_nested_df,DF_nested_df,DF_res,lower.tail = FALSE)
@@ -69,10 +76,9 @@ dox_split_aov=function(formula, dataset){
   
   
   tbl<-kable(formatted, align = 'r',
-        caption = "ANOVA Summary", escape = F, format.args = list(big.mark = ","))  %>%
+             caption = "ANOVA Summary", escape = F, format.args = list(big.mark = ","))  %>%
     kable_styling() %>%
     row_spec(nrow(stack_df) - 1, hline_after = TRUE)
-  
   
   #printing the ANOVA summary table from the stacked dataframe
   # print(kable(format(stack_df, digits = 4), align = 'r',
@@ -82,6 +88,9 @@ dox_split_aov=function(formula, dataset){
   #This part onwards deals with the calculation of the residuals and fitted values of any split plot model
   
   #differentiating between the response and explanatory variables
+  
+  
+  
   vars<- all.vars(formula)
   y<-vars[1] #response variable
   x<-vars[-1] #independent variables
@@ -117,7 +126,6 @@ dox_split_aov=function(formula, dataset){
   #defining the grand mean from the mean of the response variable
   gm <- mean(dataset[[y]])
   
-  
   #separating/parsing the error term into before and after parts
   err[[1]]$after<- gsub("\\s+", "", err[[1]]$after)
   err[[1]]$before<- gsub("\\s+", "", err[[1]]$before)
@@ -136,33 +144,67 @@ dox_split_aov=function(formula, dataset){
   
   
   #calculating the averages and effect sizes of the interaction variables
-  for (i in seq(1,length(int),by=2)){
-    pair<- int[i:(i+1)]
-    fmla_int<- as.formula(paste(y,"~",pair[[1]],"*",pair[[2]]))
-    means<-  aggregate(fmla_int, data = dataset, FUN = mean)
-    dataset[[paste0("avg_inter_",pair[[1]],"_",pair[[2]])]] <- means[[y]][
-      match(
-        interaction(dataset[[pair[[1]]]], dataset[[pair[[2]]]]),
-        interaction(means[[pair[[1]]]], means[[pair[[2]]]])
-      )
-    ]
-    dataset[[paste0("effect_",pair[[1]],"_",pair[[2]])]] <- dataset[[paste0("avg_inter_",pair[[1]],"_",pair[[2]])]]-
-      dataset[[paste0("avg_",pair[[1]])]] - dataset[[paste0("avg_",pair[[2]])]] +gm
+  if (!is.null(int)){
+    if (length(int) %% 2 ==0){
+      for (i in seq(1,length(int),by=2)){
+        pair<- int[i:(i+1)]
+        fmla_int<- as.formula(paste(y,"~",pair[[1]],"*",pair[[2]]))
+        means<-  aggregate(fmla_int, data = dataset, FUN = mean)
+        dataset[[paste0("avg_inter_",pair[[1]],"_",pair[[2]])]] <- means[[y]][
+          match(
+            interaction(dataset[[pair[[1]]]], dataset[[pair[[2]]]]),
+            interaction(means[[pair[[1]]]], means[[pair[[2]]]])
+          )
+        ]
+        dataset[[paste0("effect_inter_",pair[[1]],"_",pair[[2]])]] <- dataset[[paste0("avg_inter_",pair[[1]],"_",pair[[2]])]]-
+          dataset[[paste0("avg_",pair[[1]])]] - dataset[[paste0("avg_",pair[[2]])]] +gm
+      }
+    } else {
+      for (i in seq(1,length(int)-3,by=2)){
+        pair<- int[i:(i+1)]
+        fmla_int<- as.formula(paste(y,"~",pair[[1]],"*",pair[[2]]))
+        means<-  aggregate(fmla_int, data = dataset, FUN = mean)
+        dataset[[paste0("avg_inter_",pair[[1]],"_",pair[[2]])]] <- means[[y]][
+          match(
+            interaction(dataset[[pair[[1]]]], dataset[[pair[[2]]]]),
+            interaction(means[[pair[[1]]]], means[[pair[[2]]]])
+          )]
+        dataset[[paste0("effect_inter_",pair[[1]],"_",pair[[2]])]] <- dataset[[paste0("avg_inter_",pair[[1]],"_",pair[[2]])]]-
+          dataset[[paste0("avg_",pair[[1]])]] - dataset[[paste0("avg_",pair[[2]])]] +gm
+      }#for 3-way interaction
+      for (item in seq(length(int)-2,length(int),by=3)){
+        trip<-int[item:(item+2)]
+        #print(trip)
+        fmla_int<- as.formula(paste(y,"~",trip[[1]],"*",trip[[2]],"*",trip[[3]]))
+        means<-  aggregate(fmla_int, data = dataset, FUN = mean)
+        dataset[[paste0("avg_inter_",trip[[1]],"_",trip[[2]],"_",trip[[3]])]] <- means[[y]][
+          match(
+            interaction(dataset[[trip[[1]]]], dataset[[trip[[2]]]],dataset[[trip[[3]]]]),
+            interaction(means[[trip[[1]]]], means[[trip[[2]]]],means[[trip[[3]]]])
+          )
+        ]
+        dataset[[paste0("effect_inter_",trip[[1]],"_",trip[[2]],"_",trip[[3]])]] <- dataset[[paste0("avg_inter_",trip[[1]],"_",trip[[2]],"_",trip[[3]])]]+
+          dataset[[paste0("avg_",trip[[1]])]] + dataset[[paste0("avg_",trip[[2]])]]+dataset[[paste0("avg_",trip[[3]])]] -gm -dataset[[paste0("avg_inter_",trip[[1]],"_",trip[[2]])]]-dataset[[paste0("avg_inter_",trip[[1]],"_",trip[[3]])]]-dataset[[paste0("avg_inter_",trip[[2]],"_",trip[[3]])]]
+      }
+      
+    }
+    
   }
   
+  #calculating the average and effect sizes of the nested error term
+  bef <- err[[1]]$before
+  aft<- err[[1]]$after
   
-  #calculating the averages and effect sizes of the error term variables
-  fmla_err<- as.formula(paste(y,"~",err[[1]]$after))
-  means_err<-  aggregate(fmla_err, data = dataset, FUN = mean)
-  dataset[[paste0("avg_wp_err_", err[[1]]$after)]] <- means_err[[y]][
-    match(dataset[[err[[1]]$after]], means_err[[err[[1]]$after]])
-  ]
+  fmla  <- as.formula(paste(y, "~", bef, "+", aft))
+  means <- aggregate(fmla, data = dataset, FUN = mean)
   
-  if (length(err[[1]]$before) == 1){
-    dataset[[paste0("effect_",err[[1]]$after)]] <- dataset[[paste0("avg_wp_err_",err[[1]]$after)]]  - dataset[[paste0("avg_",err[[1]]$before)]]
-  } else if (length(err[[1]]$before) ==2){
-    dataset[[paste0("effect_",err[[1]]$after)]] <- dataset[[paste0("avg_wp_err_",err[[1]]$after)]] - dataset[[paste0("avg_inter_",err[[1]]$before[1],"_",err[[1]]$before[2])]]
-  }
+  # build a combined key so matching respects (i,j) order
+  key_data  <- interaction(dataset[[bef]], dataset[[aft]], drop = TRUE)
+  key_means <- interaction(means[[bef]],   means[[aft]],   drop = TRUE)
+  
+  tag <- paste0(bef, "_", aft)
+  dataset[[paste0("avg_", tag)]]    <- means[[y]][match(key_data, key_means)]
+  dataset[[paste0("effect_",tag)]]<- dataset[[paste0("avg_", tag)]]- dataset[[paste0("avg_",bef)]]
   
   
   #aggregating all the effect sizes columsn for final calculation
@@ -171,15 +213,19 @@ dox_split_aov=function(formula, dataset){
   #computing the fitted values and the residuals of the model
   dataset$fits <-  rowSums(dataset[,cols])+gm
   dataset$residuals<- dataset[[y]]- dataset$fits
+  sq<-sum(dataset$residuals^2)
   print.split_aov_result <<- function(x, ...) {
     print(x$tbl)
     invisible(x)
   }
   
-  result <- list(tbl = tbl, res = dataset$residuals, fits = dataset$fits)
-  class(result) <- "split_aov_result"
-  return(result)
+  knit_print.split_aov_result <<- function(x, ...) {
+    knitr::knit_print(x$tbl)
+  }
   
+  result <- list(tbl = tbl, res = dataset$residuals, fits = dataset$fits, sq = sq)
+  class(result) <- "split_aov_result"
+  result
   
   
   
