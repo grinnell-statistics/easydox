@@ -333,12 +333,16 @@ dox_resid = function(formula, dataset, plot = "All", bins = 10){
     
     main<-unlist(main)
     int<-unlist(int)
+    
+    #defining the grand mean from the mean of the response variable
     gm <- mean(dataset[[y]])
+    
+    #separating/parsing the error term into before and after parts
     err[[1]]$after<- gsub("\\s+", "", err[[1]]$after)
     err[[1]]$before<- gsub("\\s+", "", err[[1]]$before)
     
     
-    
+    #calculating the averages and effect sizes of the main plot variables
     for (index in seq_along(main)){
       fmla<- as.formula(paste(y,"~",main[[index]]))
       means<-  aggregate(fmla, data = dataset, FUN = mean)
@@ -350,43 +354,77 @@ dox_resid = function(formula, dataset, plot = "All", bins = 10){
     }
     
     
-    
-    for (i in seq(1,length(int),by=2)){
-      pair<- int[i:(i+1)]
-      fmla_int<- as.formula(paste(y,"~",pair[[1]],"*",pair[[2]]))
-      means<-  aggregate(fmla_int, data = dataset, FUN = mean)
-      dataset[[paste0("avg_inter_",pair[[1]],"_",pair[[2]])]] <- means[[y]][
-        match(
-          interaction(dataset[[pair[[1]]]], dataset[[pair[[2]]]]),
-          interaction(means[[pair[[1]]]], means[[pair[[2]]]])
-        )
-      ]
-      dataset[[paste0("effect_",pair[[1]],"_",pair[[2]])]] <- dataset[[paste0("avg_inter_",pair[[1]],"_",pair[[2]])]]-
-        dataset[[paste0("avg_",pair[[1]])]] - dataset[[paste0("avg_",pair[[2]])]] +gm
+    #calculating the averages and effect sizes of the interaction variables
+    if (!is.null(int)){
+      if (length(int) %% 2 ==0){
+        for (i in seq(1,length(int),by=2)){
+          pair<- int[i:(i+1)]
+          fmla_int<- as.formula(paste(y,"~",pair[[1]],"*",pair[[2]]))
+          means<-  aggregate(fmla_int, data = dataset, FUN = mean)
+          dataset[[paste0("avg_inter_",pair[[1]],"_",pair[[2]])]] <- means[[y]][
+            match(
+              interaction(dataset[[pair[[1]]]], dataset[[pair[[2]]]]),
+              interaction(means[[pair[[1]]]], means[[pair[[2]]]])
+            )
+          ]
+          dataset[[paste0("effect_inter_",pair[[1]],"_",pair[[2]])]] <- dataset[[paste0("avg_inter_",pair[[1]],"_",pair[[2]])]]-
+            dataset[[paste0("avg_",pair[[1]])]] - dataset[[paste0("avg_",pair[[2]])]] +gm
+        }
+      } else {
+        for (i in seq(1,length(int)-3,by=2)){
+          pair<- int[i:(i+1)]
+          fmla_int<- as.formula(paste(y,"~",pair[[1]],"*",pair[[2]]))
+          means<-  aggregate(fmla_int, data = dataset, FUN = mean)
+          dataset[[paste0("avg_inter_",pair[[1]],"_",pair[[2]])]] <- means[[y]][
+            match(
+              interaction(dataset[[pair[[1]]]], dataset[[pair[[2]]]]),
+              interaction(means[[pair[[1]]]], means[[pair[[2]]]])
+            )]
+          dataset[[paste0("effect_inter_",pair[[1]],"_",pair[[2]])]] <- dataset[[paste0("avg_inter_",pair[[1]],"_",pair[[2]])]]-
+            dataset[[paste0("avg_",pair[[1]])]] - dataset[[paste0("avg_",pair[[2]])]] +gm
+        }#for 3-way interaction
+        for (item in seq(length(int)-2,length(int),by=3)){
+          trip<-int[item:(item+2)]
+          #print(trip)
+          fmla_int<- as.formula(paste(y,"~",trip[[1]],"*",trip[[2]],"*",trip[[3]]))
+          means<-  aggregate(fmla_int, data = dataset, FUN = mean)
+          dataset[[paste0("avg_inter_",trip[[1]],"_",trip[[2]],"_",trip[[3]])]] <- means[[y]][
+            match(
+              interaction(dataset[[trip[[1]]]], dataset[[trip[[2]]]],dataset[[trip[[3]]]]),
+              interaction(means[[trip[[1]]]], means[[trip[[2]]]],means[[trip[[3]]]])
+            )
+          ]
+          dataset[[paste0("effect_inter_",trip[[1]],"_",trip[[2]],"_",trip[[3]])]] <- dataset[[paste0("avg_inter_",trip[[1]],"_",trip[[2]],"_",trip[[3]])]]+
+            dataset[[paste0("avg_",trip[[1]])]] + dataset[[paste0("avg_",trip[[2]])]]+dataset[[paste0("avg_",trip[[3]])]] -gm -dataset[[paste0("avg_inter_",trip[[1]],"_",trip[[2]])]]-dataset[[paste0("avg_inter_",trip[[1]],"_",trip[[3]])]]-dataset[[paste0("avg_inter_",trip[[2]],"_",trip[[3]])]]
+        }
+        
+      }
+      
     }
     
+    #calculating the average and effect sizes of the nested error term
+    bef <- err[[1]]$before
+    aft<- err[[1]]$after
     
+    fmla  <- as.formula(paste(y, "~", bef, "+", aft))
+    means <- aggregate(fmla, data = dataset, FUN = mean)
     
-    fmla_err<- as.formula(paste(y,"~",err[[1]]$after))
-    means_err<-  aggregate(fmla_err, data = dataset, FUN = mean)
-    dataset[[paste0("avg_wp_err_", err[[1]]$after)]] <- means_err[[y]][
-      match(dataset[[err[[1]]$after]], means_err[[err[[1]]$after]])
-    ]
+    # build a combined key so matching respects (i,j) order
+    key_data  <- interaction(dataset[[bef]], dataset[[aft]], drop = TRUE)
+    key_means <- interaction(means[[bef]],   means[[aft]],   drop = TRUE)
     
-    if (length(err[[1]]$before) == 1){
-      dataset[[paste0("effect_",err[[1]]$after)]] <- dataset[[paste0("avg_wp_err_",err[[1]]$after)]]  - dataset[[paste0("avg_",err[[1]]$before)]]
-    } else if (length(err[[1]]$before) ==2){
-      dataset[[paste0("effect_",err[[1]]$after)]] <- dataset[[paste0("avg_wp_err_",err[[1]]$after)]] - dataset[[paste0("avg_inter_",err[[1]]$before[1],"_",err[[1]]$before[2])]]
-    }
+    tag <- paste0(bef, "_", aft)
+    dataset[[paste0("avg_", tag)]]    <- means[[y]][match(key_data, key_means)]
+    dataset[[paste0("effect_",tag)]]<- dataset[[paste0("avg_", tag)]]- dataset[[paste0("avg_",bef)]]
     
     
     
     cols<- grep("^effect", names(dataset))
     
-    #fits <-  rowSums(dataset[,cols])+gm
-    #resids<- dataset[[y]]- fits
-    fits=easydox::dox_split_aov(formula,data=dataset)$fits
-    resids<- easydox::dox_split_aov(formula,data=dataset)$res
+    fits <-  rowSums(dataset[,cols])+gm
+    resids<- dataset[[y]]- fits
+    #fits=easydox::dox_split_aov(formula,data=dataset)$fits
+    #resids<- easydox::dox_split_aov(formula,data=dataset)$res
     #creating a dataframe with the residuals and fitted values
     aov_data = data.frame(fits,resids)
     #print(aov_data)
