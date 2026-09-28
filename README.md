@@ -3,9 +3,9 @@ When you analyze and visualize your experiments, are you always bored with creat
 
 # Installation
 ```
-# install.packages("devtools")
-# install.packages("gridExtra")
-devtools::install_github("grinnell-statistics/easydox")
+remotes::install_github("kcuilla/reactablefmtr")
+install.packages("gridExtra")
+remotes::install_github("grinnell-statistics/easydox")
 ```
 
 # Motivation
