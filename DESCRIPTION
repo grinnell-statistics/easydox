@@ -12,14 +12,14 @@ RoxygenNote: 7.3.3
 Imports:
         ggplot2,
         dplyr,
-	reactable,
 	gridExtra,
 	kableExtra,
 	rlang,
 	stringr,
 	mosaic,
-	kableExtra,
 	remotes
+Remotes:
+	kcuilla/reactablefmtr
 Depends: 
     R (>= 2.10)
 LazyData: true
