@@ -3,6 +3,8 @@ When you analyze and visualize your experiments, are you always bored with creat
 
 # Installation
 ```
+install.packages(“remotes”)
+remotes::install_github(“kcuilla/reactablefmtr”)
 remotes::install_github("grinnell-statistics/easydox",dependencies=TRUE)
 ```
 
