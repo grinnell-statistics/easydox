@@ -13,10 +13,11 @@
 #' @importFrom gridExtra grid.arrange
 #' @export
 #' @examples
-#' dox_main(LogStrength ~ Brand + Water, Towels2, label="Mean")
+#' If you want the lable to be Mean then do
+#' dox_main(LogStrength ~ Brand + Water, Towels2, label="Mean",title1="something")
 #' # If you want the label to be effect and have a larger size for the x-axis
-#' dox_main(LogStrength ~ Brand + Water, Towels2, label="Effect", text_size = 14,title1="default")
-dox_main = function(formula, dataset, label="Mean", text_size=text_size, ylim,title1=NULL,title2=NULL,title3=NULL,title4=NULL){
+#' dox_main(LogStrength ~ Brand + Water, Towels2, label="Effect",title1="something")
+dox_main = function(formula, dataset, label="Mean", text_size=12, ylim,title1=NULL,title2=NULL,title3=NULL,title4=NULL){
   formula=as.formula(formula)
   response = all.vars(formula)[1]
   x1 = all.vars(formula)[2]
@@ -119,7 +120,7 @@ dox_main = function(formula, dataset, label="Mean", text_size=text_size, ylim,ti
     p2 <- ggplot(df2, aes(.data[[x2]], MEAN)) +
       theme(axis.title=element_text(size=14,face="bold"),axis.text.y = element_text(size = text_size),axis.text.x = element_text(size = text_size),plot.title = element_text(hjust=0.5))+
       geom_line(aes(group = 1)) +
-      geom_point()+ggtitle(title2)
+      geom_point()+ggtitle(title2)+ylab("")
     
     
     if(missing(ylim)){
@@ -130,10 +131,10 @@ dox_main = function(formula, dataset, label="Mean", text_size=text_size, ylim,ti
     }
     
     if(label=="Mean"){
-      p2 <- p2+geom_text(aes(label=ifelse(abs(MEAN) < 0.01, format(round((MEAN),4),scientific=FALSE), format(round((MEAN), 2), scientific = FALSE))),vjust = -1)+ylab("Mean_Response")
+      p2 <- p2+geom_text(aes(label=ifelse(abs(MEAN) < 0.01, format(round((MEAN),4),scientific=FALSE), format(round((MEAN), 2), scientific = FALSE))),vjust = -1)
     }
     else if(label=="Effect"){
-      p2 <- p2+geom_text(aes(label=ifelse(abs(MEAN-u) < 0.01, format(round((MEAN-u),4),scientific=FALSE), format(round((MEAN-u), 2), scientific = FALSE))),vjust = -1)+ylab("Effect size")
+      p2 <- p2+geom_text(aes(label=ifelse(abs(MEAN-u) < 0.01, format(round((MEAN-u),4),scientific=FALSE), format(round((MEAN-u), 2), scientific = FALSE))),vjust = -1)
     }
   }
   
@@ -145,7 +146,7 @@ dox_main = function(formula, dataset, label="Mean", text_size=text_size, ylim,ti
     p3 <- ggplot(df3, aes(.data[[x3]], MEAN)) +
       theme(axis.title=element_text(size=14,face="bold"),axis.text.y = element_text(size = text_size),axis.text.x = element_text(size = text_size),plot.title = element_text(hjust=0.5))+
       geom_line(aes(group = 1)) +
-      geom_point()+ggtitle(title3)
+      geom_point()+ggtitle(title3)+ylab("")
     
     if(missing(ylim)){
       p3 <- p3+ coord_cartesian(ylim = c(y_min, y_max))
@@ -155,10 +156,10 @@ dox_main = function(formula, dataset, label="Mean", text_size=text_size, ylim,ti
     }
     
     if(label=="Mean"){
-      p3 <- p3+geom_text(aes(label=ifelse(abs(MEAN) < 0.01, format(round((MEAN),4),scientific=FALSE), format(round((MEAN), 2), scientific = FALSE))),vjust = -1)+ylab("Mean_Response")
+      p3 <- p3+geom_text(aes(label=ifelse(abs(MEAN) < 0.01, format(round((MEAN),4),scientific=FALSE), format(round((MEAN), 2), scientific = FALSE))),vjust = -1)
     }
     else if(label=="Effect"){
-      p3 <- p3+geom_text(aes(label=ifelse(abs(MEAN-u) < 0.01, format(round((MEAN-u),4),scientific=FALSE), format(round((MEAN-u), 2), scientific = FALSE))),vjust = -1)+ylab("Effect size")
+      p3 <- p3+geom_text(aes(label=ifelse(abs(MEAN-u) < 0.01, format(round((MEAN-u),4),scientific=FALSE), format(round((MEAN-u), 2), scientific = FALSE))),vjust = -1)
     }
   }
   
@@ -167,7 +168,7 @@ dox_main = function(formula, dataset, label="Mean", text_size=text_size, ylim,ti
     p4 <- ggplot(df4, aes(.data[[x4]], MEAN)) +
       theme(axis.title=element_text(size=14,face="bold"),axis.text.y = element_text(size = text_size),axis.text.x = element_text(size = text_size),plot.title = element_text(hjust=0.5))+
       geom_line(aes(group = 1)) +
-      geom_point()+ggtitle(title4)
+      geom_point()+ggtitle(title4)+ylab("")
     
     if(missing(ylim)){
       p4 <- p4+ coord_cartesian(ylim = c(y_min, y_max))
@@ -177,10 +178,10 @@ dox_main = function(formula, dataset, label="Mean", text_size=text_size, ylim,ti
     }
     
     if(label=="Mean"){
-      p4 <- p4+geom_text(aes(label=ifelse(abs(MEAN) < 0.01, format(round((MEAN),4),scientific=FALSE), format(round((MEAN), 2), scientific = FALSE))),vjust = -1)+ylab("Mean_Response")
+      p4 <- p4+geom_text(aes(label=ifelse(abs(MEAN) < 0.01, format(round((MEAN),4),scientific=FALSE), format(round((MEAN), 2), scientific = FALSE))),vjust = -1)
     }
     else if(label=="Effect"){
-      p4 <- p4+geom_text(aes(label=ifelse(abs(MEAN-u) < 0.01, format(round((MEAN-u),4),scientific=FALSE), format(round((MEAN-u), 2), scientific = FALSE))),vjust = -1)+ylab("Effect size")
+      p4 <- p4+geom_text(aes(label=ifelse(abs(MEAN-u) < 0.01, format(round((MEAN-u),4),scientific=FALSE), format(round((MEAN-u), 2), scientific = FALSE))),vjust = -1)
     }
   }
   
@@ -214,9 +215,9 @@ dox_main = function(formula, dataset, label="Mean", text_size=text_size, ylim,ti
 #' @importFrom dplyr group_by summarise %>%
 #' @export
 #' @examples
-#' dox_inter(LogStrength ~ Brand + Water, Towels2, label="Mean", text_size = 14)
+#' dox_inter(LogStrength ~ Brand + Water, Towels2, label="Mean")
 #' # If you want the label to be effect and have a larger size for the x-axis
-#' dox_inter(LogStrength ~ Brand + Water, Towels2, label="Effect", text_size = 14)
+#' dox_inter(LogStrength ~ Brand + Water, Towels2, label="Effect")
 dox_inter= function(formula, dataset, label="Mean", text_size = 12,title=NULL){
   #formula=as.formula(formula)
   #response = all.vars(formula)[1]
@@ -312,7 +313,7 @@ dox_inter= function(formula, dataset, label="Mean", text_size = 12,title=NULL){
     else if(label=="Effect"){
       p1 <- p1+ylab("Effect size")+geom_text(aes(label=ifelse(abs(Inter)>0.01,format(round(Inter,2),scientific=FALSE),format(round(Inter,4),scientific=FALSE))),vjust = -1,show.legend = FALSE)
     }
-    p<-append(p,list(p1))
+    p<-append(p,p1)
   }
   return(p)
   
