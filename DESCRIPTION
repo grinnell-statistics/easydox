@@ -17,6 +17,7 @@ Imports:
 	rlang,
 	stringr,
 	mosaic,
+	stats,
 	remotes
 Remotes:
 	kcuilla/reactablefmtr
