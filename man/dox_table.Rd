@@ -2,24 +2,26 @@
 % Please edit documentation in R/assumptions.R
 \name{dox_table}
 \alias{dox_table}
-\title{An interactive table to show standard deviations of different groups}
+\title{Table of group standard deviations}
 \usage{
 dox_table(formula, dataset)
 }
 \arguments{
-\item{formula}{y~x1+x2(optional)+x3(optional)}
+\item{formula}{A formula \code{y ~ x1}, optionally \code{+ x2 + x3 + x4}.
+All explanatory variables must be factors (or character).}
 
-\item{dataset}{the dataset that contains the experiment information}
+\item{dataset}{Data frame with the experiment data.}
 }
 \value{
-an interactive table of standard deviations
+An HTML table (kableExtra) of standard deviations and sample sizes.
 }
 \description{
-This function gives an interactive table to show standard deviations of different groups.
-It can help check the within groups equal variances assumptions. You can click column names to sort.
+Shows the standard deviation and sample size of the response for each
+combination of factor levels. Useful for checking the equal-variance
+assumption.
 }
 \examples{
-# Note that "Run examples" won't work because
-# of calling the reactable package
+\dontrun{
 dox_table(LogStrength ~ Brand + Water, Towels2)
+}
 }

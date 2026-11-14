@@ -2,7 +2,7 @@
 % Please edit documentation in R/assumptions.R
 \name{t_resid}
 \alias{t_resid}
-\title{Calculating residuals from t_test() in mosaic library}
+\title{Residual diagnostics for t_test() from mosaic}
 \usage{
 t_resid(
   formula,
@@ -15,17 +15,32 @@ t_resid(
 )
 }
 \arguments{
-\item{formula}{y~x1,df$y,(df$before,df$after)}
+\item{formula}{A formula \code{y ~ x} (two-sample or paired), or a numeric
+vector (one-sample).}
 
-\item{dataset}{the dataset that contains the experiment information}
+\item{dataset}{Data frame with the experiment data.}
+
+\item{plot}{Which plot: \code{"All"}, 1 = QQ plot, 2 = histogram,
+3 = residual vs fit, 4 = residual vs order.}
+
+\item{bins}{Number of histogram bins.}
+
+\item{paired}{Logical; \code{TRUE} for a paired t-test.}
+
+\item{id}{Name of the subject column (required when \code{paired = TRUE}).}
+
+\item{...}{Further arguments passed to \code{mosaic::t_test()}.}
 }
 \value{
-A table that gives summary statistics about y partitioned by treatments
+A ggplot object, or a grid of plots when \code{plot = "All"}.
 }
 \description{
-This function applies t_test() from mosaic on a formula and hence plots diagonstic plots from calculated residuals
+Runs \code{mosaic::t_test()} and draws diagnostic plots of the residuals.
 }
 \examples{
-t_resid(LogStrength ~ Brand, Towels2,plot=2,bins=10, ...) for two-sample test
-t_resid(Salary~Season,salaries,paired=TRUE,id="Player",plot =2,  ...)
+\dontrun{
+t_resid(LogStrength ~ Brand, Towels2, plot = 2, bins = 10)        # two-sample
+t_resid(salaries$Salary, salaries, plot = 2)                      # one-sample
+t_resid(Salary ~ Season, salaries, paired = TRUE, id = "Player", plot = 2)
+}
 }
