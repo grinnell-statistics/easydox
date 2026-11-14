@@ -158,14 +158,13 @@ dox_scatterplot = function(formula, dataset, color=NULL, facet = NULL, jitter = 
 #' @param dataset the dataset that contains the experiment information
 #' @return an interactive table of standard deviations
 #' @importFrom dplyr group_by summarise %>% mutate_if n
-#' @importFrom reactable reactable colDef
-#' @importFrom reactablefmtr data_bars
+#' @importFrom kableExtra kable_styling 
 #' @export
 #' @examples
 #' # Note that "Run examples" won't work because
 #' # of calling the reactable package
 #' dox_table(LogStrength ~ Brand + Water, Towels2)
-dox_sd = function(formula, dataset){
+dox_table = function(formula, dataset){
   formula=as.formula(formula)
   response = all.vars(formula)[1]
   x1 = all.vars(formula)[2]
@@ -213,11 +212,13 @@ dox_sd = function(formula, dataset){
   summary_df = summary_df %>%
     mutate_if(is.numeric, round, digits = 2)
   
-  
-  reactable(summary_df,defaultColDef = colDef(cell = data_bars(summary_df, box_shadow = TRUE, round_edges = TRUE,
-                                                               text_position = "outside-base",
-                                                               fill_color = c("#40c9ff"),
-                                                               background = "#e5e5e5",fill_gradient = FALSE)))
+  #print(summary_df)
+  kable(summary_df,format="html",align="c")%>%
+    kable_styling(bootstrap_options = c("striped","hover","condensed"))
+  # reactable(summary_df,defaultColDef = colDef(cell = data_bars(summary_df, box_shadow = TRUE, round_edges = TRUE,
+  #                                                              text_position = "outside-base",
+  #                                                              fill_color = c("#40c9ff"),
+  #                                                              background = "#e5e5e5",fill_gradient = FALSE)))
   
   #as.datatable(formattable(summary_df, list(SampleSize = color_bar("#80ed99"),GroupVariance = color_bar("#f28482"))))
   
@@ -259,15 +260,37 @@ dox_resid = function(formula, dataset, plot = "All", bins = 10){
     message("Your experiment is not balanced and the result can be misleading. The aov() function used here conducts Type I ANOVA, which only works for balanced design. We recommend using Anova() in the 'car' package to conduct Type II/III ANOVA.")
     print(counts_table)
   }
+  variables<- all.vars(formula)
+  response_var<-variables[1]
+  explan_var<-variables[-1]
+  num_col<-names(dataset)[sapply(dataset,is.numeric)]
+  num_x <- explan_var[explan_var %in% num_col]
   
+  
+
+  
+  if (!is.null(num_x)){
+    warning("One or more of your explanatory variables was quantitative, the dox_resid() function is converting it to a factor before calculating residual plots")
+  }
+  dataset[num_x] <- lapply(dataset[num_x], as.factor)
+  num_x_levels <- sapply(dataset[num_x], nlevels)
+  for (v in names(num_x_levels)) {
+    if (num_x_levels[[v]] == 1) {
+      stop("One of your variables: ",v,",has only one level. So, it cannot be used as a variable in the model.")
+      #dataset[[v]] <- as.numeric(as.character(dataset[[v]]))
+    }
+  }
+  
+  #str(dataset)
   anova_model=aov(formula, dataset)
   
   # not split-plot design
   if(!is.null(anova_model$residuals)){
-    message("This is a Non SPLIT PLOT design")
+    #message("This is a Non SPLIT PLOT design")
     fits  = anova_model$fitted.values
     resids  = anova_model$residuals
     aov_data=data.frame(fits=fits,resids=resids)
+    
     # res vs fit
     residual_fitted = ggplot(aov_data, aes(x = fits, y = resids)) +
       geom_point() +
@@ -299,14 +322,13 @@ dox_resid = function(formula, dataset, plot = "All", bins = 10){
   }
   # split-plot design
   else{
-    message("This is a SPLIT PLOT design")
+    #message("This is a SPLIT PLOT design")
     #This part calculating the residuals and fitted values for split plot designs is taken from the split_aov()
     vars<- all.vars(formula)
     y<-vars[1]
     x<-vars[-1]
     term_labels<- terms(formula,keep.order=TRUE)
     c<-attr(term_labels,"term.labels")
-    
     #resdf<- easydox::dox_split_aov(formula,data=dataset)
     #print(resdf$res)
     int <- list()
