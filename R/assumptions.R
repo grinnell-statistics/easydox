@@ -150,19 +150,25 @@ dox_scatterplot = function(formula, dataset, color=NULL, facet = NULL, jitter = 
 
 
 
-#' An interactive table to show standard deviations of different groups
+#' Table of group standard deviations
 #'
-#' This function gives an interactive table to show standard deviations of different groups.
-#' It can help check the within groups equal variances assumptions. You can click column names to sort.
-#' @param formula y~x1+x2(optional)+x3(optional)
-#' @param dataset the dataset that contains the experiment information
-#' @return an interactive table of standard deviations
-#' @importFrom dplyr group_by summarise %>% mutate_if n
-#' @importFrom kableExtra kable_styling 
+#' Shows the standard deviation and sample size of the response for each
+#' combination of factor levels. Useful for checking the equal-variance
+#' assumption.
+#'
+#' @param formula A formula \code{y ~ x1}, optionally \code{+ x2 + x3 + x4}.
+#'   All explanatory variables must be factors (or character).
+#' @param dataset Data frame with the experiment data.
+#' @return An HTML table (kableExtra) of standard deviations and sample sizes.
+#' @importFrom dplyr group_by summarise across all_of mutate where n %>%
+#' @importFrom kableExtra kable kable_styling
+#' @importFrom rlang .data
+#' @importFrom stats sd as.formula
 #' @export
 #' @examples
+#' \dontrun{
 #' dox_table(LogStrength ~ Brand + Water, Towels2)
-
+#' }
 dox_table = function(formula, dataset){
   formula=as.formula(formula)
   response = all.vars(formula)[1]
@@ -509,20 +515,32 @@ dox_sumstats = function(formula, dataset){
 
 
 
-#' Calculating residuals from t_test() in mosaic library
+#' Residual diagnostics for t_test() from mosaic
 #'
-#' This function applies t_test() from mosaic on a formula and hence plots diagonstic plots from calculated residuals
-#' @param formula y~x1,df$y,(df$before,df$after)
-#' @param dataset the dataset that contains the experiment information
-#' @return A table that gives summary statistics about y partitioned by treatments
-#' @importFrom mosaic t_test() and all its arguments
-#' @importFrom dplyr
+#' Runs \code{mosaic::t_test()} and draws diagnostic plots of the residuals.
+#'
+#' @param formula A formula \code{y ~ x} (two-sample or paired), or a numeric
+#'   vector (one-sample).
+#' @param dataset Data frame with the experiment data.
+#' @param plot Which plot: \code{"All"}, 1 = QQ plot, 2 = histogram,
+#'   3 = residual vs fit, 4 = residual vs order.
+#' @param bins Number of histogram bins.
+#' @param paired Logical; \code{TRUE} for a paired t-test.
+#' @param id Name of the subject column (required when \code{paired = TRUE}).
+#' @param ... Further arguments passed to \code{mosaic::t_test()}.
+#' @return A ggplot object, or a grid of plots when \code{plot = "All"}.
+#' @importFrom mosaic t_test
+#' @importFrom ggplot2 ggplot aes geom_point geom_hline xlab ylab labs
+#'   stat_qq stat_qq_line coord_flip geom_histogram
+#' @importFrom gridExtra grid.arrange
+#' @importFrom stats as.formula
 #' @export
 #' @examples
-#' t_resid(LogStrength ~ Brand, Towels2,plot=2,bins=10, ...) for two-sample test
-#' t_resid(salaries$Salary,salaries,plot=2, ...) for one-sample
-#' t_resid(Salary~Season,salaries,paired=TRUE,id="Player",plot =2,  ...)
-  
+#' \dontrun{
+#' t_resid(LogStrength ~ Brand, Towels2, plot = 2, bins = 10)        # two-sample
+#' t_resid(salaries$Salary, salaries, plot = 2)                      # one-sample
+#' t_resid(Salary ~ Season, salaries, paired = TRUE, id = "Player", plot = 2)
+#' }
 t_resid=function(formula, dataset, plot = "All", bins = 10,paired = FALSE, id = NULL, ...){
   expr <- substitute(formula)
   if (is.vector(formula)) {
