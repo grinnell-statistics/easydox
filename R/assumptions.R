@@ -503,3 +503,102 @@ dox_sumstats = function(formula, dataset){
   formula_str=str_replace(formula_str, "\\*", "+")
   favstats(as.formula(formula_str), data=dataset)
 }
+
+
+
+
+
+
+#' Calculating residuals from t_test() in mosaic library
+#'
+#' This function applies t_test() from mosaic on a formula and hence plots diagonstic plots from calculated residuals
+#' @param formula y~x1,df$y,(df$before,df$after)
+#' @param dataset the dataset that contains the experiment information
+#' @return A table that gives summary statistics about y partitioned by treatments
+#' @importFrom mosaic t_test() and all its arguments
+#' @importFrom dplyr
+#' @export
+#' @examples
+#' t_resid(LogStrength ~ Brand, Towels2,plot=2,bins=10, ...) for two-sample test
+#, t_resid(salaries$Salary,salaries,plot=2, ...) for one-sample
+#' t_resid(Salary~Season,salaries,paired=TRUE,id="Player",plot =2,  ...)
+t_resid=function(formula, dataset, plot = "All", bins = 10,paired = FALSE, id = NULL, ...){
+  expr <- substitute(formula)
+  if (is.vector(formula)) {
+    cat("This is a one-sample t-test\n")
+    test     <- t_test(formula, ...)
+    observed <- formula
+    fitted   <- rep(test$estimate[[1]], length(observed))
+    
+  } else {
+    formula      <- as.formula(formula)
+    response_var <- all.vars(formula)[1]
+    explan_var   <- all.vars(formula)[-1]
+    
+    ## ---------- Two-sample ----------
+    if (!isTRUE(paired)) {
+      cat("This is a two-sample t-test\n")
+      test     <- t_test(formula, dataset, ...)
+      lev      <- levels(as.factor(dataset[[explan_var]]))
+      grp      <- factor(dataset[[explan_var]], levels = lev)
+      observed <- dataset[[response_var]]
+      fitted   <- unname(test$estimate)[as.integer(grp)]   # each row gets its group's mean
+      
+      ## ---------- Paired ----------
+    } else {
+      cat("This is a paired t-test\n")
+      if (is.null(id)) stop("For a paired test, supply id = the subject column")
+      groups <- sort(unique(dataset[[explan_var]]))
+      d1 <- dataset[dataset[[explan_var]] == groups[1], ]
+      d2 <- dataset[dataset[[explan_var]] == groups[2], ]
+      d2 <- d2[match(d1[[id]], d2[[id]]), ]
+      if (anyNA(d2[[id]])) stop("Some subjects are missing from one group")
+      observed <- d1[[response_var]] - d2[[response_var]]   # paired differences
+      test     <- t_test(observed, ...)
+      fitted   <- rep(test$estimate[[1]], length(observed))
+    }
+  }
+  
+  res <- observed - fitted
+  t_data<-data.frame(fits=fitted,resids=res)
+
+  # res vs fit
+  residual_fitted = ggplot(t_data, aes(x = fits, y = resids)) +
+    geom_point() +
+    geom_hline(yintercept = 0)+xlab("fitted value")+ylab("residual")+ labs(title="Residual vs Fit")
+  
+ 
+  # # res vs order
+  
+  t_data$rownum=1:dim(t_data)[1]
+  residual_order = ggplot(t_data, aes(x=rownum, y = resids)) +
+    geom_point() +
+    geom_hline(yintercept = 0)+xlab("row number")+ylab("residual")+ labs(title="Residual vs Order")
+  # 
+  # 
+  # 
+  # # res qqplot
+  residual_df = as.data.frame(res)
+  colnames(residual_df) = c("residual")
+  qqplot1 <- ggplot(residual_df, aes(sample = residual))
+  pl = qqplot1 + stat_qq() + stat_qq_line() +coord_flip() +
+    labs(title = "QQ Plot for Error Terms", y = "Sample", x = "Theoretical")
+  # #ty<-ggplot_build(qqplot1)
+  # #data<-ty$data[[1]]
+  # #df<-data.frame(x=data$y,y=data$x)
+  # #reversing the standard qqplot
+  # #pl<-ggplot(df,aes(x=x,y=y))+geom_point()+geom_abline() +
+  # # labs(title = "QQ Plot for Error Terms", x = "Sample", y = "Theoretical")
+  # 
+  # 
+  # # res histogram
+  hist1 = ggplot(residual_df, aes(x=residual)) + geom_histogram(bins=bins, fill="lightblue")+ labs(title="Histogram for Error Terms")
+  # 
+  if ({{plot}} == "All")
+  {grid.arrange(pl, hist1, residual_fitted, residual_order, ncol=2)}
+  else if({{plot}} == 1) {pl}
+  else if({{plot}} == 2) {hist1}
+  else if({{plot}} == 3) {residual_fitted}
+  else {residual_order}
+  
+}
