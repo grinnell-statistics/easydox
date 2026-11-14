@@ -8,7 +8,7 @@ dox_main(
   formula,
   dataset,
   label = "Mean",
-  text_size = text_size,
+  text_size = 12,
   ylim,
   title1 = NULL,
   title2 = NULL,
@@ -35,7 +35,8 @@ This function gives the main effect plots for one or more treatments in an exper
 If more than 1 treatment is given and ylim is not specified, plots will share the same y-axis range.
 }
 \examples{
-dox_main(LogStrength ~ Brand + Water, Towels2, label="Mean")
+If you want the lable to be Mean then do
+dox_main(LogStrength ~ Brand + Water, Towels2, label="Mean",title1="something")
 # If you want the label to be effect and have a larger size for the x-axis
-dox_main(LogStrength ~ Brand + Water, Towels2, label="Effect", text_size = 14,title1="default")
+dox_main(LogStrength ~ Brand + Water, Towels2, label="Effect",title1="something")
 }
