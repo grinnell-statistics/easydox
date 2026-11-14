@@ -161,9 +161,8 @@ dox_scatterplot = function(formula, dataset, color=NULL, facet = NULL, jitter = 
 #' @importFrom kableExtra kable_styling 
 #' @export
 #' @examples
-#' # Note that "Run examples" won't work because
-#' # of calling the reactable package
 #' dox_table(LogStrength ~ Brand + Water, Towels2)
+
 dox_table = function(formula, dataset){
   formula=as.formula(formula)
   response = all.vars(formula)[1]
@@ -249,6 +248,7 @@ dox_table = function(formula, dataset){
 #' Towels_copy = dox_resid(LogStrength~Brand*Water, Towels2, model_name="model1")
 #' # If you want to check a specific plot, use plot =
 #' dox_resid(LogStrength~Brand*Water, Towels2, plot = 2, bins = 40)
+
 dox_resid = function(formula, dataset, plot = "All", bins = 10){
   formula=as.formula(formula)
   # give warnings if the experiment is not balanced
@@ -520,8 +520,9 @@ dox_sumstats = function(formula, dataset){
 #' @export
 #' @examples
 #' t_resid(LogStrength ~ Brand, Towels2,plot=2,bins=10, ...) for two-sample test
-#, t_resid(salaries$Salary,salaries,plot=2, ...) for one-sample
+#' t_resid(salaries$Salary,salaries,plot=2, ...) for one-sample
 #' t_resid(Salary~Season,salaries,paired=TRUE,id="Player",plot =2,  ...)
+  
 t_resid=function(formula, dataset, plot = "All", bins = 10,paired = FALSE, id = NULL, ...){
   expr <- substitute(formula)
   if (is.vector(formula)) {
